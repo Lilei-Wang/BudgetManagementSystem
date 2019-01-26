@@ -11,6 +11,7 @@
     <title>$Title$</title>
 </head>
 <body>
-
+<a href="${pageContext.request.contextPath}/Crawler/Workstation">爬取工作站数据</a><br>
+${pageContext.request.contextPath}
 </body>
 </html>

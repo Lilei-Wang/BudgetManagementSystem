@@ -14,4 +14,5 @@
         http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <context:component-scan base-package="service"/>
 </beans>
