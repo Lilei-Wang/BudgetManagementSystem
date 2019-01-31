@@ -1,0 +1,14 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IWorkstationDao">
+<insert id="insertWorkstation">
+    insert into workstation(spec,price,img) values(#{spec},#{price},#{img})
+</insert>
+    <select id="selectBySpec" fetchSize="1" resultType="beans.Workstation">
+        select * from workstation where spec=#{spec}
+    </select>
+    <update id="updateWorkstation">
+        update workstation set price=#{price},img=#{img} where spec=#{spec}
+    </update>
+</mapper>

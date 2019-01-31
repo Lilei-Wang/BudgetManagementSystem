@@ -15,4 +15,10 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <context:component-scan base-package="handlers"/>
+    <mvc:annotation-driven/>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/data/**" location="/data/"/>
+    <mvc:resources mapping="/files/**" location="/files/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/plugins/**" location="/plugins/"/>
 </beans>

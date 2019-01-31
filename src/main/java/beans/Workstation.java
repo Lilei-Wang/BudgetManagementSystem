@@ -12,6 +12,12 @@ public class Workstation {
     public Workstation() {
     }
 
+    public Workstation(String spec, double price, String img) {
+        this.spec = spec;
+        this.price = price;
+        this.img = img;
+    }
+
     @Override
     public String toString() {
         return "Workstation{" +
