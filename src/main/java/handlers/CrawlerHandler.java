@@ -20,6 +20,5 @@ public class CrawlerHandler {
     {
         crawlerService.ForWorkstation();
         System.out.println("111");
-        //return "/WEB-INF/jsp/welcome.jsp";
     }
 }
