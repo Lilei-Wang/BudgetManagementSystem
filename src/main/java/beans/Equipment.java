@@ -8,6 +8,8 @@ public class Equipment {
     private String name;
     private String type;
     private String img;
+    private double price;
+    private String comment;
 
     @Override
     public String toString() {
@@ -16,6 +18,8 @@ public class Equipment {
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", img='" + img + '\'' +
+                ", price=" + price +
+                ", comment='" + comment + '\'' +
                 '}';
     }
 
@@ -51,12 +55,19 @@ public class Equipment {
         this.img = img;
     }
 
-    public Equipment(String name, String type, String img) {
-        this.name = name;
-        this.type = type;
-        this.img = img;
+    public double getPrice() {
+        return price;
     }
 
-    public Equipment() {
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

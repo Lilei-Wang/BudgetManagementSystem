@@ -1,6 +1,8 @@
 package service.impl;
 
+import beans.Equipment;
 import beans.Workstation;
+import dao.IEquipmentDao;
 import dao.IWorkstationDao;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,8 +21,17 @@ import java.util.List;
 public class CrawlerService implements ICrawlerService {
 
     @Autowired
+    @Deprecated
     private IWorkstationDao workstationDao;
 
+    @Autowired
+    private IEquipmentDao equipmentDao;
+
+    public void setEquipmentDao(IEquipmentDao equipmentDao) {
+        this.equipmentDao = equipmentDao;
+    }
+
+    @Deprecated
     public void setWorkstationDao(IWorkstationDao workstationDao) {
         this.workstationDao = workstationDao;
     }
@@ -31,7 +42,7 @@ public class CrawlerService implements ICrawlerService {
     @Override
     public void ForWorkstation() {
         String url = "http://top.zol.com.cn/compositor/51/workstation.html";
-        List<Workstation> workstations = new LinkedList<>();
+        List<Equipment> equipments = new LinkedList<>();
         try {
             Document document = Jsoup.connect(url).get();
             Elements rankList = document.getElementsByClass("rank-list").first().getElementsByClass("rank-list__item");
@@ -53,7 +64,10 @@ public class CrawlerService implements ICrawlerService {
                         priceStr = priceStr.substring(1);
                         price = Double.valueOf(priceStr);
                     }
-                    workstations.add(new Workstation(name, price, null));
+                    Equipment equipment=new Equipment();
+                    equipment.setName(name);
+                    equipment.setPrice(price);
+                    equipments.add(equipment);
                     index++;
                     //爬取前十
                     if (index > 10)
@@ -63,12 +77,14 @@ public class CrawlerService implements ICrawlerService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (Workstation workstation : workstations) {
-            Workstation exist = workstationDao.selectBySpec(workstation.getSpec());
+        for (Equipment equipment : equipments) {
+            System.out.println("before");
+            Equipment exist = equipmentDao.selectByName(equipment.getName());
+            System.out.println("after");
             if (exist != null) {
-                workstationDao.updateWorkstation(workstation);
+                equipmentDao.updateEquipment(equipment);
             } else
-                workstationDao.insertWorkstation(workstation);
+                equipmentDao.insertEquipment(equipment);
         }
 
         System.out.println("爬取");

@@ -1,23 +1,14 @@
 package beans;
 
 /**
- * 间接费用，由直接费用计算生成，不对应数据库
+ * 预算基类，包括所有预算都用到的id、name、price、comment等属性
+ * 继承之后每个类的toString方法要修改
  */
-public class Indirect {
+public class Item {
     private Integer id;
     private String name;
     private double price;
     private String comment;
-
-    @Override
-    public String toString() {
-        return "Indirect{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", comment='" + comment + '\'' +
-                '}';
-    }
 
     public Integer getId() {
         return id;

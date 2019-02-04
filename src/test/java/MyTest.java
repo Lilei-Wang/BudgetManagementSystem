@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -245,4 +246,10 @@ public class MyTest implements Serializable {
             }
         }
     }
+
+    @Test
+    public void test13(){
+        System.out.println(new Date().getTime());
+    }
+
 }

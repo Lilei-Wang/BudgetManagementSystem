@@ -3,6 +3,7 @@ package beans;
 /**
  * 工作站
  */
+@Deprecated
 public class Workstation {
     private Integer id;
     private String spec;

@@ -4,4 +4,50 @@ package beans;
  * 测试化验加工费
  */
 public class TestAndProcess {
+    private Integer id;
+    private String name;
+    private double price;
+    private String comment;
+
+    @Override
+    public String toString() {
+        return "TestAndProcess{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

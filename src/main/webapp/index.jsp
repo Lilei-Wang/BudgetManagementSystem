@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Song
-  Date: 2019/1/26
-  Time: 20:16
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -15,7 +8,7 @@
 ${pageContext.request.contextPath}<br>
 
 
-<form class="form-horizontal" method="post" action="">
+<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
     <fieldset>
         <div id="legend" class="">
             <legend class="">预算辅助管理系统</legend>
@@ -25,7 +18,7 @@ ${pageContext.request.contextPath}<br>
             <!-- Select Basic -->
             <label class="control-label">预算类型</label>
             <div class="controls">
-                <select class="input-xlarge">
+                <select name="budget-type" class="input-xlarge">
                     <option>专项</option>
                     <option>自筹</option>
                 </select>
@@ -38,9 +31,139 @@ ${pageContext.request.contextPath}<br>
             <!-- Text input-->
             <label class="control-label" for="input01">总预算（万元）</label>
             <div class="controls">
-                <input type="text" placeholder="" class="input-xlarge">
+                <input name="total" type="number" placeholder="" class="input-xlarge">
                 <p class="help-block"></p>
             </div>
+        </div>
+
+
+        <div class="control-group">
+
+            <!-- Prepended checkbox -->
+            <label class="control-label">选择预算包含的项目：</label>
+            <div class="controls">
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            设备费
+                          <input name="items" type="checkbox" value="equipment">
+                        </label>
+                      </span>
+                    <input name="equipment-number" class="span2" type="number"  value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            材料费
+                          <input name="items" type="checkbox" value="material">
+                        </label>
+                      </span>
+                    <input name="material-number" class="span2" type="number"  value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            测试化验加工费
+                          <input name="items" type="checkbox" value="test-and-process">
+                        </label>
+                      </span>
+                    <input name="test-and-process-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            燃料动力费
+                          <input name="items" type="checkbox" value="power">
+                        </label>
+                      </span>
+                    <input name="power-number" class="span2" type="number"  value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            差旅费
+                          <input name="items" type="checkbox" value="travel">
+                        </label>
+                      </span>
+                    <input name="travel-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            会议费
+                          <input name="items" type="checkbox" value="conference">
+                        </label>
+                      </span>
+                    <input name="conference-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            国际合作交流费
+                          <input name="items" type="checkbox" value="international-communication">
+                        </label>
+                      </span>
+                    <input name="international-communication-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            产权费
+                          <input name="items" type="checkbox" value="property">
+                        </label>
+                      </span>
+                    <input name="property-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            劳务费
+                          <input name="items" type="checkbox" value="labour">
+                        </label>
+                      </span>
+                    <input name="labour-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            咨询费
+                          <input name="items" type="checkbox" value="consultation">
+                        </label>
+                      </span>
+                    <input name="consultation-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            其他费用
+                          <input name="items" type="checkbox" value="others">
+                        </label>
+                      </span>
+                    <input name="others-number" class="span2" type="number" value="0">
+                </div>
+
+                <div class="input-prepend">
+                      <span class="add-on">
+                        <label class="checkbox">
+                            间接费用
+                          <input name="items" type="checkbox" value="indirect">
+                        </label>
+                      </span>
+                    <input name="indirect-number" class="span2" type="number" value="0">
+                </div>
+
+            </div>
+
         </div>
 
         <div class="control-group">
