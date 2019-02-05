@@ -3,26 +3,111 @@ package service.impl;
 import beans.*;
 import dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import service.IBudgetService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class BudgetService implements IBudgetService {
     @Autowired
     private IEquipmentDao equipmentDao;
+    @Autowired
     private IMaterialDao materialDao;
+    @Autowired
     private IConferenceDao conferenceDao;
+    @Autowired
     private IConsultationDao consultationDao;
+    @Autowired
     private IInternationalCommunicationDao internationalCommunicationDao;
+    @Autowired
     private ILabourDao labourDao;
+    @Autowired
     private IPowerDao powerDao;
+    @Autowired
     private IPropertyDao propertyDao;
+    @Autowired
     private ITestAndProcessDao testAndProcessDao;
+    @Autowired
     private ITravelDao travelDao;
+
+    public IEquipmentDao getEquipmentDao() {
+        return equipmentDao;
+    }
+
+    public IMaterialDao getMaterialDao() {
+        return materialDao;
+    }
+
+    public IConferenceDao getConferenceDao() {
+        return conferenceDao;
+    }
+
+    public IConsultationDao getConsultationDao() {
+        return consultationDao;
+    }
+
+    public IInternationalCommunicationDao getInternationalCommunicationDao() {
+        return internationalCommunicationDao;
+    }
+
+    public ILabourDao getLabourDao() {
+        return labourDao;
+    }
+
+    public IPowerDao getPowerDao() {
+        return powerDao;
+    }
+
+    public IPropertyDao getPropertyDao() {
+        return propertyDao;
+    }
+
+    public ITestAndProcessDao getTestAndProcessDao() {
+        return testAndProcessDao;
+    }
+
+    public ITravelDao getTravelDao() {
+        return travelDao;
+    }
+
+    public void setMaterialDao(IMaterialDao materialDao) {
+        this.materialDao = materialDao;
+    }
+
+    public void setConferenceDao(IConferenceDao conferenceDao) {
+        this.conferenceDao = conferenceDao;
+    }
+
+    public void setConsultationDao(IConsultationDao consultationDao) {
+        this.consultationDao = consultationDao;
+    }
+
+    public void setInternationalCommunicationDao(IInternationalCommunicationDao internationalCommunicationDao) {
+        this.internationalCommunicationDao = internationalCommunicationDao;
+    }
+
+    public void setLabourDao(ILabourDao labourDao) {
+        this.labourDao = labourDao;
+    }
+
+    public void setPowerDao(IPowerDao powerDao) {
+        this.powerDao = powerDao;
+    }
+
+    public void setPropertyDao(IPropertyDao propertyDao) {
+        this.propertyDao = propertyDao;
+    }
+
+    public void setTestAndProcessDao(ITestAndProcessDao testAndProcessDao) {
+        this.testAndProcessDao = testAndProcessDao;
+    }
+
+    public void setTravelDao(ITravelDao travelDao) {
+        this.travelDao = travelDao;
+    }
 
     public void setEquipmentDao(IEquipmentDao equipmentDao) {
         this.equipmentDao = equipmentDao;
@@ -34,17 +119,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Equipment[] doEquipment(Double number) {
-        Equipment[] equipments=equipmentDao.selectAll();
-        List<Equipment> temp=new ArrayList<>();
-
-        double sum=0.00;
-        while(sum<number){
-            temp.add(equipments[0]);
-            sum+=equipments[0].getPrice();
-        }
-        Equipment[] result=new Equipment[temp.size()];
-        temp.toArray(result);
+    public List<Equipment> doEquipment(Double number) {
+        List<Equipment> equipments=equipmentDao.selectAll();
+        List<Equipment> result = generateList((List) equipments, number);
         return result;
     }
 
@@ -54,9 +131,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Material[] doMaterial(Double number) {
-        List<Object> objects=new ArrayList<>();
-        return new Material[0];
+    public List<Material> doMaterial(Double number) {
+        List<Material> materials=materialDao.selectAll();
+        List<Material> result=generateList((List) materials,number);
+        return result;
     }
 
     /**
@@ -65,8 +143,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public TestAndProcess[] doTestAndProcess(Double number) {
-        return new TestAndProcess[0];
+    public List<TestAndProcess> doTestAndProcess(Double number) {
+        List<TestAndProcess> testAndProcesses=testAndProcessDao.selectAll();
+        List<TestAndProcess> result=generateList((List) testAndProcesses,number);
+        return result;
     }
 
     /**
@@ -75,8 +155,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Power[] doPower(Double number) {
-        return new Power[0];
+    public List<Power> doPower(Double number) {
+        List<Power> powers=powerDao.selectAll();
+        List<Power> result=generateList((List) powers,number);
+        return result;
     }
 
     /**
@@ -85,8 +167,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Travel[] doTravel(Double number) {
-        return new Travel[0];
+    public List<Travel> doTravel(Double number) {
+        List<Travel> travels=travelDao.selectAll();
+        List<Travel> result=generateList((List) travels,number);
+        return result;
     }
 
     /**
@@ -95,8 +179,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Conference[] doConference(Double number) {
-        return new Conference[0];
+    public List<Conference> doConference(Double number) {
+        List<Conference> conferences=conferenceDao.selectAll();
+        List<Conference> result=generateList((List) conferences,number);
+        return result;
     }
 
     /**
@@ -105,8 +191,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public InternationalCommunication[] doInternationalCommunication(Double number) {
-        return new InternationalCommunication[0];
+    public List<InternationalCommunication> doInternationalCommunication(Double number) {
+        List<InternationalCommunication> internationalCommunications=internationalCommunicationDao.selectAll();
+        List<InternationalCommunication> result=generateList((List) internationalCommunications,number);
+        return result;
     }
 
     /**
@@ -115,8 +203,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Property[] doProperty(Double number) {
-        return new Property[0];
+    public List<Property> doProperty(Double number) {
+        List<Property> properties=propertyDao.selectAll();
+        List<Property> result=generateList((List) properties,number);
+        return result;
     }
 
     /**
@@ -125,8 +215,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Labour[] doLabour(Double number) {
-        return new Labour[0];
+    public List<Labour> doLabour(Double number) {
+        List<Labour> labour=labourDao.selectAll();
+        List<Labour> result=generateList((List) labour,number);
+        return result;
     }
 
     /**
@@ -135,8 +227,10 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Consultation[] doConsultation(Double number) {
-        return new Consultation[0];
+    public List<Consultation> doConsultation(Double number) {
+        List<Consultation> consultations=consultationDao.selectAll();
+        List<Consultation> result=generateList((List) consultations,number);
+        return result;
     }
 
     /**
@@ -145,8 +239,14 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Others[] doOthers(Double number) {
-        return new Others[0];
+    public List<Others> doOthers(Double number) {
+        List<Others> others=new ArrayList<>();
+        Others item=new Others();
+        item.setName("其他费用");
+        item.setPrice(number);
+        others.add(item);
+
+        return others;
     }
 
     /**
@@ -155,9 +255,35 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Indirect[] doIndirect(Double number) {
-        return new Indirect[0];
+    public List<Indirect> doIndirect(Double number) {
+        List<Indirect> indirects=new ArrayList<>();
+        Indirect item=new Indirect();
+        item.setName("间接费用");
+        item.setPrice(number);
+        indirects.add(item);
+
+        return indirects;
     }
 
-    /*private List<Object> generateList()*/
+    /**
+     *
+     * @param items
+     * @param number
+     * @return
+     */
+    private List generateList(List list, Double number) {
+        List<Item> results=new ArrayList<>();
+        try {
+            List<Item> items = (List<Item>) list;
+            Item item = items.get(0);
+            double sum = 0.0;
+            while (sum < number) {
+                results.add(item);
+                sum += item.getPrice();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return (List)results;
+    }
 }

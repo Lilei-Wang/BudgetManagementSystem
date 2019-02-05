@@ -2,6 +2,8 @@ package dao;
 
 import beans.Equipment;
 
+import java.util.List;
+
 public interface IEquipmentDao {
     Equipment selectByName(String name);
 
@@ -9,5 +11,5 @@ public interface IEquipmentDao {
 
     void insertEquipment(Equipment equipment);
 
-    Equipment[] selectAll();
+    List<Equipment> selectAll();
 }

@@ -31,7 +31,7 @@ ${pageContext.request.contextPath}<br>
             <!-- Text input-->
             <label class="control-label" for="input01">总预算（万元）</label>
             <div class="controls">
-                <input name="total" type="number" placeholder="" class="input-xlarge">
+                <input name="total" type="number" placeholder="" class="input-xlarge" required>
                 <p class="help-block"></p>
             </div>
         </div>

@@ -1,135 +1,138 @@
 package beans;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 经费报表对象，内含各种经费的集合
  */
 public class Budget {
-    private Equipment[] equipments;
-    private Material[] materials;
-    private TestAndProcess[] testAndProcesses;
-    private Power[] powers;
-    private Travel[] travels;
-    private Conference[] conferences;
-    private InternationalCommunication[] internationalCommunications;
-    private Property[] properties;
-    private Labour[] labour;
-    private Consultation[] consultations;
-    private Others[] others;
-    private Indirect[] indirects;
+    private List<Equipment> equipments;
+    private List<Material> materials;
+    private List<TestAndProcess> testAndProcesses;
+    private List<Power> powers;
+    private List<Travel> travels;
+    private List<Conference> conferences;
+    private List<InternationalCommunication> internationalCommunications;
+    private List<Property> properties;
+    private List<Labour> labour;
+    private List<Consultation> consultations;
+    private List<Others> others;
 
     @Override
     public String toString() {
         return "Budget{" +
-                "equipments=" + Arrays.toString(equipments) +
-                ", materials=" + Arrays.toString(materials) +
-                ", testAndProcesses=" + Arrays.toString(testAndProcesses) +
-                ", powers=" + Arrays.toString(powers) +
-                ", travels=" + Arrays.toString(travels) +
-                ", conferences=" + Arrays.toString(conferences) +
-                ", internationalCommunications=" + Arrays.toString(internationalCommunications) +
-                ", properties=" + Arrays.toString(properties) +
-                ", labour=" + Arrays.toString(labour) +
-                ", consultations=" + Arrays.toString(consultations) +
-                ", others=" + Arrays.toString(others) +
-                ", indirects=" + Arrays.toString(indirects) +
+                "equipments=" + equipments +
+                ", materials=" + materials +
+                ", testAndProcesses=" + testAndProcesses +
+                ", powers=" + powers +
+                ", travels=" + travels +
+                ", conferences=" + conferences +
+                ", internationalCommunications=" + internationalCommunications +
+                ", properties=" + properties +
+                ", labour=" + labour +
+                ", consultations=" + consultations +
+                ", others=" + others +
+                ", indirects=" + indirects +
                 '}';
     }
 
-    public Indirect[] getIndirects() {
-        return indirects;
-    }
-
-    public void setIndirects(Indirect[] indirects) {
-        this.indirects = indirects;
-    }
-
-    public Others[] getOthers() {
-        return others;
-    }
-
-    public void setOthers(Others[] others) {
-        this.others = others;
-    }
-
-    public Equipment[] getEquipments() {
+    public List<Equipment> getEquipments() {
         return equipments;
     }
 
-    public void setEquipments(Equipment[] equipments) {
+    public void setEquipments(List<Equipment> equipments) {
         this.equipments = equipments;
     }
 
-    public Material[] getMaterials() {
+    public List<Material> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(Material[] materials) {
+    public void setMaterials(List<Material> materials) {
         this.materials = materials;
     }
 
-    public TestAndProcess[] getTestAndProcesses() {
+    public List<TestAndProcess> getTestAndProcesses() {
         return testAndProcesses;
     }
 
-    public void setTestAndProcesses(TestAndProcess[] testAndProcesses) {
+    public void setTestAndProcesses(List<TestAndProcess> testAndProcesses) {
         this.testAndProcesses = testAndProcesses;
     }
 
-    public Power[] getPowers() {
+    public List<Power> getPowers() {
         return powers;
     }
 
-    public void setPowers(Power[] powers) {
+    public void setPowers(List<Power> powers) {
         this.powers = powers;
     }
 
-    public Travel[] getTravels() {
+    public List<Travel> getTravels() {
         return travels;
     }
 
-    public void setTravels(Travel[] travels) {
+    public void setTravels(List<Travel> travels) {
         this.travels = travels;
     }
 
-    public Conference[] getConferences() {
+    public List<Conference> getConferences() {
         return conferences;
     }
 
-    public void setConferences(Conference[] conferences) {
+    public void setConferences(List<Conference> conferences) {
         this.conferences = conferences;
     }
 
-    public InternationalCommunication[] getInternationalCommunications() {
+    public List<InternationalCommunication> getInternationalCommunications() {
         return internationalCommunications;
     }
 
-    public void setInternationalCommunications(InternationalCommunication[] internationalCommunications) {
+    public void setInternationalCommunications(List<InternationalCommunication> internationalCommunications) {
         this.internationalCommunications = internationalCommunications;
     }
 
-    public Property[] getProperties() {
+    public List<Property> getProperties() {
         return properties;
     }
 
-    public void setProperties(Property[] properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
 
-    public Labour[] getLabour() {
+    public List<Labour> getLabour() {
         return labour;
     }
 
-    public void setLabour(Labour[] labour) {
+    public void setLabour(List<Labour> labour) {
         this.labour = labour;
     }
 
-    public Consultation[] getConsultations() {
+    public List<Consultation> getConsultations() {
         return consultations;
     }
 
-    public void setConsultations(Consultation[] consultations) {
+    public void setConsultations(List<Consultation> consultations) {
         this.consultations = consultations;
     }
+
+    public List<Others> getOthers() {
+        return others;
+    }
+
+    public void setOthers(List<Others> others) {
+        this.others = others;
+    }
+
+    public List<Indirect> getIndirects() {
+        return indirects;
+    }
+
+    public void setIndirects(List<Indirect> indirects) {
+        this.indirects = indirects;
+    }
+
+    private List<Indirect> indirects;
+
 }

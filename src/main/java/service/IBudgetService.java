@@ -2,30 +2,32 @@ package service;
 
 import beans.*;
 
+import java.util.List;
+
 public interface IBudgetService {
 
 
-    Equipment[] doEquipment(Double number);
+    List<Equipment> doEquipment(Double number);
 
-    Material[] doMaterial(Double number);
+    List<Material> doMaterial(Double number);
 
-    TestAndProcess[] doTestAndProcess(Double number);
+    List<TestAndProcess> doTestAndProcess(Double number);
 
-    Power[] doPower(Double number);
+    List<Power> doPower(Double number);
 
-    Travel[] doTravel(Double number);
+    List<Travel> doTravel(Double number);
 
-    Conference[] doConference(Double number);
+    List<Conference> doConference(Double number);
 
-    InternationalCommunication[] doInternationalCommunication(Double number);
+    List<InternationalCommunication> doInternationalCommunication(Double number);
 
-    Property[] doProperty(Double number);
+    List<Property> doProperty(Double number);
 
-    Labour[] doLabour(Double number);
+    List<Labour> doLabour(Double number);
 
-    Consultation[] doConsultation(Double number);
+    List<Consultation> doConsultation(Double number);
 
-    Others[] doOthers(Double number);
+    List<Others> doOthers(Double number);
 
-    Indirect[] doIndirect(Double number);
+    List<Indirect> doIndirect(Double number);
 }

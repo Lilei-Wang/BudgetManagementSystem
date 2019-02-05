@@ -35,39 +35,40 @@ public class BudgetHandler {
 
             //以时间为标志，标志预算对象
             long sessionID = new Date().getTime();
-            response.addCookie(new Cookie("sessionID",Long.toString(sessionID)));
+            response.addCookie(new Cookie("sessionID", Long.toString(sessionID)));
 
-            Budget budget=new Budget();
+            Budget budget = new Budget();
 
-            for (String item : items) {
-                //System.out.println(item);
-                Double number = Double.valueOf(request.getParameter(item + "-number"))*10000;
-                if (item.contains("equipment")) {
-                    budget.setEquipments(budgetService.doEquipment(number));
-                } else if (item.contains("material")) {
-                    budget.setMaterials(budgetService.doMaterial(number));
-                } else if (item.contains("test")) {
-                    budget.setTestAndProcesses(budgetService.doTestAndProcess(number));
-                } else if (item.contains("power")) {
-                    budget.setPowers(budgetService.doPower(number));
-                } else if (item.contains("travel")) {
-                    budget.setTravels(budgetService.doTravel(number));
-                } else if (item.contains("confernece")) {
-                    budget.setConferences(budgetService.doConference(number));
-                } else if (item.contains("international")) {
-                    budget.setInternationalCommunications(budgetService.doInternationalCommunication(number));
-                } else if (item.contains("property")) {
-                    budget.setProperties(budgetService.doProperty(number));
-                } else if (item.contains("labour")) {
-                    budget.setLabour(budgetService.doLabour(number));
-                } else if (item.contains("consulatation")) {
-                    budget.setConsultations(budgetService.doConsultation(number));
-                } else if (item.contains("others")) {
-                    budget.setOthers(budgetService.doOthers(number));
-                } else if (item.contains("indirect")) {
-                    budget.setIndirects(budgetService.doIndirect(number));
+            if (items!=null)
+                for (String item : items) {
+                    //System.out.println(item);
+                    Double number = Double.valueOf(request.getParameter(item + "-number")) * 10000;
+                    if (item.contains("equipment")) {
+                        budget.setEquipments(budgetService.doEquipment(number));
+                    } else if (item.contains("material")) {
+                        budget.setMaterials(budgetService.doMaterial(number));
+                    } else if (item.contains("test")) {
+                        budget.setTestAndProcesses(budgetService.doTestAndProcess(number));
+                    } else if (item.contains("power")) {
+                        budget.setPowers(budgetService.doPower(number));
+                    } else if (item.contains("travel")) {
+                        budget.setTravels(budgetService.doTravel(number));
+                    } else if (item.contains("confernece")) {
+                        budget.setConferences(budgetService.doConference(number));
+                    } else if (item.contains("international")) {
+                        budget.setInternationalCommunications(budgetService.doInternationalCommunication(number));
+                    } else if (item.contains("property")) {
+                        budget.setProperties(budgetService.doProperty(number));
+                    } else if (item.contains("labour")) {
+                        budget.setLabour(budgetService.doLabour(number));
+                    } else if (item.contains("consulatation")) {
+                        budget.setConsultations(budgetService.doConsultation(number));
+                    } else if (item.contains("others")) {
+                        budget.setOthers(budgetService.doOthers(number));
+                    } else if (item.contains("indirect")) {
+                        budget.setIndirects(budgetService.doIndirect(number));
+                    }
                 }
-            }
             System.out.println(budget);
             writer.close();
         } catch (IOException e) {
