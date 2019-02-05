@@ -26,12 +26,12 @@ public class BudgetHandler {
     @RequestMapping("/Generate")
     public void generateBudget(HttpServletRequest request, HttpServletResponse response) {
         try {
-            System.out.println(budgetService);
+            //System.out.println(budgetService);
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter writer = response.getWriter();
             Integer totalBudget = Integer.valueOf(request.getParameter("total"));
             String[] items = request.getParameterValues("items");
-            System.out.println(totalBudget);
+            //System.out.println(totalBudget);
 
             //以时间为标志，标志预算对象
             long sessionID = new Date().getTime();
@@ -40,8 +40,8 @@ public class BudgetHandler {
             Budget budget=new Budget();
 
             for (String item : items) {
-                System.out.println(item);
-                Integer number = Integer.valueOf(request.getParameter(item + "-number"));
+                //System.out.println(item);
+                Double number = Double.valueOf(request.getParameter(item + "-number"))*10000;
                 if (item.contains("equipment")) {
                     budget.setEquipments(budgetService.doEquipment(number));
                 } else if (item.contains("material")) {
@@ -68,6 +68,7 @@ public class BudgetHandler {
                     budget.setIndirects(budgetService.doIndirect(number));
                 }
             }
+            System.out.println(budget);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

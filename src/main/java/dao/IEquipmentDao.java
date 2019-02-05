@@ -8,4 +8,6 @@ public interface IEquipmentDao {
     void updateEquipment(Equipment equipment);
 
     void insertEquipment(Equipment equipment);
+
+    Equipment[] selectAll();
 }

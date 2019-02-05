@@ -11,4 +11,7 @@
     <update id="updateEquipment">
         update equipment set price=#{price} where name=#{name}
     </update>
+    <select id="selectAll" resultType="beans.Equipment">
+        select * from equipment
+    </select>
 </mapper>

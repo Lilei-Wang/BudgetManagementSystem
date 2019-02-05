@@ -4,7 +4,9 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -217,13 +219,13 @@ public class MyTest implements Serializable {
 
     @Test
     public void test12() {
-        BufferedReader reader =null;
-        BufferedWriter writer=null;
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
         try {
             reader = new BufferedReader(new FileReader("F:\\in.txt"));
-            writer=new BufferedWriter(new FileWriter("F:\\out.txt"));
-            String line=null;
-            while((line=reader.readLine())!=null){
+            writer = new BufferedWriter(new FileWriter("F:\\out.txt"));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
                 writer.write(line);
                 writer.newLine();
                 System.out.println(line);
@@ -248,8 +250,28 @@ public class MyTest implements Serializable {
     }
 
     @Test
-    public void test13(){
+    public void test13() {
         System.out.println(new Date().getTime());
+        List<String> strs = new ArrayList<>();
+        strs.add("123");
+        strs.add("abc");
+        String[] rst = new String[strs.size()];
+        strs.toArray(rst);
+        for (String s : rst) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void test14() {
+        List<Object> objects=new ArrayList<>();
+        objects.add("string");
+        objects.add("123");
+        String[] strs=new String[objects.size()];
+        objects.toArray(strs);
+        for (String str : strs) {
+            System.out.println(str);
+        }
     }
 
 }

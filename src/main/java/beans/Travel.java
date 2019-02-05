@@ -3,10 +3,9 @@ package beans;
 /**
  * 差旅费
  */
-public class Travel {
-    private Integer id;
+public class Travel extends Item{
+
     private String dest;
-    private double price;
     private double food;
     private double traffic;
     private double accommodation;
@@ -14,22 +13,11 @@ public class Travel {
     @Override
     public String toString() {
         return "Travel{" +
-                "id=" + id +
-                ", dest='" + dest + '\'' +
-                ", price=" + price +
+                "dest='" + dest + '\'' +
                 ", food=" + food +
                 ", traffic=" + traffic +
                 ", accommodation=" + accommodation +
-                ", comment='" + comment + '\'' +
-                '}';
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+                "} " + super.toString();
     }
 
     public String getDest() {
@@ -38,14 +26,6 @@ public class Travel {
 
     public void setDest(String dest) {
         this.dest = dest;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public double getFood() {
@@ -71,14 +51,4 @@ public class Travel {
     public void setAccommodation(double accommodation) {
         this.accommodation = accommodation;
     }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    private String comment;
 }

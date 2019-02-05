@@ -10,6 +10,16 @@ public class Item {
     private double price;
     private String comment;
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

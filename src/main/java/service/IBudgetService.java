@@ -5,27 +5,27 @@ import beans.*;
 public interface IBudgetService {
 
 
-    Equipment[] doEquipment(Integer number);
+    Equipment[] doEquipment(Double number);
 
-    Material[] doMaterial(Integer number);
+    Material[] doMaterial(Double number);
 
-    TestAndProcess[] doTestAndProcess(Integer number);
+    TestAndProcess[] doTestAndProcess(Double number);
 
-    Power[] doPower(Integer number);
+    Power[] doPower(Double number);
 
-    Travel[] doTravel(Integer number);
+    Travel[] doTravel(Double number);
 
-    Conference[] doConference(Integer number);
+    Conference[] doConference(Double number);
 
-    InternationalCommunication[] doInternationalCommunication(Integer number);
+    InternationalCommunication[] doInternationalCommunication(Double number);
 
-    Property[] doProperty(Integer number);
+    Property[] doProperty(Double number);
 
-    Labour[] doLabour(Integer number);
+    Labour[] doLabour(Double number);
 
-    Consultation[] doConsultation(Integer number);
+    Consultation[] doConsultation(Double number);
 
-    Others[] doOthers(Integer number);
+    Others[] doOthers(Double number);
 
-    Indirect[] doIndirect(Integer number);
+    Indirect[] doIndirect(Double number);
 }
