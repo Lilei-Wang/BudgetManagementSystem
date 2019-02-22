@@ -11,6 +11,11 @@ public class Travel extends Item{
     private double accommodation;
 
     @Override
+    public double computeUnitPrice() {
+        return getPrice()+getFood()+getAccommodation()+getTraffic();
+    }
+
+    @Override
     public String toString() {
         return "Travel{" +
                 "dest='" + dest + '\'' +

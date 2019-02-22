@@ -1,12 +1,15 @@
+import beans.Budget;
+import beans.Equipment;
+import beans.Item;
 import org.junit.Test;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -201,6 +204,20 @@ public class MyTest implements Serializable {
                     ", name='" + name + '\'' +
                     '}';
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Student student = (Student) o;
+            return Objects.equals(getId(), student.getId()) &&
+                    Objects.equals(getName(), student.getName());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getId(), getName());
+        }
     }
 
     @Test
@@ -274,4 +291,114 @@ public class MyTest implements Serializable {
         }
     }
 
+
+
+    public void test15() {
+        Map<Item,Integer> map=new HashMap<>();
+        map.put(new Item(),1);
+        map.put(new Item(),1);
+        Set<Map.Entry<Item, Integer>> entries = map.entrySet();
+        for (Map.Entry<Item, Integer> entry : entries) {
+            System.out.println(entry.getKey().hashCode());
+        }
+        String str="123,abc";
+        String[] split = str.split(",");
+        for (String s : split) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void test16() {
+        Map<Item,Integer> map=new HashMap<>();
+        Equipment equipment = new Equipment();
+        /*equipment.setId(1);
+        equipment.setName("nnn");*/
+        map.put(equipment,1);
+        Map<Equipment,Integer> equipmentIntegerMap=(Map)map;
+        Set<Map.Entry<Item, Integer>> entries = map.entrySet();
+        for (Map.Entry<Item, Integer> entry : entries) {
+            System.out.println(entry);
+        }
+    }
+
+    @Test
+    public void test17() {
+        Map<Item,Integer> map=new HashMap<>();
+        Equipment equipment=new Equipment();
+        equipment.setId(1);
+        equipment.setName("123");
+        equipment.setPrice(12.34);
+        map.put(equipment,1);
+        if(map.containsKey(equipment)){
+            map.put(equipment,111);
+        }
+        System.out.println(map);
+
+        Random random = new Random();
+        int i = random.nextInt(10),power=0;
+        System.out.println(i--);
+        while(i!=0){
+            i=i/2;
+            power++;
+        }
+        System.out.println(1<<power);
+
+    }
+
+    @Test
+    public void hashCodeTest(){
+        Student student=new Student();
+        System.out.println(student.hashCode());
+    }
+
+    @Test
+    public void hashMapTest(){
+        Map<Student,Integer> map=new HashMap<>(4);
+        Student stu1=new Student(1,"zs"),stu2=new Student(2,"ls");
+        map.put(stu1,1);
+        map.put(stu2,2);
+        stu1.setName("hhh");
+        map.remove(stu1);
+        for (Student student : map.keySet()) {
+            System.out.println(student);
+        }
+        System.out.println(map.get(stu2));
+    }
+
+    @Test
+    public void LinkedListTest(){
+        List<Student> list=new LinkedList<>();
+        list.add(new Student(1,"zs"));
+        list.add(new Student(2,"ls"));
+        System.out.println(list.get(0));
+    }
+
+    @Test
+    public void ArrayListTest(){
+        List<Student> list=new ArrayList<>();
+        list.add(new Student(1,"zs"));
+        list.add(new Student(2,"ls"));
+        System.out.println(list.get(0));
+        int x=1;
+        float y=2;
+        System.out.println(x/y);
+    }
+
+    @Test
+    public void PathTest(){
+        System.out.println(this.getClass().getClassLoader().getResource("").getPath());
+        String name;
+        //System.out.println(Objects.hash(null));
+        Equipment equipment = new Equipment();
+        System.out.println(equipment.getId());
+    }
+
+    @Test
+    public void SerializeTest() throws IOException, ClassNotFoundException {
+        String file="F:\\Workspace\\BudgetManagementSystem\\target\\BudgetManagementSystem-1.0-SNAPSHOT\\WEB-INF\\budgets\\1550329536855";
+        ObjectInputStream inputStream=new ObjectInputStream(new FileInputStream(file));
+        Object object = inputStream.readObject();
+        System.out.println((Budget)object);
+    }
 }

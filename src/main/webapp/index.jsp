@@ -5,7 +5,21 @@
 </head>
 <body>
 <a href="Crawler/Workstation">爬取工作站数据</a><br>
+<a href="Budget/Download">下载</a><br>
 ${pageContext.request.contextPath}<br>
+
+
+<% int total = 150,
+        equiment = 20,
+        material = 12,
+        test = 15,
+        power = 0,
+        travel = 12,
+        conference = 3,
+        international = 6,
+        property = 8,
+        labour = 66,
+        others = 0; %>
 
 
 <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
@@ -31,7 +45,7 @@ ${pageContext.request.contextPath}<br>
             <!-- Text input-->
             <label class="control-label" for="input01">总预算（万元）</label>
             <div class="controls">
-                <input name="total" type="number" placeholder="" class="input-xlarge" required>
+                <input name="total" type="number" placeholder="" class="input-xlarge" required value=<%=total%>>
                 <p class="help-block"></p>
             </div>
         </div>
@@ -46,93 +60,94 @@ ${pageContext.request.contextPath}<br>
                       <span class="add-on">
                         <label class="checkbox">
                             设备费
-                          <input name="items" type="checkbox" value="equipment">
+                          <input name="items" type="checkbox" value="equipment" checked>
                         </label>
                       </span>
-                    <input name="equipment-number" class="span2" type="number"  value="0">
+                    <input name="equipment-number" class="span2" type="number" value=<%=equiment%>>
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             材料费
-                          <input name="items" type="checkbox" value="material">
+                          <input name="items" type="checkbox" value="material" checked>
                         </label>
                       </span>
-                    <input name="material-number" class="span2" type="number"  value="0">
+                    <input name="material-number" class="span2" type="number" value=<%=material%>>
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             测试化验加工费
-                          <input name="items" type="checkbox" value="test-and-process">
+                          <input name="items" type="checkbox" value="test-and-process" checked>
                         </label>
                       </span>
-                    <input name="test-and-process-number" class="span2" type="number" value="0">
+                    <input name="test-and-process-number" class="span2" type="number" value=<%=test%>
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             燃料动力费
-                          <input name="items" type="checkbox" value="power">
+                          <input name="items" type="checkbox" value="power" checked>
                         </label>
                       </span>
-                    <input name="power-number" class="span2" type="number"  value="0">
+                    <input name="power-number" class="span2" type="number" value=<%=power%>>
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             差旅费
-                          <input name="items" type="checkbox" value="travel">
+                          <input name="items" type="checkbox" value="travel" checked>
                         </label>
                       </span>
-                    <input name="travel-number" class="span2" type="number" value="0">
+                    <input name="travel-number" class="span2" type="number" value=<%=travel%>>
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             会议费
-                          <input name="items" type="checkbox" value="conference">
+                          <input name="items" type="checkbox" value="conference" checked>
                         </label>
                       </span>
-                    <input name="conference-number" class="span2" type="number" value="0">
+                    <input name="conference-number" class="span2" type="number" value=<%=conference%>>
+                    （系统计算相应的咨询费）
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             国际合作交流费
-                          <input name="items" type="checkbox" value="international-communication">
+                          <input name="items" type="checkbox" value="international-communication" checked>
                         </label>
                       </span>
-                    <input name="international-communication-number" class="span2" type="number" value="0">
+                    <input name="international-communication-number" class="span2" type="number" value="<%=international%>">
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             产权费
-                          <input name="items" type="checkbox" value="property">
+                          <input name="items" type="checkbox" value="property" checked>
                         </label>
                       </span>
-                    <input name="property-number" class="span2" type="number" value="0">
+                    <input name="property-number" class="span2" type="number" value="<%=property%>">
                 </div>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             劳务费
-                          <input name="items" type="checkbox" value="labour">
+                          <input name="items" type="checkbox" value="labour" checked>
                         </label>
                       </span>
-                    <input name="labour-number" class="span2" type="number" value="0">
+                    <input name="labour-number" class="span2" type="number" value="<%=labour%>">
                 </div>
 
-                <div class="input-prepend">
+                <%--<div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             咨询费
@@ -140,19 +155,19 @@ ${pageContext.request.contextPath}<br>
                         </label>
                       </span>
                     <input name="consultation-number" class="span2" type="number" value="0">
-                </div>
+                </div>--%>
 
                 <div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             其他费用
-                          <input name="items" type="checkbox" value="others">
+                          <input name="items" type="checkbox" value="others" checked>
                         </label>
                       </span>
-                    <input name="others-number" class="span2" type="number" value="0">
+                    <input name="others-number" class="span2" type="number" value="<%=others%>">
                 </div>
 
-                <div class="input-prepend">
+                <%--<div class="input-prepend">
                       <span class="add-on">
                         <label class="checkbox">
                             间接费用
@@ -160,7 +175,7 @@ ${pageContext.request.contextPath}<br>
                         </label>
                       </span>
                     <input name="indirect-number" class="span2" type="number" value="0">
-                </div>
+                </div>--%>
 
             </div>
 

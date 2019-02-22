@@ -78,9 +78,9 @@ public class CrawlerService implements ICrawlerService {
             e.printStackTrace();
         }
         for (Equipment equipment : equipments) {
-            System.out.println("before");
+            //System.out.println("before");
             Equipment exist = equipmentDao.selectByName(equipment.getName());
-            System.out.println("after");
+            //System.out.println("after");
             if (exist != null) {
                 equipmentDao.updateEquipment(equipment);
             } else

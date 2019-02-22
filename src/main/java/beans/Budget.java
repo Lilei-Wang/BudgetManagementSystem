@@ -1,12 +1,15 @@
 package beans;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 经费报表对象，内含各种经费的集合
  */
-public class Budget {
+public class Budget implements Serializable {
     private List<Equipment> equipments;
     private List<Material> materials;
     private List<TestAndProcess> testAndProcesses;
@@ -18,6 +21,77 @@ public class Budget {
     private List<Labour> labour;
     private List<Consultation> consultations;
     private List<Others> others;
+
+    public Map<Item, Integer> listToMap(List<Item> items) {
+        Map<Item, Integer> map = new HashMap<>();
+        if (items == null || items.size() == 0) return map;
+        for (Item item : items) {
+            int val = 1;
+            if (map.containsKey(item)) {
+                val = map.get(item) + 1;
+            }
+            map.put(item, val);
+        }
+        return map;
+    }
+
+    /**
+     * 计算间接经费
+     *
+     * @return
+     */
+    public List<Indirect> computeIndirect() {
+        double direct = 0.0;
+        if (materials != null)
+            for (Material material : materials) {
+                direct += material.computeUnitPrice();
+            }
+        if (testAndProcesses != null)
+            for (TestAndProcess testAndProcess : testAndProcesses) {
+                direct += testAndProcess.computeUnitPrice();
+            }
+        if (powers != null)
+            for (Power power : powers) {
+                direct += power.computeUnitPrice();
+            }
+        if (travels != null)
+            for (Travel travel : travels) {
+                direct += travel.computeUnitPrice();
+            }
+        if (conferences != null)
+            for (Conference conference : conferences) {
+                direct += conference.computeUnitPrice();
+            }
+        if (internationalCommunications != null)
+            for (InternationalCommunication internationalCommunication : internationalCommunications) {
+                direct += internationalCommunication.computeUnitPrice();
+            }
+        if (properties != null)
+            for (Property property : properties) {
+                direct += property.computeUnitPrice();
+            }
+        if (labour != null)
+            for (Labour labour1 : labour) {
+                direct += labour1.computeUnitPrice();
+            }
+        if (others != null)
+            for (Others other : others) {
+                direct += other.computeUnitPrice();
+            }
+
+        double indirect = 0.0;
+        if (direct <= 5000000) {
+            indirect = direct * 0.2;
+        } else if (direct <= 10000000) {
+            indirect = 5000000 * 0.2 + (direct - 5000000) * 0.15;
+        } else {
+            indirect = 5000000 * 0.2 + 5000000 * 0.15 + (direct - 10000000) * 0.13;
+        }
+        Indirect result = new Indirect();
+        result.setPrice(indirect);
+        result.setName("间接费用");
+        return Arrays.asList(result);
+    }
 
     @Override
     public String toString() {

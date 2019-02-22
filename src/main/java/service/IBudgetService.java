@@ -25,7 +25,12 @@ public interface IBudgetService {
 
     List<Labour> doLabour(Double number);
 
+    @Deprecated
     List<Consultation> doConsultation(Double number);
+
+
+    List<Consultation> doConsultation(List<Conference> conferences);
+
 
     List<Others> doOthers(Double number);
 
