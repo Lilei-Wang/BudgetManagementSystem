@@ -1,14 +1,12 @@
-<%@ page import="beans.Budget" %>
 <%@ page import="java.awt.*" %>
 <%@ page import="java.util.List" %>
-<%@ page import="beans.Item" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="dao.IEquipmentDao" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="beans.Equipment" %>
 <%@ page import="dao.IMaterialDao" %>
-<%@ page import="beans.Material" %><%--
+<%@ page import="dao.ITestAndProcessDao" %>
+<%@ page import="beans.*" %><%--
   Created by IntelliJ IDEA.
   User: Song
   Date: 2019/2/28
@@ -78,6 +76,10 @@
     </div>
 </nav>
 
+<div>
+    <button class="btn btn-success">同步预算</button>
+    <p class="help-block center-block">当且仅当在生成预算之后对规则进行了更改时需要此操作</p>
+</div>
 
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
@@ -86,7 +88,7 @@
         </a>
     </li>
     <li><a href="#material" data-toggle="tab">材料费</a></li>
-    <li><a href="#test" data-toggle="tab">材料费</a></li>
+    <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab">差旅费</a></li>
     <li><a href="#conference" data-toggle="tab">会议费</a></li>
@@ -115,7 +117,7 @@
             <tbody>
             <%
                 Budget budget = (Budget) request.getAttribute("budget");
-                Map<Item,Integer> map = budget.listToMap((List) budget.getEquipments());
+                Map<Item,Integer> map = (Map) budget.getEquipments();
 
                 ServletContext servletContext = this.getServletConfig().getServletContext();
                 ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -134,7 +136,7 @@
                     }
                     out.write("<td>" +
                             "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' class='updateEquipment' onclick=updateEquipment('equip',this)>确认</button>" +
+                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('equip',this)>确认</button>" +
                             "</td>");
                 }
                 /*int i=0;
@@ -164,7 +166,7 @@
 
             <tbody>
             <%
-                map = budget.listToMap((List) budget.getMaterials());
+                map = (Map)budget.getMaterials();
                 IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
                 List<Material> materials = materialDao.selectAll();
                 for (Material material : materials) {
@@ -179,7 +181,7 @@
                     }
                     out.write("<td>" +
                             "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' onclick=updateEquipment("+material.getId()+","+num+")>确认</button>" +
+                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('material',this)>确认</button>" +
                             "</td>");
                 }
             %>
@@ -188,7 +190,40 @@
         </table>
     </div>
     <div class="tab-pane fade" id="test">
-        <p></p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map)budget.getTestAndProcesses();
+                ITestAndProcessDao testAndProcessDao = applicationContext.getBean(ITestAndProcessDao.class);
+                List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
+                for (TestAndProcess testAndProcess:testAndProcesses) {
+                    out.write("<tr>");
+                    out.write("<td>"+testAndProcess.getId()+"</td>");
+                    out.write("<td>"+testAndProcess.getName()+"</td>");
+                    out.write("<td>"+testAndProcess.getPrice()+"</td>");
+                    int num=0;
+                    if(map.get(testAndProcess)!=null)
+                    {
+                        num=map.get(testAndProcess);
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='"+num+"' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('test',this)>确认</button>" +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
     <div class="tab-pane fade" id="power">
         <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
@@ -244,9 +279,9 @@
 
 
 <script>
-    function updateEquipment(type,btn) {
+    function updateItem(type,btn) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num=btn.parentElement.firstElementChild.getAttribute("value")
+        var num=btn.parentElement.firstElementChild.value;
         /*alert(type)
         alert(id)
         alert(num)*/

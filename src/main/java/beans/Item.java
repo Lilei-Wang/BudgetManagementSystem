@@ -55,7 +55,7 @@ public class Item implements Serializable {
         if(this==obj) return true;
         if(getClass()!=obj.getClass()) return false;
         Item other=(Item)obj;
-        return id.equals(other.getId()) && name.equals(other.getName()) && price==other.getPrice();
+        return id.equals(other.getId()) && name.equals(other.getName());
     }
 
     public Integer getId() {

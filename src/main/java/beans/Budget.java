@@ -10,17 +10,114 @@ import java.util.Map;
  * 经费报表对象，内含各种经费的集合
  */
 public class Budget implements Serializable {
-    private List<Equipment> equipments;
-    private List<Material> materials;
-    private List<TestAndProcess> testAndProcesses;
-    private List<Power> powers;
-    private List<Travel> travels;
-    private List<Conference> conferences;
-    private List<InternationalCommunication> internationalCommunications;
-    private List<Property> properties;
-    private List<Labour> labour;
-    private List<Consultation> consultations;
-    private List<Others> others;
+    private Map<Equipment,Integer> equipments;
+    private Map<Material,Integer> materials;
+    private Map<TestAndProcess,Integer> testAndProcesses;
+    private Map<Power,Integer> powers;
+    private Map<Travel,Integer> travels;
+    private Map<Conference,Integer> conferences;
+    private Map<InternationalCommunication,Integer> internationalCommunications;
+    private Map<Property,Integer> properties;
+    private Map<Labour,Integer> labour;
+    private Map<Consultation,Integer> consultations;
+    private Map<Others,Integer> others;
+    private Map<Indirect,Integer> indirects;
+
+    public Map<Indirect, Integer> getIndirects() {
+        return indirects;
+    }
+
+    public void setIndirects(Map<Indirect, Integer> indirects) {
+        this.indirects = indirects;
+    }
+
+    public Map<Equipment, Integer> getEquipments() {
+        return equipments;
+    }
+
+    public void setEquipments(Map<Equipment, Integer> equipments) {
+        this.equipments = equipments;
+    }
+
+    public Map<Material, Integer> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(Map<Material, Integer> materials) {
+        this.materials = materials;
+    }
+
+    public Map<TestAndProcess, Integer> getTestAndProcesses() {
+        return testAndProcesses;
+    }
+
+    public void setTestAndProcesses(Map<TestAndProcess, Integer> testAndProcesses) {
+        this.testAndProcesses = testAndProcesses;
+    }
+
+    public Map<Power, Integer> getPowers() {
+        return powers;
+    }
+
+    public void setPowers(Map<Power, Integer> powers) {
+        this.powers = powers;
+    }
+
+    public Map<Travel, Integer> getTravels() {
+        return travels;
+    }
+
+    public void setTravels(Map<Travel, Integer> travels) {
+        this.travels = travels;
+    }
+
+    public Map<Conference, Integer> getConferences() {
+        return conferences;
+    }
+
+    public void setConferences(Map<Conference, Integer> conferences) {
+        this.conferences = conferences;
+    }
+
+    public Map<InternationalCommunication, Integer> getInternationalCommunications() {
+        return internationalCommunications;
+    }
+
+    public void setInternationalCommunications(Map<InternationalCommunication, Integer> internationalCommunications) {
+        this.internationalCommunications = internationalCommunications;
+    }
+
+    public Map<Property, Integer> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<Property, Integer> properties) {
+        this.properties = properties;
+    }
+
+    public Map<Labour, Integer> getLabour() {
+        return labour;
+    }
+
+    public void setLabour(Map<Labour, Integer> labour) {
+        this.labour = labour;
+    }
+
+    public Map<Consultation, Integer> getConsultations() {
+        return consultations;
+    }
+
+    public void setConsultations(Map<Consultation, Integer> consultations) {
+        this.consultations = consultations;
+    }
+
+    public Map<Others, Integer> getOthers() {
+        return others;
+    }
+
+    public void setOthers(Map<Others, Integer> others) {
+        this.others = others;
+    }
 
     public Map<Item, Integer> listToMap(List<Item> items) {
         Map<Item, Integer> map = new HashMap<>();
@@ -40,43 +137,43 @@ public class Budget implements Serializable {
      *
      * @return
      */
-    public List<Indirect> computeIndirect() {
+    public Map<Indirect,Integer> computeIndirect() {
         double direct = 0.0;
         if (materials != null)
-            for (Material material : materials) {
-                direct += material.computeUnitPrice();
+            for (Material material : materials.keySet()) {
+                direct += material.computeUnitPrice() * materials.get(material);
             }
         if (testAndProcesses != null)
-            for (TestAndProcess testAndProcess : testAndProcesses) {
-                direct += testAndProcess.computeUnitPrice();
+            for (TestAndProcess testAndProcess : testAndProcesses.keySet()) {
+                direct += testAndProcess.computeUnitPrice() * testAndProcesses.get(testAndProcess);
             }
         if (powers != null)
-            for (Power power : powers) {
-                direct += power.computeUnitPrice();
+            for (Power power : powers.keySet()) {
+                direct += power.computeUnitPrice() * powers.get(power);
             }
         if (travels != null)
-            for (Travel travel : travels) {
-                direct += travel.computeUnitPrice();
+            for (Travel travel : travels.keySet()) {
+                direct += travel.computeUnitPrice() * travels.get(travel);
             }
         if (conferences != null)
-            for (Conference conference : conferences) {
-                direct += conference.computeUnitPrice();
+            for (Conference conference : conferences.keySet()) {
+                direct += conference.computeUnitPrice()*conferences.get(conference);
             }
         if (internationalCommunications != null)
-            for (InternationalCommunication internationalCommunication : internationalCommunications) {
-                direct += internationalCommunication.computeUnitPrice();
+            for (InternationalCommunication internationalCommunication : internationalCommunications.keySet()) {
+                direct += internationalCommunication.computeUnitPrice()*internationalCommunications.get(internationalCommunication);
             }
         if (properties != null)
-            for (Property property : properties) {
-                direct += property.computeUnitPrice();
+            for (Property property : properties.keySet()) {
+                direct += property.computeUnitPrice()*properties.get(property);
             }
         if (labour != null)
-            for (Labour labour1 : labour) {
-                direct += labour1.computeUnitPrice();
+            for (Labour labour1 : labour.keySet()) {
+                direct += labour1.computeUnitPrice()*labour.get(labour1);
             }
         if (others != null)
-            for (Others other : others) {
-                direct += other.computeUnitPrice();
+            for (Others other : others.keySet()) {
+                direct += other.computeUnitPrice()*others.get(other);
             }
 
         double indirect = 0.0;
@@ -90,7 +187,9 @@ public class Budget implements Serializable {
         Indirect result = new Indirect();
         result.setPrice(indirect);
         result.setName("间接费用");
-        return Arrays.asList(result);
+        Map<Indirect,Integer> map=new HashMap<>();
+        map.put(result,1);
+        return map;
     }
 
     @Override
@@ -110,103 +209,4 @@ public class Budget implements Serializable {
                 ", indirects=" + indirects +
                 '}';
     }
-
-    public List<Equipment> getEquipments() {
-        return equipments;
-    }
-
-    public void setEquipments(List<Equipment> equipments) {
-        this.equipments = equipments;
-    }
-
-    public List<Material> getMaterials() {
-        return materials;
-    }
-
-    public void setMaterials(List<Material> materials) {
-        this.materials = materials;
-    }
-
-    public List<TestAndProcess> getTestAndProcesses() {
-        return testAndProcesses;
-    }
-
-    public void setTestAndProcesses(List<TestAndProcess> testAndProcesses) {
-        this.testAndProcesses = testAndProcesses;
-    }
-
-    public List<Power> getPowers() {
-        return powers;
-    }
-
-    public void setPowers(List<Power> powers) {
-        this.powers = powers;
-    }
-
-    public List<Travel> getTravels() {
-        return travels;
-    }
-
-    public void setTravels(List<Travel> travels) {
-        this.travels = travels;
-    }
-
-    public List<Conference> getConferences() {
-        return conferences;
-    }
-
-    public void setConferences(List<Conference> conferences) {
-        this.conferences = conferences;
-    }
-
-    public List<InternationalCommunication> getInternationalCommunications() {
-        return internationalCommunications;
-    }
-
-    public void setInternationalCommunications(List<InternationalCommunication> internationalCommunications) {
-        this.internationalCommunications = internationalCommunications;
-    }
-
-    public List<Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
-    }
-
-    public List<Labour> getLabour() {
-        return labour;
-    }
-
-    public void setLabour(List<Labour> labour) {
-        this.labour = labour;
-    }
-
-    public List<Consultation> getConsultations() {
-        return consultations;
-    }
-
-    public void setConsultations(List<Consultation> consultations) {
-        this.consultations = consultations;
-    }
-
-    public List<Others> getOthers() {
-        return others;
-    }
-
-    public void setOthers(List<Others> others) {
-        this.others = others;
-    }
-
-    public List<Indirect> getIndirects() {
-        return indirects;
-    }
-
-    public void setIndirects(List<Indirect> indirects) {
-        this.indirects = indirects;
-    }
-
-    private List<Indirect> indirects;
-
 }

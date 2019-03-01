@@ -401,4 +401,84 @@ public class MyTest implements Serializable {
         Object object = inputStream.readObject();
         System.out.println((Budget)object);
     }
+
+    @Test
+    public void AssertTest()
+    {
+        ;
+    }
+
+
+    class Person{
+        Integer id;
+        String name;
+        String tel;
+
+        public Person(Integer id, String name, String tel) {
+            this.id = id;
+            this.name = name;
+            this.tel = tel;
+        }
+
+        public Person() {
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTel() {
+            return tel;
+        }
+
+        public void setTel(String tel) {
+            this.tel = tel;
+        }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode() & name.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj==null) return false;
+            if(this==obj) return true;
+            if(getClass()!=obj.getClass()) return false;
+            Person other=(Person)obj;
+            return id.equals(other.getId()) && name.equals(other.getName());
+        }
+
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", tel='" + tel + '\'' +
+                    '}';
+        }
+    }
+
+    @Test
+    public void MapPutTest()
+    {
+        Map<Person,Integer> map=new HashMap<>();
+        map.put(new Person(1,"zs","123"),1);
+        map.put(new Person(1,"zs","abc"),2);
+        for (Person person : map.keySet()) {
+            System.out.println(person);
+        }
+    }
 }

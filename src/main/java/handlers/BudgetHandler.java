@@ -1,6 +1,7 @@
 package handlers;
 
 import beans.*;
+import dao.IEquipmentDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -88,7 +89,6 @@ public class BudgetHandler {
             budget.setIndirects(budget.computeIndirect());
 
             System.out.println(budget);
-            System.out.println(budget.listToMap((List) (budget.getEquipments())));
 
 
             /*String filePath = this.getClass().getClassLoader().getResource("..").getPath() +
@@ -148,32 +148,73 @@ public class BudgetHandler {
     public ModelAndView budgetDetailHandler(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/budgetDetail.jsp");
-        modelAndView.addObject("budget",retrieveBudget(getSessionID(request.getCookies())));
+        modelAndView.addObject("budget", retrieveBudget(getSessionID(request.getCookies())));
         return modelAndView;
     }
 
 
+    @Autowired
+    private IEquipmentDao equipmentDao;
 
     @RequestMapping("/Modify")
     @ResponseBody
-    public void modifyBudget(String type, Integer id,Integer nums)
-    {
+    public void modifyBudget(String type, Integer id, Integer nums, HttpServletRequest request, HttpServletResponse response) {
+        if (nums < 0) return;
         System.out.println("Modify");
         System.out.println(type);
         System.out.println(id);
         System.out.println(nums);
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+
+        assert budget != null;
+
+        Map<Item, Integer> items = null;
+        if (type.contains("equip")) {
+            items = (Map) budget.getEquipments();
+        } else if (type.contains("material")) {
+            items = (Map) budget.getMaterials();
+        } else if (type.contains("test")) {
+            items = (Map) budget.getTestAndProcesses();
+        } else if (type.contains("power")) {
+            items = (Map) budget.getPowers();
+        } else if (type.contains("travel")) {
+            items = (Map) budget.getTravels();
+        } else if (type.contains("conference")) {
+            items = (Map) budget.getConferences();
+        } else if (type.contains("international")) {
+            items = (Map) budget.getInternationalCommunications();
+        } else if (type.contains("property")) {
+            items = (Map) budget.getProperties();
+        } else if (type.contains("labour")) {
+            items = (Map) budget.getLabour();
+        } else if (type.contains("consultation")) {
+            items = (Map) budget.getConsultations();
+        } else if (type.contains("other")) {
+            items = (Map) budget.getOthers();
+        } else if (type.contains("indirect")) {
+            items = (Map) budget.getIndirects();
+        }
+
+        for (Item item : items.keySet()) {
+            if (item.getId().equals(id)) {
+                items.put(item, nums);
+                break;
+            }
+        }
+
+
+        serializeBudget(budget, getFilePath(sessionID));
     }
-
-
 
 
     /**
      * 从Cookies中获取sessionID
+     *
      * @param cookies
      * @return
      */
-    private String getSessionID(Cookie[] cookies)
-    {
+    private String getSessionID(Cookie[] cookies) {
         String sessionID = null;
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("sessionID")) {
@@ -185,10 +226,9 @@ public class BudgetHandler {
     }
 
 
-
-
     /**
      * 根据sessionID获取Budget对象
+     *
      * @param sessionID
      * @return
      */
@@ -200,7 +240,7 @@ public class BudgetHandler {
             return (Budget) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 assert inputStream != null;
                 inputStream.close();
@@ -218,10 +258,10 @@ public class BudgetHandler {
      * @return
      */
     private String getFilePath(String sessionID) {
-        String filePath=this.getClass().getClassLoader().getResource("..").getPath() +
+        String filePath = this.getClass().getClassLoader().getResource("..").getPath() +
                 File.separator + "budgets" +
                 File.separator + sessionID;
-        System.out.println("Budget File Path:"+filePath);
+        System.out.println("Budget File Path:" + filePath);
         return filePath;
     }
 
@@ -256,7 +296,7 @@ public class BudgetHandler {
         try {
             writer.write("设备费,名称,单价,数量,小计");
             writer.newLine();
-            Map<Item, Integer> items = budget.listToMap((List) budget.getEquipments());
+            Map<Item, Integer> items = (Map) budget.getEquipments();
             char comma = ',';
             for (Item item : items.keySet()) {
                 writer.write(comma + item.getName()
@@ -269,7 +309,7 @@ public class BudgetHandler {
 
             writer.write("材料费,名称,单价,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getMaterials());
+            items = (Map) budget.getMaterials();
             for (Item item : items.keySet()) {
                 writer.write(comma + item.getName()
                         + comma + item.getPrice()
@@ -281,7 +321,7 @@ public class BudgetHandler {
 
             writer.write("测试化验加工费,名称,单价,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getTestAndProcesses());
+            items = (Map) budget.getTestAndProcesses();
             for (Item item : items.keySet()) {
                 writer.write(comma + item.getName()
                         + comma + item.getPrice()
@@ -293,7 +333,7 @@ public class BudgetHandler {
 
             writer.write("燃料动力费,名称,单价,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getPowers());
+            items = (Map) budget.getPowers();
             for (Item item : items.keySet()) {
                 writer.write(comma + item.getName()
                         + comma + item.getPrice()
@@ -305,7 +345,7 @@ public class BudgetHandler {
 
             writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getTravels());
+            items = (Map) budget.getTravels();
             for (Item item : items.keySet()) {
                 if (item instanceof Travel) {
                     writer.write(comma + ((Travel) item).getDest()
@@ -321,7 +361,7 @@ public class BudgetHandler {
 
             writer.write("会议费,会议内容,费用标准,会议次数,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getConferences());
+            items = (Map) budget.getConferences();
             for (Item item : items.keySet()) {
                 if (item instanceof Conference) {
                     writer.write(comma + item.getName()
@@ -335,7 +375,7 @@ public class BudgetHandler {
 
             writer.write("国际合作交流费,会议内容,费用标准,会议次数,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getInternationalCommunications());
+            items = (Map) budget.getInternationalCommunications();
             for (Item item : items.keySet()) {
                 if (item instanceof InternationalCommunication) {
                     writer.write(comma + item.getName()
@@ -349,7 +389,7 @@ public class BudgetHandler {
 
             writer.write("出版/文献/信息传播/知识产权事务费,费用名称,费用标准,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getProperties());
+            items = (Map) budget.getProperties();
             for (Item item : items.keySet()) {
                 if (item instanceof Property) {
                     writer.write(comma + item.getName()
@@ -363,7 +403,7 @@ public class BudgetHandler {
 
             writer.write("劳务费,费用名称,费用标准,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getLabour());
+            items = (Map) budget.getLabour();
             for (Item item : items.keySet()) {
                 if (item instanceof Labour) {
                     writer.write(comma + item.getName()
@@ -378,8 +418,12 @@ public class BudgetHandler {
             if (budget.getConferences() != null && budget.getConferences().size() > 0) {
                 writer.write("咨询费,工作内容,人员类型,费用标准,每次人数,次数,小计");
                 writer.newLine();
-                Consultation consultation = budget.getConsultations().get(0);
-                items = budget.listToMap((List) budget.getConferences());
+                Map<Consultation, Integer> consultations = budget.getConsultations();
+                Consultation consultation = null;
+                for (Consultation item : consultations.keySet()) {
+                    consultation = item;
+                }
+                items = (Map) budget.getConferences();
                 for (Item item : items.keySet()) {
                     if (item instanceof Conference) {
                         writer.write(comma + item.getName()
@@ -396,7 +440,7 @@ public class BudgetHandler {
 
             writer.write("其他费用,费用名称,费用标准,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getOthers());
+            items = (Map) budget.getOthers();
             for (Item item : items.keySet()) {
                 if (item instanceof Others) {
                     writer.write(comma + item.getName()
@@ -410,7 +454,7 @@ public class BudgetHandler {
 
             writer.write("间接费用,费用名称,费用标准,数量,小计");
             writer.newLine();
-            items = budget.listToMap((List) budget.getIndirects());
+            items = (Map) budget.getIndirects();
             for (Item item : items.keySet()) {
                 if (item instanceof Indirect) {
                     writer.write(comma + item.getName()

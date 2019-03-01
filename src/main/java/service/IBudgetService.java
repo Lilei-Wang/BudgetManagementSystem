@@ -8,32 +8,34 @@ import java.util.Map;
 public interface IBudgetService {
 
 
-    List<Equipment> doEquipment(Double number);
+    Map<Equipment,Integer> doEquipment(Double number);
 
-    List<Material> doMaterial(Double number);
+    Map<Material,Integer> doMaterial(Double number);
 
-    List<TestAndProcess> doTestAndProcess(Double number);
+    Map<TestAndProcess,Integer> doTestAndProcess(Double number);
 
-    List<Power> doPower(Double number);
+    Map<Power,Integer> doPower(Double number);
 
-    List<Travel> doTravel(Double number);
+    Map<Travel,Integer> doTravel(Double number);
 
-    List<Conference> doConference(Double number);
+    Map<Conference,Integer> doConference(Double number);
 
-    List<InternationalCommunication> doInternationalCommunication(Double number);
+    Map<InternationalCommunication,Integer> doInternationalCommunication(Double number);
 
-    List<Property> doProperty(Double number);
+    Map<Property,Integer> doProperty(Double number);
 
-    List<Labour> doLabour(Double number);
+    Map<Labour,Integer> doLabour(Double number);
 
     @Deprecated
-    List<Consultation> doConsultation(Double number);
+    Map<Consultation,Integer> doConsultation(Double number);
 
 
-    List<Consultation> doConsultation(List<Conference> conferences);
+    Map<Consultation,Integer> doConsultation(Map<Conference,Integer> conferences);
 
 
-    List<Others> doOthers(Double number);
+    Map<Others,Integer> doOthers(Double number);
 
-    List<Indirect> doIndirect(Double number);
+    Map<Indirect,Integer> doIndirect(Double number);
+
+    void refreshBudget(Budget budget);
 }

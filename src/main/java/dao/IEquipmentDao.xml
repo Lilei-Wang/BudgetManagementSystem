@@ -14,4 +14,7 @@
     <select id="selectAll" resultType="beans.Equipment">
         select * from equipment
     </select>
+    <select id="selectById" resultType="beans.Equipment">
+        select * from equipment where id=#{id}
+    </select>
 </mapper>

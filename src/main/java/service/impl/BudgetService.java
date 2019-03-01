@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.IBudgetService;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -119,10 +118,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Equipment> doEquipment(Double number) {
+    public Map<Equipment, Integer> doEquipment(Double number) {
         List<Equipment> equipments = equipmentDao.selectAll();
-        List<Equipment> result = generateList((List) equipments, number);
-        return result;
+        return generateMap((List) equipments, number);
     }
 
     /**
@@ -132,10 +130,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Material> doMaterial(Double number) {
+    public Map<Material, Integer> doMaterial(Double number) {
         List<Material> materials = materialDao.selectAll();
-        List<Material> result = generateList((List) materials, number);
-        return result;
+        return generateMap((List) materials, number);
     }
 
     /**
@@ -145,10 +142,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<TestAndProcess> doTestAndProcess(Double number) {
+    public Map<TestAndProcess, Integer> doTestAndProcess(Double number) {
         List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
-        List<TestAndProcess> result = generateList((List) testAndProcesses, number);
-        return result;
+        return generateMap((List) testAndProcesses, number);
     }
 
     /**
@@ -158,10 +154,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Power> doPower(Double number) {
+    public Map<Power, Integer> doPower(Double number) {
         List<Power> powers = powerDao.selectAll();
-        List<Power> result = generateList((List) powers, number);
-        return result;
+        return generateMap((List) powers, number);
     }
 
     /**
@@ -171,10 +166,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Travel> doTravel(Double number) {
+    public Map<Travel, Integer> doTravel(Double number) {
         List<Travel> travels = travelDao.selectAll();
-        List<Travel> result = generateList((List) travels, number);
-        return result;
+        return generateMap((List) travels, number);
     }
 
     /**
@@ -184,10 +178,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Conference> doConference(Double number) {
+    public Map<Conference, Integer> doConference(Double number) {
         List<Conference> conferences = conferenceDao.selectAll();
-        List<Conference> result = generateList((List) conferences, number);
-        return result;
+        return generateMap((List) conferences, number);
     }
 
     /**
@@ -197,10 +190,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<InternationalCommunication> doInternationalCommunication(Double number) {
+    public Map<InternationalCommunication, Integer> doInternationalCommunication(Double number) {
         List<InternationalCommunication> internationalCommunications = internationalCommunicationDao.selectAll();
-        List<InternationalCommunication> result = generateList((List) internationalCommunications, number);
-        return result;
+        return generateMap((List) internationalCommunications, number);
     }
 
     /**
@@ -210,10 +202,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Property> doProperty(Double number) {
+    public Map<Property, Integer> doProperty(Double number) {
         List<Property> properties = propertyDao.selectAll();
-        List<Property> result = generateList((List) properties, number);
-        return result;
+        return generateMap((List) properties, number);
     }
 
     /**
@@ -223,10 +214,9 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Labour> doLabour(Double number) {
+    public Map<Labour, Integer> doLabour(Double number) {
         List<Labour> labour = labourDao.selectAll();
-        List<Labour> result = generateList((List) labour, number);
-        return result;
+        return generateMap((List) labour, number);
     }
 
     /**
@@ -237,10 +227,9 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     @Deprecated
-    public List<Consultation> doConsultation(Double number) {
+    public Map<Consultation, Integer> doConsultation(Double number) {
         List<Consultation> consultations = consultationDao.selectAll();
-        List<Consultation> result = generateList((List) consultations, number);
-        return result;
+        return generateMap((List) consultations, number);
     }
 
     /**
@@ -249,7 +238,7 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Consultation> doConsultation(List<Conference> conferences) {
+    public Map<Consultation,Integer> doConsultation(Map<Conference,Integer> conferences) {
         List<Consultation> consultations = consultationDao.selectAll();
         Consultation consultation=null;
         try
@@ -260,15 +249,11 @@ public class BudgetService implements IBudgetService {
             e.printStackTrace();
         }
         int experts=0;
-        for (Conference conference : conferences) {
-            experts+=conference.getExperts();
+        for (Conference conference : conferences.keySet()) {
+            experts+=conference.getExperts()*conferences.get(conference);
         }
-        List<Consultation> result=new ArrayList<>();
-        while(experts!=0)
-        {
-            experts--;
-            result.add(consultation);
-        }
+        Map<Consultation,Integer> result=new HashMap<>();
+        result.put(consultation,experts);
         return result;
     }
 
@@ -279,12 +264,12 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Others> doOthers(Double number) {
-        List<Others> others = new ArrayList<>();
+    public Map<Others, Integer> doOthers(Double number) {
+        Map<Others,Integer> others = new HashMap<>();
         Others item = new Others();
         item.setName("其他费用");
         item.setPrice(number);
-        others.add(item);
+        others.put(item,1);
 
         return others;
     }
@@ -296,14 +281,23 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public List<Indirect> doIndirect(Double number) {
-        List<Indirect> indirects = new ArrayList<>();
+    public Map<Indirect, Integer> doIndirect(Double number) {
+        Map<Indirect,Integer> indirects = new HashMap<>();
         Indirect item = new Indirect();
         item.setName("间接费用");
         item.setPrice(number);
-        indirects.add(item);
+        indirects.put(item,1);
 
         return indirects;
+    }
+
+    /**
+     * 刷新Bedget对象，与数据库最新数据一致，包括条目的增删改
+     * @param budget
+     */
+    @Override
+    public void refreshBudget(Budget budget) {
+        ;
     }
 
     /**
@@ -311,10 +305,13 @@ public class BudgetService implements IBudgetService {
      * @param number
      * @return
      */
-    private List generateList(List list, Double number) {
-        List<Item> results = new ArrayList<>();
+    private Map generateMap(List list, Double number) {
+        Map<Item,Integer> results = new HashMap<>();
         try {
             List<Item> items = (List<Item>) list;
+            for (Item item : items) {
+                results.put(item,0);
+            }
             Item item = items.get(0);
             double sum = 0.0;
 
@@ -335,14 +332,15 @@ public class BudgetService implements IBudgetService {
             else
                 price=item.getPrice();*/
 
-
-            while (sum+price < number) {
-                results.add(item);
+            int nums=0;
+            while (sum+price <= number) {
+                nums++;
                 sum += price;
             }
+            results.put(item,nums);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return (List) results;
+        return (Map) results;
     }
 }
