@@ -15,5 +15,10 @@
 <a href="Crawler/Workstation">爬取工作站数据</a><br>
 <a href="Budget/Download">下载</a><br>
 ${pageContext.request.contextPath}<br>
+<%
+    for (int i = 1; i <= 3; i++) {%>
+        <font size="<%=i%>"> hhhh</font>
+ <%   }
+%>
 </body>
 </html>

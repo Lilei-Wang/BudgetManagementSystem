@@ -3,6 +3,7 @@ package service;
 import beans.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IBudgetService {
 

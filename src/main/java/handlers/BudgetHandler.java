@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import service.IBudgetService;
 
@@ -40,7 +42,10 @@ public class BudgetHandler {
 
             //以时间为标志，标志预算对象，用以鉴别不同用户
             long sessionID = new Date().getTime();
-            response.addCookie(new Cookie("sessionID", Long.toString(sessionID)));
+            Cookie cookie = new Cookie("sessionID", Long.toString(sessionID));
+            cookie.setMaxAge(Integer.MAX_VALUE);
+            cookie.setComment("会话鉴别，age=int_max，除非重新生成预算，否则长时间保持会话");
+            response.addCookie(cookie);
 
             Budget budget = new Budget();
             Integer actualBudget = 0;
@@ -148,6 +153,20 @@ public class BudgetHandler {
     }
 
 
+
+    @RequestMapping("/Modify")
+    @ResponseBody
+    public void modifyBudget(String type, Integer id,Integer nums)
+    {
+        System.out.println("Modify");
+        System.out.println(type);
+        System.out.println(id);
+        System.out.println(nums);
+    }
+
+
+
+
     /**
      * 从Cookies中获取sessionID
      * @param cookies
@@ -199,9 +218,11 @@ public class BudgetHandler {
      * @return
      */
     private String getFilePath(String sessionID) {
-        return this.getClass().getClassLoader().getResource("..").getPath() +
+        String filePath=this.getClass().getClassLoader().getResource("..").getPath() +
                 File.separator + "budgets" +
                 File.separator + sessionID;
+        System.out.println("Budget File Path:"+filePath);
+        return filePath;
     }
 
 

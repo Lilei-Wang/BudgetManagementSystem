@@ -1,24 +1,14 @@
-<%@ page import="beans.Budget" %>
-<%@ page import="java.awt.*" %>
-<%@ page import="java.util.List" %>
-<%@ page import="beans.Item" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="dao.IEquipmentDao" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="beans.Equipment" %>
-<%@ page import="dao.IMaterialDao" %>
-<%@ page import="beans.Material" %><%--
+<%--
   Created by IntelliJ IDEA.
   User: Song
   Date: 2019/2/28
-  Time: 16:49
+  Time: 23:05
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>预算明细</title>
+    <title>修改规则</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -41,7 +31,6 @@
     </style>
 </head>
 <body>
-
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -51,8 +40,8 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/">创建预算</a></li>
 
-                <li class="active">
-                    <a href="#">
+                <li>
+                    <a href="${pageContext.request.contextPath}/Budget/Detail">
                         修改预算
                     </a>
                     <%--<ul class="dropdown-menu">
@@ -70,7 +59,7 @@
                     </ul>--%>
                 </li>
 
-                <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
+                <li class="active"><a href="#">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
             </ul>
@@ -102,90 +91,11 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>编号</th>
-                <th>名称</th>
-                <th>单价</th>
-                <th>数量</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <%
-                Budget budget = (Budget) request.getAttribute("budget");
-                Map<Item,Integer> map = budget.listToMap((List) budget.getEquipments());
-
-                ServletContext servletContext = this.getServletConfig().getServletContext();
-                ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-
-                IEquipmentDao equipmentDao = applicationContext.getBean(IEquipmentDao.class);
-                List<Equipment> equipments = equipmentDao.selectAll();
-                for (Equipment equipment : equipments) {
-                    out.write("<tr>");
-                    out.write("<td>"+equipment.getId()+"</td>");
-                    out.write("<td>"+equipment.getName()+"</td>");
-                    out.write("<td>"+equipment.getPrice()+"</td>");
-                    int num=0;
-                    if(map.get(equipment)!=null)
-                    {
-                        num=map.get(equipment);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' class='updateEquipment' onclick=updateEquipment('equip',this)>确认</button>" +
-                            "</td>");
-                }
-                /*int i=0;
-                for (Item item : map.keySet()) {
-                    out.write("<tr>");
-                    out.write("<td>"+item.getName()+"</td>");
-                    out.write("<td>"+item.getPrice()+"</td>");
-                    out.write("<td>" +
-                            "<input type='number' value='"+map.get(item)+"' />" +
-                            "<button type='btn btn-default' onclick=updateEquipment("+item.getId()+","+map.get(item)+")>确认</button>" +
-                            "</td>");
-                }*/
-            %>
-            </tbody>
-        </table>
+        设备费
+        ${budget.listToMap(budget.getEquipments())}
     </div>
     <div class="tab-pane fade" id="material">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>编号</th>
-                <th>名称</th>
-                <th>单价</th>
-                <th>数量</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <%
-                map = budget.listToMap((List) budget.getMaterials());
-                IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
-                List<Material> materials = materialDao.selectAll();
-                for (Material material : materials) {
-                    out.write("<tr>");
-                    out.write("<td>"+material.getId()+"</td>");
-                    out.write("<td>"+material.getName()+"</td>");
-                    out.write("<td>"+material.getPrice()+"</td>");
-                    int num=0;
-                    if(map.get(material)!=null)
-                    {
-                        num=map.get(material);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' onclick=updateEquipment("+material.getId()+","+num+")>确认</button>" +
-                            "</td>");
-                }
-            %>
-            </tbody>
-
-        </table>
+        <p></p>
     </div>
     <div class="tab-pane fade" id="test">
         <p></p>
@@ -235,45 +145,5 @@
         </p>
     </div>
 </div>
-
-
 </body>
 </html>
-
-
-
-
-<script>
-    function updateEquipment(type,btn) {
-        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num=btn.parentElement.firstElementChild.getAttribute("value")
-        /*alert(type)
-        alert(id)
-        alert(num)*/
-        $.ajax({
-            url:"${pageContext.request.contextPath}/Budget/Modify",
-            type:"post",
-            data:{
-                type:type,
-                id:id,
-                nums:num
-            },
-            success:function () {
-                alert("success")
-            }
-        })
-    }
-
-    function init() {
-        var updateEquips=document.getElementsByClassName("updateEquipment");
-        alert(updateEquips.length);
-        var i;
-        for(i=0;i<updateEquips.length;i++)
-        {
-            var btn=updateEquips[i];
-            var num=btn.parentElement.parentElement.firstElementChild.innerHTML
-            btn.addEventListener("click",function () { alert(num) })
-        }
-    }
-
-</script>

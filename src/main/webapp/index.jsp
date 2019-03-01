@@ -55,7 +55,7 @@
                     </ul>--%>
                 </li>
 
-                <li><a href="#">修改规则</a></li>
+                <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
             </ul>
