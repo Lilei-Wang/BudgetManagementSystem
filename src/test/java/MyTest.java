@@ -95,9 +95,9 @@ public class MyTest implements Serializable {
         System.out.println(replaceAll);
     }
 
-    @Test
+    //@Test
     //替换
-    public void test05() {
+    /*public void test05() {
         Pattern pattern = Pattern.compile("java", Pattern.CASE_INSENSITIVE);
         String source = "java Java jAva ILoveJavA youHateJAVA adsdsfd";
         Matcher matcher = pattern.matcher(source);
@@ -112,7 +112,7 @@ public class MyTest implements Serializable {
         }
         matcher.appendTail(builder);
         System.out.println(builder);
-    }
+    }*/
 
     @Test
     public void test06() throws Exception {
@@ -394,13 +394,13 @@ public class MyTest implements Serializable {
         System.out.println(equipment.getId());
     }
 
-    @Test
+    /*@Test
     public void SerializeTest() throws IOException, ClassNotFoundException {
         String file="F:\\Workspace\\BudgetManagementSystem\\target\\BudgetManagementSystem-1.0-SNAPSHOT\\WEB-INF\\budgets\\1550329536855";
         ObjectInputStream inputStream=new ObjectInputStream(new FileInputStream(file));
         Object object = inputStream.readObject();
         System.out.println((Budget)object);
-    }
+    }*/
 
     @Test
     public void AssertTest()
