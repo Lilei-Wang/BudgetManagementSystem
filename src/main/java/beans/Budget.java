@@ -22,6 +22,15 @@ public class Budget implements Serializable {
     private Map<Consultation,Integer> consultations;
     private Map<Others,Integer> others;
     private Map<Indirect,Integer> indirects;
+    private Requirement requirement=new Requirement();
+
+    public Requirement getRequirement() {
+        return requirement;
+    }
+
+    public void setRequirement(Requirement requirement) {
+        this.requirement = requirement;
+    }
 
     public Map<Indirect, Integer> getIndirects() {
         return indirects;

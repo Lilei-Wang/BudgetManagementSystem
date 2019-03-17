@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <%--<script type="text/javascript" src="${pageContext.request.contextPath}/js/modifyDetail.js"></script>--%>
     <style type="text/css">
         body {
             padding-top: 70px;
@@ -53,19 +54,6 @@
                     <a href="#">
                         修改预算
                     </a>
-                    <%--<ul class="dropdown-menu">
-                        <li><a href="#">设备费</a></li>
-                        <li><a href="#">材料费</a></li>
-                        <li><a href="#">测试化验加工费</a></li>
-                        <li><a href="#">燃料动力费</a></li>
-                        <li><a href="#">差旅费</a></li>
-                        <li><a href="#">会议费</a></li>
-                        <li><a href="#">国际合作交流费</a></li>
-                        <li><a href="#">出版/文献/信息传播/知识产权事务费</a></li>
-                        <li><a href="#">劳务费</a></li>
-                        <li><a href="#">咨询费</a></li>
-                        <li><a href="#">其他费用</a></li>
-                    </ul>--%>
                 </li>
 
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
@@ -136,19 +124,9 @@
                     }
                     out.write("<td>" +
                             "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('equip',this)>确认</button>" +
+                            "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
                             "</td>");
                 }
-                /*int i=0;
-                for (Item item : map.keySet()) {
-                    out.write("<tr>");
-                    out.write("<td>"+item.getName()+"</td>");
-                    out.write("<td>"+item.getPrice()+"</td>");
-                    out.write("<td>" +
-                            "<input type='number' value='"+map.get(item)+"' />" +
-                            "<button type='btn btn-default' onclick=updateEquipment("+item.getId()+","+map.get(item)+")>确认</button>" +
-                            "</td>");
-                }*/
             %>
             </tbody>
         </table>
@@ -181,7 +159,7 @@
                     }
                     out.write("<td>" +
                             "<input type='number' value='"+num+"' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('material',this)>确认</button>" +
+                            "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
                             "</td>");
                 }
             %>
@@ -279,12 +257,12 @@
 
 
 <script>
-    function updateItem(type,btn) {
+    /*function updateItem(type,btn) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
         var num=btn.parentElement.firstElementChild.value;
-        /*alert(type)
+        /!*alert(type)
         alert(id)
-        alert(num)*/
+        alert(num)*!/
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify",
             type:"post",
@@ -297,9 +275,43 @@
                 alert("success")
             }
         })
+    }*/
+
+    function equip(btn) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num=btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Material",
+            type:"post",
+            data:{
+                mode:0,
+                id:id,
+                nums:num
+            },
+            success:function () {
+                alert("success")
+            }
+        })
     }
 
-    function init() {
+    function material(btn) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num=btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Material",
+            type:"post",
+            data:{
+                mode:0,
+                id:id,
+                nums:num
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+   /* function init() {
         var updateEquips=document.getElementsByClassName("updateEquipment");
         alert(updateEquips.length);
         var i;
@@ -309,6 +321,6 @@
             var num=btn.parentElement.parentElement.firstElementChild.innerHTML
             btn.addEventListener("click",function () { alert(num) })
         }
-    }
+    }*/
 
 </script>

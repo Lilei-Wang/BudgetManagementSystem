@@ -11,6 +11,8 @@ public interface IEquipmentDao {
 
     void insertEquipment(Equipment equipment);
 
+    void deleteEquipment(Equipment equipment);
+
     List<Equipment> selectAll();
 
     Equipment selectById(Integer id);

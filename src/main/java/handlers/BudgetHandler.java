@@ -2,6 +2,7 @@ package handlers;
 
 import beans.*;
 import dao.IEquipmentDao;
+import dao.IMaterialDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -32,11 +33,11 @@ public class BudgetHandler {
 
     @RequestMapping("/Generate")
     public void generateBudget(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-        PrintWriter writer = null;
+        //PrintWriter writer = null;
         try {
             //System.out.println(budgetService);
             response.setContentType("text/html;charset=UTF-8");
-            writer = response.getWriter();
+            //writer = response.getWriter();
             Integer totalBudget = Integer.valueOf(request.getParameter("total"));
             String[] items = request.getParameterValues("items");
             //System.out.println(totalBudget);
@@ -58,27 +59,37 @@ public class BudgetHandler {
                     actualBudget += number.intValue();
                     if (item.contains("equipment")) {
                         budget.setEquipments(budgetService.doEquipment(number));
+                        budget.getRequirement().setEquip(number);
                     } else if (item.contains("material")) {
                         budget.setMaterials(budgetService.doMaterial(number));
+                        budget.getRequirement().setMaterial(number);
                     } else if (item.contains("test")) {
                         budget.setTestAndProcesses(budgetService.doTestAndProcess(number));
+                        budget.getRequirement().setTest(number);
                     } else if (item.contains("power")) {
                         budget.setPowers(budgetService.doPower(number));
+                        budget.getRequirement().setPower(number);
                     } else if (item.contains("travel")) {
                         budget.setTravels(budgetService.doTravel(number));
+                        budget.getRequirement().setTravel(number);
                     } else if (item.contains("conference")) {
                         budget.setConferences(budgetService.doConference(number));
+                        budget.getRequirement().setConference(number);
                         budget.setConsultations(budgetService.doConsultation(budget.getConferences()));
                     } else if (item.contains("international")) {
                         budget.setInternationalCommunications(budgetService.doInternationalCommunication(number));
+                        budget.getRequirement().setInternational(number);
                     } else if (item.contains("property")) {
                         budget.setProperties(budgetService.doProperty(number));
+                        budget.getRequirement().setProperty(number);
                     } else if (item.contains("labour")) {
                         budget.setLabour(budgetService.doLabour(number));
+                        budget.getRequirement().setLabour(number);
                     } /*else if (item.contains("consulatation")) {
                         budget.setConsultations(budgetService.doConsultation(number));
                     } */ else if (item.contains("others")) {
                         budget.setOthers(budgetService.doOthers(number));
+                        budget.getRequirement().setOthers(number);
                     }
                 }
             }
@@ -100,13 +111,10 @@ public class BudgetHandler {
             response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             System.out.println("ContextPath: " + request.getContextPath());
             System.out.println(session.getServletContext().getRealPath(""));
-            budgetToOutputStream(budget, writer);
+            budgetToOutputStream(budget, response.getOutputStream());
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            assert writer != null;
-            writer.close();
         }
     }
 
@@ -120,6 +128,8 @@ public class BudgetHandler {
     @RequestMapping("/Download")
     public void downloadBudgetHandler(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         Cookie[] cookies = request.getCookies();
+        //response.setContentType("application/octet-stream");
+        response.setContentType("text/html;charset=UTF-8");
         String sessionID = null;
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("sessionID")) {
@@ -129,18 +139,19 @@ public class BudgetHandler {
         }
         if (sessionID == null) return;
         String filepath = getFilePath(sessionID);
-        PrintWriter writer = null;
         try {
             Budget budget = retrieveBudget(sessionID);
-            writer = response.getWriter();
+            //writer = response.getWriter();
             response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             assert budget != null;
-            budgetToOutputStream(budget, writer);
+            //budgetToOutputStream(budget, writer);
+            budgetToOutputStream(budget, response.getOutputStream());
+            System.out.println("Download...............");
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            assert writer != null;
-            writer.close();
+        }catch (Throwable e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -153,10 +164,9 @@ public class BudgetHandler {
     }
 
 
-    @Autowired
-    private IEquipmentDao equipmentDao;
 
-    @RequestMapping("/Modify")
+
+    /*@RequestMapping("/Modify")
     @ResponseBody
     public void modifyBudget(String type, Integer id, Integer nums, HttpServletRequest request, HttpServletResponse response) {
         if (nums < 0) return;
@@ -205,7 +215,106 @@ public class BudgetHandler {
 
 
         serializeBudget(budget, getFilePath(sessionID));
+    }*/
+
+
+    @Autowired
+    private IEquipmentDao equipmentDao;
+
+    @RequestMapping("/Modify/Equip")
+    public void modifyEquip(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
+    {
+        System.out.println("/Modify/Equip");
+
+        if(mode.equals(0))//修改预算
+        {
+            if (nums < 0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<Equipment, Integer> items = null;
+            items=budget.getEquipments();
+            for (Equipment equipment : items.keySet()) {
+                if(equipment.getId().equals(id))
+                {
+                    items.put(equipment,nums);
+                    break;
+                }
+            }
+            serializeBudget(budget,getFilePath(sessionID));
+        }
+        else//修改规则
+        {
+            Equipment equipment=new Equipment();
+            equipment.setId(id);
+            equipment.setName(name);
+            equipment.setPrice(price);
+            if(curd.equals(0))//增
+            {
+                equipmentDao.insertEquipment(equipment);
+            }
+            else if(curd.equals(1))//删
+            {
+                equipmentDao.deleteEquipment(equipment);
+            }
+            else//改
+            {
+                equipmentDao.updateEquipment(equipment);
+            }
+        }
     }
+
+
+    @Autowired
+    private IMaterialDao materialDao;
+    @RequestMapping("/Modify/Material")
+    public void modifyMaterial(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
+    {
+        System.out.println("/Modify/Material");
+
+        if(mode.equals(0))//修改预算
+        {
+            if (nums < 0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<Material, Integer> items = null;
+            items=budget.getMaterials();
+            for (Material item : items.keySet()) {
+                if(item.getId().equals(id))
+                {
+                    items.put(item,nums);
+                    break;
+                }
+            }
+            serializeBudget(budget,getFilePath(sessionID));
+        }
+        else//修改规则
+        {
+            Material item=new Material();
+            item.setId(id);
+            item.setName(name);
+            item.setPrice(price);
+            if(curd.equals(0))//增
+            {
+                materialDao.insertMaterial(item);
+            }
+            else if(curd.equals(1))//删
+            {
+                materialDao.deleteMaterial(item);
+            }
+            else//改
+            {
+                materialDao.updateMaterial(item);
+            }
+        }
+    }
+
+
 
 
     /**
@@ -469,6 +578,21 @@ public class BudgetHandler {
             writer.flush();
             System.out.println("CSV");
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * GBK格式，解决csv文件中文乱码
+     * @param budget
+     * @param outputStream
+     */
+    private void budgetToOutputStream(Budget budget, OutputStream outputStream) {
+            System.out.println("GBK");
+        try {
+            budgetToOutputStream(budget,new PrintWriter(new OutputStreamWriter(outputStream,"GBK")));
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }

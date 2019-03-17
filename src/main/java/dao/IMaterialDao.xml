@@ -5,4 +5,14 @@
     <select id="selectAll" resultType="beans.Material">
         select * from material
     </select>
+    <insert id="insertMaterial" useGeneratedKeys="true" keyProperty="id">
+        insert into budgetmanagementsystem.material(name, price) values (#{name},#{price})
+    </insert>
+    <delete id="deleteMaterial">
+        delete from budgetmanagementsystem.material where id=#{id}
+    </delete>
+
+    <update id="updateMaterial">
+        update budgetmanagementsystem.material set price=#{price},name=#{name} where id=#{id}
+    </update>
 </mapper>

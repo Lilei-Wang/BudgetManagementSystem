@@ -1,4 +1,13 @@
-<%--
+<%@ page import="beans.Budget" %>
+<%@ page import="beans.Item" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="dao.IEquipmentDao" %>
+<%@ page import="beans.Equipment" %>
+<%@ page import="java.util.List" %>
+<%@ page import="dao.IMaterialDao" %>
+<%@ page import="beans.Material" %><%--
   Created by IntelliJ IDEA.
   User: Song
   Date: 2019/2/28
@@ -75,7 +84,7 @@
         </a>
     </li>
     <li><a href="#material" data-toggle="tab">材料费</a></li>
-    <li><a href="#test" data-toggle="tab">材料费</a></li>
+    <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab">差旅费</a></li>
     <li><a href="#conference" data-toggle="tab">会议费</a></li>
@@ -91,11 +100,72 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
-        设备费
-        ${budget.listToMap(budget.getEquipments())}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                ServletContext servletContext = this.getServletConfig().getServletContext();
+                ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+
+                IEquipmentDao equipmentDao = applicationContext.getBean(IEquipmentDao.class);
+                List<Equipment> equipments = equipmentDao.selectAll();
+                for (Equipment equipment : equipments) {
+                    out.write("<tr>");
+                    out.write("<td>"+equipment.getId()+"</td>");
+                    out.write("<td>"+equipment.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +equipment.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=equipRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=equipRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+        </table>
     </div>
     <div class="tab-pane fade" id="material">
-        <p></p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
+                List<Material> materials = materialDao.selectAll();
+                for (Material material : materials) {
+                    out.write("<tr>");
+                    out.write("<td>"+material.getId()+"</td>");
+                    out.write("<td>"+material.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +material.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=materialRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=materialRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
     <div class="tab-pane fade" id="test">
         <p></p>
@@ -145,5 +215,45 @@
         </p>
     </div>
 </div>
+<script>
+    function equipRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Equip",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+    function materialRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Material",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+</script>
 </body>
 </html>

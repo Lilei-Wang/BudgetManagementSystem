@@ -234,26 +234,25 @@ public class BudgetService implements IBudgetService {
 
     /**
      * 根据会议费合成咨询费
+     *
      * @param conferences
      * @return
      */
     @Override
-    public Map<Consultation,Integer> doConsultation(Map<Conference,Integer> conferences) {
+    public Map<Consultation, Integer> doConsultation(Map<Conference, Integer> conferences) {
         List<Consultation> consultations = consultationDao.selectAll();
-        Consultation consultation=null;
-        try
-        {
-            consultation=consultations.get(0);
-        }catch (Exception e)
-        {
+        Consultation consultation = null;
+        try {
+            consultation = consultations.get(0);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        int experts=0;
+        int experts = 0;
         for (Conference conference : conferences.keySet()) {
-            experts+=conference.getExperts()*conferences.get(conference);
+            experts += conference.getExperts() * conferences.get(conference);
         }
-        Map<Consultation,Integer> result=new HashMap<>();
-        result.put(consultation,experts);
+        Map<Consultation, Integer> result = new HashMap<>();
+        result.put(consultation, experts);
         return result;
     }
 
@@ -265,11 +264,11 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Others, Integer> doOthers(Double number) {
-        Map<Others,Integer> others = new HashMap<>();
+        Map<Others, Integer> others = new HashMap<>();
         Others item = new Others();
         item.setName("其他费用");
         item.setPrice(number);
-        others.put(item,1);
+        others.put(item, 1);
 
         return others;
     }
@@ -282,17 +281,18 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Indirect, Integer> doIndirect(Double number) {
-        Map<Indirect,Integer> indirects = new HashMap<>();
+        Map<Indirect, Integer> indirects = new HashMap<>();
         Indirect item = new Indirect();
         item.setName("间接费用");
         item.setPrice(number);
-        indirects.put(item,1);
+        indirects.put(item, 1);
 
         return indirects;
     }
 
     /**
      * 刷新Bedget对象，与数据库最新数据一致，包括条目的增删改
+     *
      * @param budget
      */
     @Override
@@ -306,20 +306,21 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     private Map generateMap(List list, Double number) {
-        Map<Item,Integer> results = new HashMap<>();
-        try {
-            List<Item> items = (List<Item>) list;
-            for (Item item : items) {
-                results.put(item,0);
-            }
-            Item item = items.get(0);
-            double sum = 0.0;
+        Map<Item, Integer> results = new HashMap<>();
+        if (list != null && list.size() != 0) {
+            try {
+                List<Item> items = (List<Item>) list;
+                for (Item item : items) {
+                    results.put(item, 0);
+                }
+                Item item = items.get(0);
+                double sum = 0.0;
 
             /*
             根据不同类型的预算计算单价，简单的就是getPrice，复杂的比如差旅费就要计算每个小项
             还有会议费和咨询费一起计算
             */
-            double price = item.computeUnitPrice();
+                double price = item.computeUnitPrice();
             /*if(item instanceof Travel)
                 price=item.getPrice()+((Travel) item).getFood()+
                         ((Travel) item).getTraffic()+((Travel) item).getAccommodation();
@@ -332,14 +333,15 @@ public class BudgetService implements IBudgetService {
             else
                 price=item.getPrice();*/
 
-            int nums=0;
-            while (sum+price <= number) {
-                nums++;
-                sum += price;
+                int nums = 0;
+                while (sum + price <= number) {
+                    nums++;
+                    sum += price;
+                }
+                results.put(item, nums);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            results.put(item,nums);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return (Map) results;
     }
