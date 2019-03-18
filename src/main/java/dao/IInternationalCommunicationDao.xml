@@ -5,4 +5,13 @@
     <select id="selectAll" resultType="beans.InternationalCommunication">
         select * from internationalcommunication
     </select>
+    <insert id="insertInternational">
+        insert into budgetmanagementsystem.internationalcommunication(name,price) values (#{name},#{price})
+    </insert>
+    <update id="updateInternational">
+        update budgetmanagementsystem.internationalcommunication set name=#{name},price=#{price} where id=#{id}
+    </update>
+    <delete id="deleteInternational">
+        delete from budgetmanagementsystem.internationalcommunication where id=#{id}
+    </delete>
 </mapper>

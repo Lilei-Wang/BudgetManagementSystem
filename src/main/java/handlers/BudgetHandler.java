@@ -1,8 +1,7 @@
 package handlers;
 
 import beans.*;
-import dao.IEquipmentDao;
-import dao.IMaterialDao;
+import dao.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -267,8 +266,21 @@ public class BudgetHandler {
     }
 
 
+
     @Autowired
     private IMaterialDao materialDao;
+
+    /**
+     * 修改预算中的材料费以及规则里的材料费
+     * @param mode
+     * @param id
+     * @param name
+     * @param price
+     * @param nums
+     * @param curd
+     * @param request
+     * @param response
+     */
     @RequestMapping("/Modify/Material")
     public void modifyMaterial(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
     {
@@ -310,6 +322,189 @@ public class BudgetHandler {
             else//改
             {
                 materialDao.updateMaterial(item);
+            }
+        }
+    }
+
+
+
+    @Autowired
+    private IInternationalCommunicationDao internationalCommunicationDao;
+
+    /**
+     * 修改预算中的国际交流合作费、规则中的国际交流合作费
+     * @param mode
+     * @param id
+     * @param name
+     * @param price
+     * @param nums
+     * @param curd
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/Modify/International")
+    public void modifyInternational(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
+    {
+        System.out.println("/Modify/International");
+
+        if(mode.equals(0))//修改预算
+        {
+            if (nums < 0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<InternationalCommunication, Integer> items = null;
+            items=budget.getInternationalCommunications();
+            for (InternationalCommunication item : items.keySet()) {
+                if(item.getId().equals(id))
+                {
+                    items.put(item,nums);
+                    break;
+                }
+            }
+            serializeBudget(budget,getFilePath(sessionID));
+        }
+        else//修改规则
+        {
+            InternationalCommunication item=new InternationalCommunication();
+            item.setId(id);
+            item.setName(name);
+            item.setPrice(price);
+            if(curd.equals(0))//增
+            {
+                internationalCommunicationDao.insertInternational(item);
+            }
+            else if(curd.equals(1))//删
+            {
+                internationalCommunicationDao.deleteInternational(item);
+            }
+            else//改
+            {
+                internationalCommunicationDao.updateInternational(item);
+            }
+        }
+    }
+
+
+
+
+    @Autowired
+    private IPropertyDao propertyDao;
+
+    /**
+     * 修改预算中的国际交流合作费、规则中的国际交流合作费
+     * @param mode
+     * @param id
+     * @param name
+     * @param price
+     * @param nums
+     * @param curd
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/Modify/Property")
+    public void modifyProperty(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
+    {
+        System.out.println("/Modify/Property");
+
+        if(mode.equals(0))//修改预算
+        {
+            if (nums < 0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<Property, Integer> items = null;
+            items=budget.getProperties();
+            for (Property item : items.keySet()) {
+                if(item.getId().equals(id))
+                {
+                    items.put(item,nums);
+                    break;
+                }
+            }
+            serializeBudget(budget,getFilePath(sessionID));
+        }
+        else//修改规则
+        {
+            Property item=new Property();
+            item.setId(id);
+            item.setName(name);
+            item.setPrice(price);
+            if(curd.equals(0))//增
+            {
+                propertyDao.insertProperty(item);
+            }
+            else if(curd.equals(1))//删
+            {
+                propertyDao.deleteProperty(item);
+            }
+            else//改
+            {
+                propertyDao.updateProperty(item);
+            }
+        }
+    }
+
+
+    @Autowired
+    private ILabourDao labourDao;
+
+    /**
+     * 修改预算中的国际交流合作费、规则中的国际交流合作费
+     * @param mode
+     * @param id
+     * @param name
+     * @param price
+     * @param nums
+     * @param curd
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/Modify/Labour")
+    public void modifyLabour(Integer mode,Integer id,String name,Double price,Integer nums,Integer curd,HttpServletRequest request,HttpServletResponse response)
+    {
+        System.out.println("/Modify/Labour");
+
+        if(mode.equals(0))//修改预算
+        {
+            if (nums < 0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<Labour, Integer> items = null;
+            items=budget.getLabour();
+            for (Labour item : items.keySet()) {
+                if(item.getId().equals(id))
+                {
+                    items.put(item,nums);
+                    break;
+                }
+            }
+            serializeBudget(budget,getFilePath(sessionID));
+        }
+        else//修改规则
+        {
+            Labour item=new Labour();
+            item.setId(id);
+            item.setName(name);
+            item.setPrice(price);
+            if(curd.equals(0))//增
+            {
+                labourDao.insertLabour(item);
+            }
+            else if(curd.equals(1))//删
+            {
+                labourDao.deleteLabour(item);
+            }
+            else//改
+            {
+                labourDao.updateLabour(item);
             }
         }
     }
@@ -537,7 +732,7 @@ public class BudgetHandler {
                     if (item instanceof Conference) {
                         writer.write(comma + item.getName()
                                 + comma + consultation.getName()
-                                + comma + item.getPrice()
+                                + comma + consultation.getPrice()
                                 + comma + ((Conference) item).getExperts()
                                 + comma + items.get(item)
                                 + comma + ((Conference) item).getExperts() * consultation.getPrice() * items.get(item));

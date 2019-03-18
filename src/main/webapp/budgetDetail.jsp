@@ -1,12 +1,10 @@
 <%@ page import="java.awt.*" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="dao.IEquipmentDao" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="dao.IMaterialDao" %>
-<%@ page import="dao.ITestAndProcessDao" %>
-<%@ page import="beans.*" %><%--
+<%@ page import="beans.*" %>
+<%@ page import="dao.*" %><%--
   Created by IntelliJ IDEA.
   User: Song
   Date: 2019/2/28
@@ -92,6 +90,20 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
+        <%
+            Budget budget = (Budget) request.getAttribute("budget");
+            double equipSum = 0.00;
+            Map<Equipment, Integer> equipmentMap = budget.getEquipments();
+            for (Equipment equipment : equipmentMap.keySet()) {
+                equipSum += (equipmentMap.get(equipment) * equipment.computeUnitPrice());
+            }
+        %>
+        <div class="center-block">
+            <div>需求：<%=budget.getRequirement().getEquip()%>
+            </div>
+            <div id="equipSum">实际：<%=equipSum%>
+            </div>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -104,8 +116,8 @@
 
             <tbody>
             <%
-                Budget budget = (Budget) request.getAttribute("budget");
-                Map<Item,Integer> map = (Map) budget.getEquipments();
+                budget = (Budget) request.getAttribute("budget");
+                Map<Item, Integer> map = (Map) budget.getEquipments();
 
                 ServletContext servletContext = this.getServletConfig().getServletContext();
                 ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -114,16 +126,15 @@
                 List<Equipment> equipments = equipmentDao.selectAll();
                 for (Equipment equipment : equipments) {
                     out.write("<tr>");
-                    out.write("<td>"+equipment.getId()+"</td>");
-                    out.write("<td>"+equipment.getName()+"</td>");
-                    out.write("<td>"+equipment.getPrice()+"</td>");
-                    int num=0;
-                    if(map.get(equipment)!=null)
-                    {
-                        num=map.get(equipment);
+                    out.write("<td>" + equipment.getId() + "</td>");
+                    out.write("<td>" + equipment.getName() + "</td>");
+                    out.write("<td>" + equipment.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(equipment) != null) {
+                        num = map.get(equipment);
                     }
                     out.write("<td>" +
-                            "<input type='number' value='"+num+"' />" +
+                            "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
                             "</td>");
                 }
@@ -144,21 +155,20 @@
 
             <tbody>
             <%
-                map = (Map)budget.getMaterials();
+                map = (Map) budget.getMaterials();
                 IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
                 List<Material> materials = materialDao.selectAll();
                 for (Material material : materials) {
                     out.write("<tr>");
-                    out.write("<td>"+material.getId()+"</td>");
-                    out.write("<td>"+material.getName()+"</td>");
-                    out.write("<td>"+material.getPrice()+"</td>");
-                    int num=0;
-                    if(map.get(material)!=null)
-                    {
-                        num=map.get(material);
+                    out.write("<td>" + material.getId() + "</td>");
+                    out.write("<td>" + material.getName() + "</td>");
+                    out.write("<td>" + material.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(material) != null) {
+                        num = map.get(material);
                     }
                     out.write("<td>" +
-                            "<input type='number' value='"+num+"' />" +
+                            "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
                             "</td>");
                 }
@@ -180,21 +190,20 @@
 
             <tbody>
             <%
-                map = (Map)budget.getTestAndProcesses();
+                map = (Map) budget.getTestAndProcesses();
                 ITestAndProcessDao testAndProcessDao = applicationContext.getBean(ITestAndProcessDao.class);
                 List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
-                for (TestAndProcess testAndProcess:testAndProcesses) {
+                for (TestAndProcess testAndProcess : testAndProcesses) {
                     out.write("<tr>");
-                    out.write("<td>"+testAndProcess.getId()+"</td>");
-                    out.write("<td>"+testAndProcess.getName()+"</td>");
-                    out.write("<td>"+testAndProcess.getPrice()+"</td>");
-                    int num=0;
-                    if(map.get(testAndProcess)!=null)
-                    {
-                        num=map.get(testAndProcess);
+                    out.write("<td>" + testAndProcess.getId() + "</td>");
+                    out.write("<td>" + testAndProcess.getName() + "</td>");
+                    out.write("<td>" + testAndProcess.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(testAndProcess) != null) {
+                        num = map.get(testAndProcess);
                     }
                     out.write("<td>" +
-                            "<input type='number' value='"+num+"' />" +
+                            "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=updateItem('test',this)>确认</button>" +
                             "</td>");
                 }
@@ -219,18 +228,114 @@
     </div>
 
     <div class="tab-pane fade" id="international">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map) budget.getInternationalCommunications();
+                IInternationalCommunicationDao internationalCommunicationDao =
+                        applicationContext.getBean(IInternationalCommunicationDao.class);
+                List<InternationalCommunication> internationalCommunications = internationalCommunicationDao.selectAll();
+                for (InternationalCommunication item : internationalCommunications) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(item) != null) {
+                        num = map.get(item);
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='" + num + "' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=international(this)>确认</button>" +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="property">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map) budget.getProperties();
+                IPropertyDao propertyDao =
+                        applicationContext.getBean(IPropertyDao.class);
+                List<Property> properties = propertyDao.selectAll();
+                for (Property item : properties) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(item) != null) {
+                        num = map.get(item);
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='" + num + "' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=property(this)>确认</button>" +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="labour">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map) budget.getLabour();
+                ILabourDao labourDao =
+                        applicationContext.getBean(ILabourDao.class);
+                List<Labour>  labour= labourDao.selectAll();
+                for (Labour item : labour) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(item) != null) {
+                        num = map.get(item);
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='" + num + "' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=labour(this)>确认</button>" +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="consultation">
@@ -252,8 +357,6 @@
 
 </body>
 </html>
-
-
 
 
 <script>
@@ -278,49 +381,100 @@
     }*/
 
     function equip(btn) {
-        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num=btn.parentElement.firstElementChild.value;
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
         $.ajax({
-            url:"${pageContext.request.contextPath}/Budget/Modify/Material",
-            type:"post",
-            data:{
-                mode:0,
-                id:id,
-                nums:num
+            url: "${pageContext.request.contextPath}/Budget/Modify/Material",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
             },
-            success:function () {
+            success: function () {
                 alert("success")
             }
         })
     }
 
     function material(btn) {
-        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num=btn.parentElement.firstElementChild.value;
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
         $.ajax({
-            url:"${pageContext.request.contextPath}/Budget/Modify/Material",
-            type:"post",
-            data:{
-                mode:0,
-                id:id,
-                nums:num
+            url: "${pageContext.request.contextPath}/Budget/Modify/Material",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
             },
-            success:function () {
+            success: function () {
                 alert("success")
             }
         })
     }
 
-   /* function init() {
-        var updateEquips=document.getElementsByClassName("updateEquipment");
-        alert(updateEquips.length);
-        var i;
-        for(i=0;i<updateEquips.length;i++)
-        {
-            var btn=updateEquips[i];
-            var num=btn.parentElement.parentElement.firstElementChild.innerHTML
-            btn.addEventListener("click",function () { alert(num) })
-        }
-    }*/
+    function international(btn) {
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/International",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
+            },
+            success: function () {
+                alert("success")
+            }
+        })
+    }
+
+    function property(btn) {
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Property",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
+            },
+            success: function () {
+                alert("success")
+            }
+        })
+    }
+
+    function labour(btn) {
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Labour",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
+            },
+            success: function () {
+                alert("success")
+            }
+        })
+    }
+
+    /* function init() {
+         var updateEquips=document.getElementsByClassName("updateEquipment");
+         alert(updateEquips.length);
+         var i;
+         for(i=0;i<updateEquips.length;i++)
+         {
+             var btn=updateEquips[i];
+             var num=btn.parentElement.parentElement.firstElementChild.innerHTML
+             btn.addEventListener("click",function () { alert(num) })
+         }
+     }*/
 
 </script>

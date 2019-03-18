@@ -5,4 +5,13 @@
     <select id="selectAll" resultType="beans.Labour">
         select * from labour
     </select>
+    <insert id="insertLabour">
+        insert into budgetmanagementsystem.labour(name,price) values (#{name},#{price})
+    </insert>
+    <update id="updateLabour">
+        update budgetmanagementsystem.labour set name=#{name},price=#{price} where id=#{id}
+    </update>
+    <delete id="deleteLabour">
+        delete from budgetmanagementsystem.labour where id=#{id}
+    </delete>
 </mapper>

@@ -1,13 +1,10 @@
-<%@ page import="beans.Budget" %>
-<%@ page import="beans.Item" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="dao.IEquipmentDao" %>
-<%@ page import="beans.Equipment" %>
 <%@ page import="java.util.List" %>
-<%@ page import="dao.IMaterialDao" %>
-<%@ page import="beans.Material" %><%--
+<%@ page import="beans.*" %>
+<%@ page import="dao.*" %>
+<%--
   Created by IntelliJ IDEA.
   User: Song
   Date: 2019/2/28
@@ -186,18 +183,105 @@
     </div>
 
     <div class="tab-pane fade" id="international">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                IInternationalCommunicationDao dao = applicationContext.getBean(IInternationalCommunicationDao.class);
+                List<InternationalCommunication> items = dao.selectAll();
+                for (InternationalCommunication item : items) {
+                    out.write("<tr>");
+                    out.write("<td>"+item.getId()+"</td>");
+                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=internationalRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=internationalRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="property">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                IPropertyDao propertyDao = applicationContext.getBean(IPropertyDao.class);
+                List<Property> properties = propertyDao.selectAll();
+                for (Property item : properties) {
+                    out.write("<tr>");
+                    out.write("<td>"+item.getId()+"</td>");
+                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=propertyRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=propertyRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="labour">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                ILabourDao labourDao = applicationContext.getBean(ILabourDao.class);
+                List<Labour> labour= labourDao.selectAll();
+                for (Labour item : labour) {
+                    out.write("<tr>");
+                    out.write("<td>"+item.getId()+"</td>");
+                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=labourRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=labourRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="consultation">
@@ -241,6 +325,66 @@
         var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Material",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+    function internationalRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/International",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+    function propertyRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Property",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+    function labourRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Labour",
             type:"post",
             data:{
                 mode:1,

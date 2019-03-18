@@ -5,4 +5,13 @@
     <select id="selectAll" resultType="beans.Property">
         select * from property
     </select>
+    <insert id="insertProperty">
+        insert into budgetmanagementsystem.property(name,price) values (#{name},#{price})
+    </insert>
+    <update id="updateProperty">
+        update budgetmanagementsystem.property set name=#{name},price=#{price} where id=#{id}
+    </update>
+    <delete id="deleteProperty">
+        delete from budgetmanagementsystem.property where id=#{id}
+    </delete>
 </mapper>
