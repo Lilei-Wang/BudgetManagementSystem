@@ -178,8 +178,48 @@
     </div>
 
     <div class="tab-pane fade" id="conference">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>所需专家个数</th>
+                <th>参会人数</th>
+                <th>单价</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                IConferenceDao conferenceDao =
+                        applicationContext.getBean(IConferenceDao.class);
+                List<Conference>  conferences= conferenceDao.selectAll();
+                for (Conference item : conferences) {
+                    out.write("<tr>");
+                    out.write("<td>"+item.getId()+"</td>");
+                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input id='experts' type='number' value='"
+                            +item.getExperts()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input id='experts' type='number' value='"
+                            +item.getPeople()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input id='price' type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=conferenceRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=conferenceRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="international">
@@ -285,8 +325,38 @@
     </div>
 
     <div class="tab-pane fade" id="consultation">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>人员类型</th>
+                <th>费用标准</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                IConsultationDao consultationDao =
+                        applicationContext.getBean(IConsultationDao.class);
+                List<Consultation>  consultations= consultationDao.selectAll();
+                for (Consultation item : consultations) {
+                    out.write("<tr>");
+                    out.write("<td>"+item.getId()+"</td>");
+                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input id='price' type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"+
+                            "<button class='btn btn-success' onclick=consultationRule(this,2)>确认</button>"+
+                            "<button class='btn btn-danger' onclick=consultationRule(this,1)>删除</button>"+
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="others">
@@ -398,6 +468,53 @@
             }
         })
     }
+
+    function conferenceRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var experts=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
+        var people=btn.parentElement.parentElement.childNodes.item(3).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(4).firstChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Conference",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                experts:experts,
+                people:people,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+
+    function consultationRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Consultation",
+            type:"post",
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                curd:curd
+            },
+            success:function () {
+                alert("success")
+            }
+        })
+    }
+
+
 </script>
 </body>
 </html>

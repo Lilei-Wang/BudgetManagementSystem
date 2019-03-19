@@ -87,6 +87,13 @@
 
 </ul>
 
+<%
+    if(false){
+        %>
+<p>ssdd</p>
+<%
+    }
+%>
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
@@ -223,8 +230,42 @@
     </div>
 
     <div class="tab-pane fade" id="conference">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>需要专家</th>
+                <th>会议次数</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map) budget.getConferences();
+                IConferenceDao conferenceDao =
+                        applicationContext.getBean(IConferenceDao.class);
+                List<Conference>  conferences= conferenceDao.selectAll();
+                for (Conference item : conferences) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    out.write("<td>" + item.getExperts() + "</td>");
+                    int num = 0;
+                    if (map.get(item) != null) {
+                        num = map.get(item);
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='" + num + "' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=conference(this)>确认</button>" +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="international">
@@ -339,8 +380,37 @@
     </div>
 
     <div class="tab-pane fade" id="consultation">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>人员类型</th>
+                <th>费用标准</th>
+                <th>人数</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                map = (Map) budget.getConsultations();
+                IConsultationDao consultationDao =
+                        applicationContext.getBean(IConsultationDao.class);
+                List<Consultation>  consultations= consultationDao.selectAll();
+                for (Consultation item : consultations) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    int num = 0;
+                    if (map.get(item) != null) {
+                        num = map.get(item);
+                    }
+                    out.write("<td>" + num + "</td>");
+                }
+            %>
+            </tbody>
+        </table>
+        <p class="help-block">此项由会议费决定，不可单独更改</p>
     </div>
 
     <div class="tab-pane fade" id="others">
@@ -360,35 +430,24 @@
 
 
 <script>
-    /*function updateItem(type,btn) {
-        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num=btn.parentElement.firstElementChild.value;
-        /!*alert(type)
-        alert(id)
-        alert(num)*!/
-        $.ajax({
-            url:"${pageContext.request.contextPath}/Budget/Modify",
-            type:"post",
-            data:{
-                type:type,
-                id:id,
-                nums:num
-            },
-            success:function () {
-                alert("success")
-            }
-        })
-    }*/
 
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
+        alert(price);
         var num = btn.parentElement.firstElementChild.value;
         $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Material",
+            url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
             type: "post",
+            xhrFields:{
+                withCredentials:true
+            },
+            async:false,
+            crossDomain:true,
             data: {
                 mode: 0,
                 id: id,
+                price:price,
                 nums: num
             },
             success: function () {
@@ -453,6 +512,23 @@
         var num = btn.parentElement.firstElementChild.value;
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Labour",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                nums: num
+            },
+            success: function () {
+                alert("success")
+            }
+        })
+    }
+
+    function conference(btn) {
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var num = btn.parentElement.firstElementChild.value;
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Conference",
             type: "post",
             data: {
                 mode: 0,

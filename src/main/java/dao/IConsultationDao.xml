@@ -5,4 +5,13 @@
     <select id="selectAll" resultType="beans.Consultation">
         select * from consultation
     </select>
+    <insert id="insertConsultation">
+        insert into budgetmanagementsystem.consultation( name, price) values (#{name},#{price})
+    </insert>
+    <update id="updateConsultation">
+        update budgetmanagementsystem.consultation set name=#{name},price=#{price} where id=#{id}
+    </update>
+    <delete id="deleteConsultation">
+        delete from budgetmanagementsystem.consultation where id=#{id}
+    </delete>
 </mapper>

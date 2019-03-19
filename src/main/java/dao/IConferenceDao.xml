@@ -5,4 +5,13 @@
     <select id="selectAll" resultType="beans.Conference">
         select * from conference
     </select>
+    <insert id="insertConference">
+        insert into budgetmanagementsystem.conference(name, price, experts,people) values (#{name},#{price},#{experts},#{people})
+    </insert>
+    <update id="updateConference">
+        update budgetmanagementsystem.conference set name=#{name},price=#{price},experts=#{experts},people=#{people} where id=#{id};
+    </update>
+    <delete id="deleteConference">
+        delete  from budgetmanagementsystem.conference where id =#{id}
+    </delete>
 </mapper>
