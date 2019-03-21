@@ -39,9 +39,7 @@ public class Item implements Serializable {
      */
     @Override
     public int hashCode() {
-        int idHash=(id==null)?0:id.hashCode();
-        int nameHash=(name==null)?0:name.hashCode();
-        return idHash&nameHash;
+        return (id==null)?0:id.hashCode();
     }
 
     /**
@@ -55,7 +53,7 @@ public class Item implements Serializable {
         if(this==obj) return true;
         if(getClass()!=obj.getClass()) return false;
         Item other=(Item)obj;
-        return id.equals(other.getId()) && name.equals(other.getName());
+        return id.equals(other.getId());
     }
 
     public Integer getId() {

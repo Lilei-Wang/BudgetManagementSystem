@@ -1,4 +1,5 @@
 import beans.Budget;
+import beans.Conference;
 import beans.Equipment;
 import beans.Item;
 import org.junit.Test;
@@ -480,5 +481,19 @@ public class MyTest implements Serializable {
         for (Person person : map.keySet()) {
             System.out.println(person);
         }
+    }
+
+    @Test
+    public void equalsTest()
+    {
+        Equipment e1=new Equipment(),e2=new Equipment();
+        e1.setId(1);e1.setName("123");
+        e2.setId(1);e2.setName("abc");
+
+        Conference c1=new Conference();
+        c1.setId(1);c1.setName("123");
+
+        System.out.println(e1.equals(c1));
+        System.out.println(e1.equals(e2));
     }
 }

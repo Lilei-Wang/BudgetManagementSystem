@@ -117,7 +117,10 @@
                 for (Equipment equipment : equipments) {
                     out.write("<tr>");
                     out.write("<td>"+equipment.getId()+"</td>");
-                    out.write("<td>"+equipment.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +equipment.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input type='number' value='"
                             +equipment.getPrice()
@@ -127,6 +130,17 @@
                             "<button class='btn btn-danger' onclick=equipRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>0</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='新增条目"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='0"
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=equipRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
         </table>
@@ -372,8 +386,8 @@
 <script>
     function equipRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Equip",
             type:"post",
@@ -385,7 +399,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -404,7 +419,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -424,7 +440,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -444,7 +461,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -464,7 +482,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -488,7 +507,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -509,7 +529,8 @@
                 curd:curd
             },
             success:function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }

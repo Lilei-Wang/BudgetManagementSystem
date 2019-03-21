@@ -451,7 +451,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -468,7 +469,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -485,7 +487,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -502,7 +505,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -519,7 +523,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
@@ -536,7 +541,8 @@
                 nums: num
             },
             success: function () {
-                alert("success")
+                alert("success");
+                location.reload();
             }
         })
     }
