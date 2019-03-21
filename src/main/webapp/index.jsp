@@ -40,19 +40,6 @@
                     <a href="${pageContext.request.contextPath}/Budget/Detail" >
                         修改预算
                     </a>
-                    <%--<ul class="dropdown-menu">
-                        <li><a href="#">设备费</a></li>
-                        <li><a href="#">材料费</a></li>
-                        <li><a href="#">测试化验加工费</a></li>
-                        <li><a href="#">燃料动力费</a></li>
-                        <li><a href="#">差旅费</a></li>
-                        <li><a href="#">会议费</a></li>
-                        <li><a href="#">国际合作交流费</a></li>
-                        <li><a href="#">出版/文献/信息传播/知识产权事务费</a></li>
-                        <li><a href="#">劳务费</a></li>
-                        <li><a href="#">咨询费</a></li>
-                        <li><a href="#">其他费用</a></li>
-                    </ul>--%>
                 </li>
 
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
@@ -81,7 +68,7 @@
 
 <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
     <%--<fieldset>--%>
-    <div class="form-group">
+   <%-- <div class="form-group">
         <label class="control-label col-sm-4">预算类型</label>
         <div class="col-sm-4">
             <select name="budget-type" class="form-control">
@@ -89,7 +76,7 @@
                 <option>自筹</option>
             </select>
         </div>
-    </div>
+    </div>--%>
 
     <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>

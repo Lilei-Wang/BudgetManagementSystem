@@ -110,6 +110,8 @@
             </div>
             <div id="equipSum">实际：<%=equipSum%>
             </div>
+            <div id="diff">还差：<%=budget.getRequirement().getEquip()-equipSum%>
+            </div>
         </div>
         <table class="table table-hover">
             <thead>
@@ -143,6 +145,7 @@
                     out.write("<td>" +
                             "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
+                            equipment.getPrice()*num+
                             "</td>");
                 }
             %>
@@ -150,6 +153,22 @@
         </table>
     </div>
     <div class="tab-pane fade" id="material">
+        <%
+            double sum=0.00;
+            double req=budget.getRequirement().getMaterial();
+            Map<Material, Integer> materialsMap = budget.getMaterials();
+            for (Material material : materialsMap.keySet()) {
+                sum+=(material.computeUnitPrice()*materialsMap.get(material));
+            }
+        %>
+        <div class="center-block">
+            <div>需求：<%=req%>
+            </div>
+            <div>实际：<%=sum%>
+            </div>
+            <div>还差：<%=req-sum%>
+            </div>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -177,7 +196,7 @@
                     out.write("<td>" +
                             "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
-                            "</td>");
+                            material.computeUnitPrice()*num+"</td>");
                 }
             %>
             </tbody>
@@ -237,6 +256,7 @@
                 <th>名称</th>
                 <th>单价</th>
                 <th>需要专家</th>
+                <th>参会人数</th>
                 <th>会议次数</th>
             </tr>
             </thead>
@@ -253,6 +273,7 @@
                     out.write("<td>" + item.getName() + "</td>");
                     out.write("<td>" + item.getPrice() + "</td>");
                     out.write("<td>" + item.getExperts() + "</td>");
+                    out.write("<td>" + item.getPeople() + "</td>");
                     int num = 0;
                     if (map.get(item) != null) {
                         num = map.get(item);
@@ -434,16 +455,10 @@
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
         var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
-        alert(price);
         var num = btn.parentElement.firstElementChild.value;
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
             type: "post",
-            xhrFields:{
-                withCredentials:true
-            },
-            async:false,
-            crossDomain:true,
             data: {
                 mode: 0,
                 id: id,
