@@ -50,19 +50,6 @@
                     <a href="${pageContext.request.contextPath}/Budget/Detail">
                         修改预算
                     </a>
-                    <%--<ul class="dropdown-menu">
-                        <li><a href="#">设备费</a></li>
-                        <li><a href="#">材料费</a></li>
-                        <li><a href="#">测试化验加工费</a></li>
-                        <li><a href="#">燃料动力费</a></li>
-                        <li><a href="#">差旅费</a></li>
-                        <li><a href="#">会议费</a></li>
-                        <li><a href="#">国际合作交流费</a></li>
-                        <li><a href="#">出版/文献/信息传播/知识产权事务费</a></li>
-                        <li><a href="#">劳务费</a></li>
-                        <li><a href="#">咨询费</a></li>
-                        <li><a href="#">其他费用</a></li>
-                    </ul>--%>
                 </li>
 
                 <li class="active"><a href="#">修改规则</a></li>
@@ -133,7 +120,7 @@
                 out.write("<tr>");
                 out.write("<td>0</td>");
                 out.write("<td>"
-                        +"<input type='text' size=50 value='新增条目"
+                        +"<input type='text' size=50 value='new"
                         +"'/></td>");
                 out.write("<td>"
                         +"<input type='number' value='0"
@@ -163,7 +150,10 @@
                 for (Material material : materials) {
                     out.write("<tr>");
                     out.write("<td>"+material.getId()+"</td>");
-                    out.write("<td>"+material.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +material.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input type='number' value='"
                             +material.getPrice()
@@ -173,6 +163,17 @@
                             "<button class='btn btn-danger' onclick=materialRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>0</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='0"
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=materialRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -187,8 +188,82 @@
     </div>
 
     <div class="tab-pane fade" id="travel">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>城市</th>
+                <th>往返价格</th>
+                <th>伙食补助</th>
+                <th>交通补助</th>
+                <th>住宿补助</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                /*Map<Travel, Pair> travelsMap = budget.getTravels();*/
+                ITravelDao travelDao =
+                        applicationContext.getBean(ITravelDao.class);
+                List<Travel>  travels= travelDao.selectAll();
+                for (Travel item : travels) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=20 value='"
+                            +item.getName()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getPrice()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getFood()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getTraffic()
+                            +"'/></td>");
+                    out.write("<td>"
+                            +"<input type='number' value='"
+                            +item.getAccommodation()
+                            +"'/></td>");
+                    out.write("<td>" +
+                            "<button class='btn btn-success' onclick=travelRule(this,2)>确认</button>" +
+                            "<button class='btn btn-danger' onclick=travelRule(this,1)>删除</button>" +
+                            "</td>");
+                }
+                out.write("<tr>");
+                out.write("<td>" + 0 + "</td>");
+                out.write("<td>"
+                        +"<input type='text' size=20 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>" +
+                        "<button class='btn btn-success' onclick=travelRule(this,0)>添加</button>" +
+                        "</td>");
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="conference">
@@ -212,7 +287,10 @@
                 for (Conference item : conferences) {
                     out.write("<tr>");
                     out.write("<td>"+item.getId()+"</td>");
-                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +item.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input id='experts' type='number' value='"
                             +item.getExperts()
@@ -230,6 +308,27 @@
                             "<button class='btn btn-danger' onclick=conferenceRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>"+0+"</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input id='experts' type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input id='experts' type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input id='price' type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=conferenceRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -254,7 +353,10 @@
                 for (InternationalCommunication item : items) {
                     out.write("<tr>");
                     out.write("<td>"+item.getId()+"</td>");
-                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +item.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input type='number' value='"
                             +item.getPrice()
@@ -264,6 +366,19 @@
                             "<button class='btn btn-danger' onclick=internationalRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>"+0+"</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=internationalRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -288,7 +403,10 @@
                 for (Property item : properties) {
                     out.write("<tr>");
                     out.write("<td>"+item.getId()+"</td>");
-                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +item.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input type='number' value='"
                             +item.getPrice()
@@ -298,6 +416,19 @@
                             "<button class='btn btn-danger' onclick=propertyRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>"+0+"</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=propertyRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -322,7 +453,10 @@
                 for (Labour item : labour) {
                     out.write("<tr>");
                     out.write("<td>"+item.getId()+"</td>");
-                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +item.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input type='number' value='"
                             +item.getPrice()
@@ -332,6 +466,19 @@
                             "<button class='btn btn-danger' onclick=labourRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>"+0+"</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=labourRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -357,7 +504,10 @@
                 for (Consultation item : consultations) {
                     out.write("<tr>");
                     out.write("<td>"+item.getId()+"</td>");
-                    out.write("<td>"+item.getName()+"</td>");
+                    out.write("<td>"
+                            +"<input type='text' size=50 value='"
+                            +item.getName()
+                            +"'/></td>");
                     out.write("<td>"
                             +"<input id='price' type='number' value='"
                             +item.getPrice()
@@ -367,6 +517,19 @@
                             "<button class='btn btn-danger' onclick=consultationRule(this,1)>删除</button>"+
                             "</td>");
                 }
+                out.write("<tr>");
+                out.write("<td>"+0+"</td>");
+                out.write("<td>"
+                        +"<input type='text' size=50 value='"
+                        +"new"
+                        +"'/></td>");
+                out.write("<td>"
+                        +"<input id='price' type='number' value='"
+                        +0
+                        +"'/></td>");
+                out.write("<td>"+
+                        "<button class='btn btn-success' onclick=consultationRule(this,0)>添加</button>"+
+                        "</td>");
             %>
             </tbody>
 
@@ -400,14 +563,14 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
     function materialRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Material",
             type:"post",
@@ -420,15 +583,15 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
 
     function internationalRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/International",
             type:"post",
@@ -441,15 +604,15 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
 
     function propertyRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Property",
             type:"post",
@@ -462,15 +625,15 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
 
     function labourRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild.value;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Labour",
             type:"post",
@@ -483,14 +646,14 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
 
     function conferenceRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
         var experts=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         var people=btn.parentElement.parentElement.childNodes.item(3).firstChild.value;
         var price=btn.parentElement.parentElement.childNodes.item(4).firstChild.value;
@@ -508,7 +671,7 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
@@ -516,7 +679,7 @@
 
     function consultationRule(btn,curd) {
         var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var name=btn.parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
         var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
         $.ajax({
             url:"${pageContext.request.contextPath}/Budget/Modify/Consultation",
@@ -530,7 +693,36 @@
             },
             success:function () {
                 alert("success");
-                location.reload();
+                //location.reload();
+            }
+        })
+    }
+
+    function travelRule(btn,curd) {
+        var id=btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var name=btn.parentElement.parentElement.childNodes.item(1).firstChild.value;
+        var price=btn.parentElement.parentElement.childNodes.item(2).firstChild.value;
+        var food=btn.parentElement.parentElement.childNodes.item(3).firstChild.value;
+        var traffic=btn.parentElement.parentElement.childNodes.item(4).firstChild.value;
+        var accommodation=btn.parentElement.parentElement.childNodes.item(5).firstChild.value;
+        $.ajax({
+            url:"${pageContext.request.contextPath}/Budget/Modify/Travel",
+            type:"post",
+            async:false,
+            data:{
+                mode:1,
+                id:id,
+                name:name,
+                price:price,
+                food:food,
+                traffic:traffic,
+                accommodation:accommodation,
+                curd:curd
+            },
+            success:function (data) {
+                //alert("success");
+                alert(data);
+                //location.reload();
             }
         })
     }

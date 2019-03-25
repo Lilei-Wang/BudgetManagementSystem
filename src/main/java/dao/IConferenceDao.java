@@ -9,4 +9,6 @@ public interface IConferenceDao {
     void insertConference(Conference conference);
     void updateConference(Conference conference);
     void deleteConference(Conference conference);
+
+    Conference selectById(Integer id);
 }

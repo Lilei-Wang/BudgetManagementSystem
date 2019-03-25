@@ -119,8 +119,30 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Equipment, Integer> doEquipment(Double number) {
+        Map<Equipment,Integer> map=new HashMap<>();
         List<Equipment> equipments = equipmentDao.selectAll();
-        return generateMap((List) equipments, number);
+        if(equipments!=null && equipments.size()>0) {
+            Collections.sort(equipments,new Comparator<Equipment>() {
+                @Override
+                public int compare(Equipment o1, Equipment o2) {
+                    double diff=o1.getPrice()-o2.getPrice();
+                    return (int)diff;
+                }
+            });
+            for (Equipment equipment : equipments) {
+                System.out.println(equipment);
+            }
+            Equipment equipment = equipments.get(0);
+            double sum=0.0;
+            int i=0;
+            while(sum<number)
+            {
+                sum+=equipment.getPrice();
+                i++;
+            }
+            map.put(equipment,i);
+        }
+        return map;
     }
 
     /**
@@ -166,9 +188,32 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Map<Travel, Integer> doTravel(Double number) {
+    public Map<Travel, Pair> doTravel(Double number) {
+        Map<Travel,Pair> result=new HashMap<>();
         List<Travel> travels = travelDao.selectAll();
-        return generateMap((List) travels, number);
+        if(travels!=null && travels.size()!=0)
+        {
+            double sofar=0.0;
+            Pair pair=new Pair(1,1);
+            for (Travel travel : travels) {
+                if(sofar<number)
+                {
+                    result.put(travel,pair);
+                    sofar+=travel.cost(pair);
+                }
+            }
+            while (true)
+            {
+                sofar=0.0;
+                for (Travel travel : result.keySet()) {
+                    pair=result.get(travel);
+                    pair.setDays(pair.getDays()+1);
+                    sofar+=(travel.cost(pair));
+                    if(sofar>=number) return result;
+                }
+            }
+        }
+        return result;
     }
 
     /**

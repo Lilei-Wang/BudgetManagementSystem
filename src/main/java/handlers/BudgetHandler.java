@@ -233,14 +233,18 @@ public class BudgetHandler {
 
             assert budget != null;
 
-            Map<Equipment, Integer> items = null;
-            items = budget.getEquipments();
-            for (Equipment equipment : items.keySet()) {
-                if (equipment.getId().equals(id)) {
-                    items.put(equipment, nums);
-                    equipment.setPrice(price);
-                    break;
+            Map<Equipment, Integer> items = budget.getEquipments();
+            Equipment mod=equipmentDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
+            try {
+                double sum=0.0;
+                for (Equipment equipment : items.keySet()) {
+                    sum+=(equipment.getPrice()*items.get(equipment));
                 }
+                response.getWriter().print(sum);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
@@ -292,11 +296,17 @@ public class BudgetHandler {
 
             Map<Material, Integer> items = null;
             items = budget.getMaterials();
-            for (Material item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
+            Material mod=materialDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
+            try {
+                double sum=0.0;
+                for (Material material : items.keySet()) {
+                    sum+=(material.getPrice()*items.get(material));
                 }
+                response.getWriter().print(sum);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
@@ -347,12 +357,9 @@ public class BudgetHandler {
 
             Map<InternationalCommunication, Integer> items = null;
             items = budget.getInternationalCommunications();
-            for (InternationalCommunication item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
-                }
-            }
+            InternationalCommunication mod=internationalCommunicationDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
         {
@@ -403,12 +410,9 @@ public class BudgetHandler {
 
             Map<Property, Integer> items = null;
             items = budget.getProperties();
-            for (Property item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
-                }
-            }
+            Property mod=propertyDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
         {
@@ -458,12 +462,9 @@ public class BudgetHandler {
 
             Map<Labour, Integer> items = null;
             items = budget.getLabour();
-            for (Labour item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
-                }
-            }
+            Labour mod=labourDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
         {
@@ -514,12 +515,9 @@ public class BudgetHandler {
 
             Map<Conference, Integer> items = null;
             items = budget.getConferences();
-            for (Conference item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
-                }
-            }
+            Conference mod=conferenceDao.selectById(id);
+            if(mod!=null)
+                items.put(mod,nums);
             budget.setConsultations(budgetService.doConsultation(budget.getConferences()));
             serializeBudget(budget, getFilePath(sessionID));
         } else//修改规则
@@ -596,6 +594,63 @@ public class BudgetHandler {
             } else//改
             {
                 consultationDao.updateConsultation(item);
+            }
+        }
+    }
+
+
+
+
+    @Autowired
+    private ITravelDao travelDao;
+
+    /**
+     *
+     * @param mode
+     * @param travel
+     * @param nums
+     * @param curd
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/Modify/Travel")
+    public void modifyTravel(Integer mode, Travel travel,Pair pair, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("/Modify/Travel");
+
+        if (mode.equals(0))//修改预算
+        {
+            if (pair==null || pair.getDays()<0 || pair.getPeople()<0) return;
+            String sessionID = getSessionID(request.getCookies());
+            Budget budget = retrieveBudget(sessionID);
+
+            assert budget != null;
+
+            Map<Travel, Pair> items = budget.getTravels();
+            travel=travelDao.selectById(travel.getId());
+            if(travel!=null)
+                items.put(travel,pair);
+
+            serializeBudget(budget, getFilePath(sessionID));
+            try {
+                double sum=0.0;
+                for (Travel item : items.keySet()) {
+                    sum+=item.cost(items.get(item));
+                }
+                response.getWriter().print(sum);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else//修改规则
+        {
+            if (curd.equals(0))//增
+            {
+                travelDao.insertTravel(travel);
+            } else if (curd.equals(1))//删
+            {
+                travelDao.deleteTravel(travel);
+            } else//改
+            {
+                travelDao.updateTravel(travel);
             }
         }
     }
@@ -743,17 +798,19 @@ public class BudgetHandler {
             }
             writer.newLine();
 
-            writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,小计");
+            writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,人数,天数,小计");
             writer.newLine();
-            items = (Map) budget.getTravels();
-            for (Item item : items.keySet()) {
+            Map<Travel, Pair> travels = budget.getTravels();
+            for (Item item : travels.keySet()) {
                 if (item instanceof Travel) {
                     writer.write(comma + ((Travel) item).getDest()
                             + comma + item.getPrice()
                             + comma + ((Travel) item).getFood()
                             + comma + ((Travel) item).getTraffic()
                             + comma + ((Travel) item).getAccommodation()
-                            + comma + item.computeUnitPrice() * items.get(item));
+                            + comma + travels.get(item).getPeople()
+                            + comma + travels.get(item).getDays()
+                            + comma + ((Travel) item).cost(travels.get(item)));
                     writer.newLine();
                 }
             }

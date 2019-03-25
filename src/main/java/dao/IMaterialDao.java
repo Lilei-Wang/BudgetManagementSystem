@@ -9,4 +9,6 @@ public interface IMaterialDao {
     void insertMaterial(Material material);
     void deleteMaterial(Material material);
     void updateMaterial(Material material);
+
+    Material selectById(Integer id);
 }

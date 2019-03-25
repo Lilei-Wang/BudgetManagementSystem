@@ -5,6 +5,9 @@
     <select id="selectAll" resultType="beans.Material">
         select * from material
     </select>
+    <select id="selectById" resultType="beans.Material">
+        select * from material where id=#{id}
+    </select>
     <insert id="insertMaterial" useGeneratedKeys="true" keyProperty="id">
         insert into budgetmanagementsystem.material(name, price) values (#{name},#{price})
     </insert>

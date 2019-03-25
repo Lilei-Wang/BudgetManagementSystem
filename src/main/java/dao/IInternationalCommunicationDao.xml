@@ -5,6 +5,9 @@
     <select id="selectAll" resultType="beans.InternationalCommunication">
         select * from internationalcommunication
     </select>
+    <select id="selectById" resultType="beans.InternationalCommunication">
+        select * from internationalcommunication where id=#{id}
+    </select>
     <insert id="insertInternational">
         insert into budgetmanagementsystem.internationalcommunication(name,price) values (#{name},#{price})
     </insert>

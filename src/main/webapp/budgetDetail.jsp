@@ -88,8 +88,8 @@
 </ul>
 
 <%
-    if(false){
-        %>
+    if (false) {
+%>
 <p>ssdd</p>
 <%
     }
@@ -106,12 +106,14 @@
             }
         %>
         <div class="center-block">
-            <div>需求：<%=budget.getRequirement().getEquip()%>
-            </div>
-            <div id="equipSum">实际：<%=equipSum%>
-            </div>
-            <div id="diff">还差：<%=budget.getRequirement().getEquip()-equipSum%>
-            </div>
+            需求：<label id="equip-req"><%=budget.getRequirement().getEquip()%>
+        </label>
+            实际：
+            <label id="equip-sum"><%=equipSum%>
+            </label>
+            还差：
+            <label id="equip-diff"><%=budget.getRequirement().getEquip() - equipSum%>
+            </label>
         </div>
         <table class="table table-hover">
             <thead>
@@ -145,7 +147,7 @@
                     out.write("<td>" +
                             "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
-                            equipment.getPrice()*num+
+                            equipment.getPrice() * num +
                             "</td>");
                 }
             %>
@@ -154,20 +156,22 @@
     </div>
     <div class="tab-pane fade" id="material">
         <%
-            double sum=0.00;
-            double req=budget.getRequirement().getMaterial();
+            double sum = 0.00;
+            double req = budget.getRequirement().getMaterial();
             Map<Material, Integer> materialsMap = budget.getMaterials();
             for (Material material : materialsMap.keySet()) {
-                sum+=(material.computeUnitPrice()*materialsMap.get(material));
+                sum += (material.computeUnitPrice() * materialsMap.get(material));
             }
         %>
         <div class="center-block">
-            <div>需求：<%=req%>
-            </div>
-            <div>实际：<%=sum%>
-            </div>
-            <div>还差：<%=req-sum%>
-            </div>
+            需求：<label id="material-req"><%=req%>
+        </label>
+            实际：
+            <label id="material-sum"><%=sum%>
+            </label>
+            还差：
+            <label id="material-diff"><%=req-sum%>
+            </label>
         </div>
         <table class="table table-hover">
             <thead>
@@ -196,7 +200,7 @@
                     out.write("<td>" +
                             "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
-                            material.computeUnitPrice()*num+"</td>");
+                            material.computeUnitPrice() * num + "</td>");
                 }
             %>
             </tbody>
@@ -244,8 +248,67 @@
     </div>
 
     <div class="tab-pane fade" id="travel">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <%
+            sum = 0.00;
+            req = budget.getRequirement().getTravel();
+            Map<Travel, Pair> travelsMap = budget.getTravels();
+            for (Travel travel : travelsMap.keySet()) {
+                sum += travel.cost(travelsMap.get(travel));
+            }
+        %>
+        <div class="center-block">
+            需求：<label id="travel-req"><%=req%>
+        </label>
+            实际：
+            <label id="travel-sum"><%=sum%>
+            </label>
+            还差：
+            <label id="travel-diff"><%=req - sum%>
+            </label>
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>城市</th>
+                <th>往返价格</th>
+                <th>伙食补助</th>
+                <th>交通补助</th>
+                <th>住宿补助</th>
+                <th>人数*天数</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <%
+                /*Map<Travel, Pair> travelsMap = budget.getTravels();*/
+                ITravelDao travelDao =
+                        applicationContext.getBean(ITravelDao.class);
+                List<Travel> travels = travelDao.selectAll();
+                for (Travel item : travels) {
+                    out.write("<tr>");
+                    out.write("<td>" + item.getId() + "</td>");
+                    out.write("<td>" + item.getName() + "</td>");
+                    out.write("<td>" + item.getPrice() + "</td>");
+                    out.write("<td>" + item.getFood() + "</td>");
+                    out.write("<td>" + item.getTraffic() + "</td>");
+                    out.write("<td>" + item.getAccommodation() + "</td>");
+                    int people = 0, days = 0;
+                    if (travelsMap.get(item) != null) {
+                        people = travelsMap.get(item).getPeople();
+                        days = travelsMap.get(item).getDays();
+                    }
+                    out.write("<td>" +
+                            "<input type='number' value='" + people + "' />" +
+                            "<input type='number' value='" + days + "' />" +
+                            "<button type='btn btn-default' class='updateItem' onclick=travel(this)>确认</button>" +
+                            item.cost(travelsMap.get(item)) +
+                            "</td>");
+                }
+            %>
+            </tbody>
+
+        </table>
     </div>
 
     <div class="tab-pane fade" id="conference">
@@ -266,7 +329,7 @@
                 map = (Map) budget.getConferences();
                 IConferenceDao conferenceDao =
                         applicationContext.getBean(IConferenceDao.class);
-                List<Conference>  conferences= conferenceDao.selectAll();
+                List<Conference> conferences = conferenceDao.selectAll();
                 for (Conference item : conferences) {
                     out.write("<tr>");
                     out.write("<td>" + item.getId() + "</td>");
@@ -379,7 +442,7 @@
                 map = (Map) budget.getLabour();
                 ILabourDao labourDao =
                         applicationContext.getBean(ILabourDao.class);
-                List<Labour>  labour= labourDao.selectAll();
+                List<Labour> labour = labourDao.selectAll();
                 for (Labour item : labour) {
                     out.write("<tr>");
                     out.write("<td>" + item.getId() + "</td>");
@@ -416,7 +479,7 @@
                 map = (Map) budget.getConsultations();
                 IConsultationDao consultationDao =
                         applicationContext.getBean(IConsultationDao.class);
-                List<Consultation>  consultations= consultationDao.selectAll();
+                List<Consultation> consultations = consultationDao.selectAll();
                 for (Consultation item : consultations) {
                     out.write("<tr>");
                     out.write("<td>" + item.getId() + "</td>");
@@ -454,7 +517,7 @@
 
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var price=btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
+        var price = btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
         var num = btn.parentElement.firstElementChild.value;
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
@@ -462,12 +525,17 @@
             data: {
                 mode: 0,
                 id: id,
-                price:price,
+                price: price,
                 nums: num
             },
-            success: function () {
-                alert("success");
-                location.reload();
+            success: function (data) {
+                req = Number(document.getElementById("equip-req").innerHTML)
+                data = Number(data)
+
+                document.getElementById("equip-sum").innerHTML = data
+                document.getElementById("equip-diff").innerHTML = req - data
+                //alert("success");
+                //location.reload();
             }
         })
     }
@@ -483,9 +551,14 @@
                 id: id,
                 nums: num
             },
-            success: function () {
-                alert("success");
-                location.reload();
+            success: function (data) {
+                req = Number(document.getElementById("material-req").innerHTML)
+                data = Number(data)
+
+                document.getElementById("material-sum").innerHTML = data
+                document.getElementById("material-diff").innerHTML = req - data
+                //alert("success");
+                //location.reload();
             }
         })
     }
@@ -503,7 +576,7 @@
             },
             success: function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
@@ -521,7 +594,7 @@
             },
             success: function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
@@ -539,7 +612,7 @@
             },
             success: function () {
                 alert("success");
-                location.reload();
+                //location.reload();
             }
         })
     }
@@ -557,7 +630,32 @@
             },
             success: function () {
                 alert("success");
-                location.reload();
+                //location.reload();
+            }
+        })
+    }
+
+    function travel(btn) {
+        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
+        var people = btn.parentElement.childNodes.item(0).value;
+        var days = btn.parentElement.childNodes.item(1).value;
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Travel",
+            type: "post",
+            data: {
+                mode: 0,
+                id: id,
+                people: people,
+                days: days
+            },
+            success: function (data) {
+                req = Number(document.getElementById("travel-req").innerHTML)
+                data = Number(data)
+
+                document.getElementById("travel-sum").innerHTML = data
+                document.getElementById("travel-diff").innerHTML = req - data
+                //alert("success");
+                //location.reload();
             }
         })
     }

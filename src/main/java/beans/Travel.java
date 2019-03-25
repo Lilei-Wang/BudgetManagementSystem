@@ -3,7 +3,7 @@ package beans;
 /**
  * 差旅费
  */
-public class Travel extends Item{
+public class Travel extends Item {
 
     private String dest;
     private double food;
@@ -12,7 +12,17 @@ public class Travel extends Item{
 
     @Override
     public double computeUnitPrice() {
-        return getPrice()+getFood()+getAccommodation()+getTraffic();
+        return getPrice() + getFood() + getAccommodation() + getTraffic();
+    }
+
+    @Override
+    public String getName() {
+        return getDest();
+    }
+
+    @Override
+    public void setName(String name) {
+        setDest(name);
     }
 
     @Override
@@ -55,5 +65,19 @@ public class Travel extends Item{
 
     public void setAccommodation(double accommodation) {
         this.accommodation = accommodation;
+    }
+
+    /**
+     * 计算n人m天的旅行需要多少钱
+     *
+     * @param pair
+     * @return
+     */
+    public double cost(Pair pair) {
+        if(pair==null || pair.getPeople()<=0 || pair.getDays()<=0) return 0.0;
+        return pair.getPeople() *
+                (getPrice()
+                        + (getTraffic() + getFood()) * pair.getDays()
+                        + getAccommodation() * (pair.getDays() - 1));
     }
 }

@@ -9,4 +9,6 @@ public interface ILabourDao {
     void insertLabour(Labour labour);
     void updateLabour(Labour labour);
     void deleteLabour(Labour labour);
+
+    Labour selectById(Integer id);
 }

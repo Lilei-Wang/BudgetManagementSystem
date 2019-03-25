@@ -9,4 +9,6 @@ public interface IPropertyDao {
     void insertProperty(Property property);
     void updateProperty(Property property);
     void deleteProperty(Property property);
+
+    Property selectById(Integer id);
 }

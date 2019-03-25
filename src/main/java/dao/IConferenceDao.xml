@@ -5,6 +5,9 @@
     <select id="selectAll" resultType="beans.Conference">
         select * from conference
     </select>
+    <select id="selectById" resultType="beans.Conference">
+        select * from conference where id=#{id}
+    </select>
     <insert id="insertConference">
         insert into budgetmanagementsystem.conference(name, price, experts,people) values (#{name},#{price},#{experts},#{people})
     </insert>

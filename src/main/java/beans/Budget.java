@@ -1,7 +1,6 @@
 package beans;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ public class Budget implements Serializable {
     private Map<Material,Integer> materials;
     private Map<TestAndProcess,Integer> testAndProcesses;
     private Map<Power,Integer> powers;
-    private Map<Travel,Integer> travels;
+    private Map<Travel,Pair> travels;
     private Map<Conference,Integer> conferences;
     private Map<InternationalCommunication,Integer> internationalCommunications;
     private Map<Property,Integer> properties;
@@ -72,11 +71,11 @@ public class Budget implements Serializable {
         this.powers = powers;
     }
 
-    public Map<Travel, Integer> getTravels() {
+    public Map<Travel, Pair> getTravels() {
         return travels;
     }
 
-    public void setTravels(Map<Travel, Integer> travels) {
+    public void setTravels(Map<Travel, Pair> travels) {
         this.travels = travels;
     }
 
@@ -162,7 +161,7 @@ public class Budget implements Serializable {
             }
         if (travels != null)
             for (Travel travel : travels.keySet()) {
-                direct += travel.computeUnitPrice() * travels.get(travel);
+                direct += travel.cost(travels.get(travel));
             }
         if (conferences != null)
             for (Conference conference : conferences.keySet()) {

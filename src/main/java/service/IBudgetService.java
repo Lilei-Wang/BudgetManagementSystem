@@ -2,7 +2,6 @@ package service;
 
 import beans.*;
 
-import java.util.List;
 import java.util.Map;
 
 public interface IBudgetService {
@@ -16,7 +15,7 @@ public interface IBudgetService {
 
     Map<Power,Integer> doPower(Double number);
 
-    Map<Travel,Integer> doTravel(Double number);
+    Map<Travel, Pair> doTravel(Double number);
 
     Map<Conference,Integer> doConference(Double number);
 

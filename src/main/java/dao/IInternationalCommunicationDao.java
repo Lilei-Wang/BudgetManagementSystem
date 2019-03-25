@@ -9,4 +9,6 @@ public interface IInternationalCommunicationDao {
     void insertInternational(InternationalCommunication internationalCommunication);
     void updateInternational(InternationalCommunication internationalCommunication);
     void deleteInternational(InternationalCommunication internationalCommunication);
+
+    InternationalCommunication selectById(Integer id);
 }

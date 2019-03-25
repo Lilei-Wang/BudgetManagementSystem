@@ -5,6 +5,9 @@
     <select id="selectAll" resultType="beans.Labour">
         select * from labour
     </select>
+    <select id="selectById" resultType="beans.Labour">
+        select * from labour where id=#{id}
+    </select>
     <insert id="insertLabour">
         insert into budgetmanagementsystem.labour(name,price) values (#{name},#{price})
     </insert>

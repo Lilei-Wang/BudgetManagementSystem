@@ -5,4 +5,19 @@
     <select id="selectAll" resultType="beans.Travel">
         select * from travel
     </select>
+    <select id="selectById" resultType="beans.Travel">
+        select * from travel where id=#{id}
+    </select>
+    <insert id="insertTravel">
+        insert into budgetmanagementsystem.travel(dest, price, food, traffic, accommodation)
+          values (#{dest},#{price},#{food},#{traffic},#{accommodation})
+    </insert>
+    <delete id="deleteTravel">
+        delete from budgetmanagementsystem.travel where id=#{id}
+    </delete>
+    <update id="updateTravel">
+        update budgetmanagementsystem.travel
+        set dest=#{dest},price=#{price},food=#{food},traffic=#{traffic},accommodation=#{accommodation}
+        where id=#{id}
+    </update>
 </mapper>

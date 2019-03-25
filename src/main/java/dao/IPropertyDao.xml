@@ -5,6 +5,9 @@
     <select id="selectAll" resultType="beans.Property">
         select * from property
     </select>
+    <select id="selectById" resultType="beans.Property">
+        select * from property where id=#{id}
+    </select>
     <insert id="insertProperty">
         insert into budgetmanagementsystem.property(name,price) values (#{name},#{price})
     </insert>
