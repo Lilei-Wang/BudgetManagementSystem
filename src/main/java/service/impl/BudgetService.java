@@ -194,28 +194,36 @@ public class BudgetService implements IBudgetService {
         if(travels!=null && travels.size()!=0)
         {
             double sofar=0.0;
-            Pair pair=new Pair(1,1);
             for (Travel travel : travels) {
                 if(sofar<number)
                 {
+                    Pair pair=new Pair(1,1);
                     result.put(travel,pair);
                     sofar+=travel.cost(pair);
                 }
             }
-            while (true)
+            while (sofar<number)
             {
-                sofar=0.0;
                 for (Travel travel : result.keySet()) {
-                    pair=result.get(travel);
+                    Pair pair=result.get(travel);
+                    double oldCost=travel.cost(pair);
                     pair.setDays(pair.getDays()+1);
-                    sofar+=(travel.cost(pair));
-                    if(sofar>=number) return result;
+                    double newCost=travel.cost(pair);
+                    sofar+=(newCost-oldCost);
+                    System.out.println("oldCost:"+oldCost);
+                    System.out.println("newCost:"+newCost);
+                    System.out.println("sofar:"+sofar);
+                    if(sofar>=number) {
+                        System.out.println(result);
+                        return result;
+                    }
                 }
             }
         }
         return result;
     }
 
+    /////////////////////////////////////////////////////////待解决
     /**
      * 合成会议费
      *
@@ -223,9 +231,39 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Map<Conference, Integer> doConference(Double number) {
+    public Map<Conference, Pair> doConference(Double number) {
+        Map<Conference,Pair> map=new HashMap<>();
         List<Conference> conferences = conferenceDao.selectAll();
-        return generateMap((List) conferences, number);
+        List<Consultation> consultations = consultationDao.selectAll();
+        Consultation consultation=null;
+        if(consultations!=null && consultations.size()>0)
+        {
+            for (Consultation item : consultations) {
+                consultation=item;
+                break;
+            }
+        }
+        double sum=0.0;
+        for (Conference conference : conferences) {
+            if(sum<number)
+            {
+                Pair value = new Pair(1, 1);
+                map.put(conference,value);
+                sum+=conference.cost(value,consultation);
+            }
+        }
+        while (sum<number)
+        {
+            for (Conference conference : map.keySet()) {
+                Pair pair = map.get(conference);
+                double oldCost=conference.cost(pair,consultation);
+                pair.setPeople(pair.getPeople()+1);
+                double newCost=conference.cost(pair,consultation);
+                sum+=(newCost-oldCost);
+                if(sum>=number) return map;
+            }
+        }
+        return map;
     }
 
     /**
@@ -299,6 +337,18 @@ public class BudgetService implements IBudgetService {
         Map<Consultation, Integer> result = new HashMap<>();
         result.put(consultation, experts);
         return result;
+    }
+
+    @Override
+    public Map<Consultation, Integer> doConsultation(int n) {
+        List<Consultation> consultations = consultationDao.selectAll();
+        Map<Consultation,Integer> map=new HashMap<>();
+        if(consultations!=null && consultations.size()>0)
+        {
+            Consultation consultation = consultations.get(0);
+            map.put(consultation,n);
+        }
+        return map;
     }
 
     /**

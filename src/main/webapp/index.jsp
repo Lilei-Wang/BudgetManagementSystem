@@ -59,7 +59,7 @@
         test = 15,
         power = 0,
         travel = 12,
-        conference = 3,
+        conference = 5,
         international = 6,
         property = 8,
         labour = 66,

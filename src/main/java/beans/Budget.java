@@ -9,19 +9,19 @@ import java.util.Map;
  * 经费报表对象，内含各种经费的集合
  */
 public class Budget implements Serializable {
-    private Map<Equipment,Integer> equipments;
-    private Map<Material,Integer> materials;
-    private Map<TestAndProcess,Integer> testAndProcesses;
-    private Map<Power,Integer> powers;
-    private Map<Travel,Pair> travels;
-    private Map<Conference,Integer> conferences;
-    private Map<InternationalCommunication,Integer> internationalCommunications;
-    private Map<Property,Integer> properties;
-    private Map<Labour,Integer> labour;
-    private Map<Consultation,Integer> consultations;
-    private Map<Others,Integer> others;
-    private Map<Indirect,Integer> indirects;
-    private Requirement requirement=new Requirement();
+    private Map<Equipment, Integer> equipments;
+    private Map<Material, Integer> materials;
+    private Map<TestAndProcess, Integer> testAndProcesses;
+    private Map<Power, Integer> powers;
+    private Map<Travel, Pair> travels;
+    private Map<Conference, Pair> conferences;
+    private Map<InternationalCommunication, Integer> internationalCommunications;
+    private Map<Property, Integer> properties;
+    private Map<Labour, Integer> labour;
+    private Map<Consultation, Integer> consultations;
+    private Map<Others, Integer> others;
+    private Map<Indirect, Integer> indirects;
+    private Requirement requirement = new Requirement();
 
     public Requirement getRequirement() {
         return requirement;
@@ -79,11 +79,11 @@ public class Budget implements Serializable {
         this.travels = travels;
     }
 
-    public Map<Conference, Integer> getConferences() {
+    public Map<Conference, Pair> getConferences() {
         return conferences;
     }
 
-    public void setConferences(Map<Conference, Integer> conferences) {
+    public void setConferences(Map<Conference, Pair> conferences) {
         this.conferences = conferences;
     }
 
@@ -145,7 +145,7 @@ public class Budget implements Serializable {
      *
      * @return
      */
-    public Map<Indirect,Integer> computeIndirect() {
+    public Map<Indirect, Integer> computeIndirect() {
         double direct = 0.0;
         if (materials != null)
             for (Material material : materials.keySet()) {
@@ -165,23 +165,28 @@ public class Budget implements Serializable {
             }
         if (conferences != null)
             for (Conference conference : conferences.keySet()) {
-                direct += conference.computeUnitPrice()*conferences.get(conference);
+                direct += conference.getPrice() * conferences.get(conference).getPeople() * conferences.get(conference).getDays();
             }
+        if (consultations!=null) {
+            for (Consultation consultation : consultations.keySet()) {
+                direct+=consultation.getPrice()*consultations.get(consultation);
+            }
+        }
         if (internationalCommunications != null)
             for (InternationalCommunication internationalCommunication : internationalCommunications.keySet()) {
-                direct += internationalCommunication.computeUnitPrice()*internationalCommunications.get(internationalCommunication);
+                direct += internationalCommunication.computeUnitPrice() * internationalCommunications.get(internationalCommunication);
             }
         if (properties != null)
             for (Property property : properties.keySet()) {
-                direct += property.computeUnitPrice()*properties.get(property);
+                direct += property.computeUnitPrice() * properties.get(property);
             }
         if (labour != null)
             for (Labour labour1 : labour.keySet()) {
-                direct += labour1.computeUnitPrice()*labour.get(labour1);
+                direct += labour1.computeUnitPrice() * labour.get(labour1);
             }
         if (others != null)
             for (Others other : others.keySet()) {
-                direct += other.computeUnitPrice()*others.get(other);
+                direct += other.computeUnitPrice() * others.get(other);
             }
 
         double indirect = 0.0;
@@ -195,8 +200,8 @@ public class Budget implements Serializable {
         Indirect result = new Indirect();
         result.setPrice(indirect);
         result.setName("间接费用");
-        Map<Indirect,Integer> map=new HashMap<>();
-        map.put(result,1);
+        Map<Indirect, Integer> map = new HashMap<>();
+        map.put(result, 1);
         return map;
     }
 

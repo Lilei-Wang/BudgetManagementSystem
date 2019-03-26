@@ -61,11 +61,11 @@
         </div>
     </div>
 </nav>
-
+<%--
 <div>
     <button class="btn btn-success">同步预算</button>
     <p class="help-block center-block">当且仅当在生成预算之后对规则进行了更改时需要此操作</p>
-</div>
+</div>--%>
 
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
@@ -73,17 +73,17 @@
             设备费
         </a>
     </li>
-    <li><a href="#material" data-toggle="tab">材料费</a></li>
+    <li><a href="#material" data-toggle="tab" onclick=showMaterial()>材料费</a></li>
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab">差旅费</a></li>
-    <li><a href="#conference" data-toggle="tab">会议费</a></li>
+    <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab">出版/文献/信息传播/知识产权事务费</a></li>
     <li><a href="#labour" data-toggle="tab">劳务费</a></li>
     <li><a href="#consultation" data-toggle="tab">咨询费</a></li>
     <li><a href="#others" data-toggle="tab">其他费用</a></li>
-    <li><a href="#indirect" data-toggle="tab">间接费用</a></li>
+    <li><a href="#indirect" data-toggle="tab" onclick=showIndirect()>间接费用</a></li>
 
 </ul>
 
@@ -94,6 +94,20 @@
 <%
     }
 %>
+<div>
+    <div class="text-center">
+        <label>总预算</label>
+        期望：<label id="total-req"></label>
+        实际：<label id="total-sum"></label>
+        还差：<label id="total-diff"></label>
+    </div>
+    <div class="text-center">
+        <label>本类预算</label>
+        期望：<label id="this-req"></label>
+        实际：<label id="this-sum"></label>
+        还差：<label id="this-diff"></label>
+    </div>
+</div>
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
@@ -170,7 +184,7 @@
             <label id="material-sum"><%=sum%>
             </label>
             还差：
-            <label id="material-diff"><%=req-sum%>
+            <label id="material-diff"><%=req - sum%>
             </label>
         </div>
         <table class="table table-hover">
@@ -312,6 +326,30 @@
     </div>
 
     <div class="tab-pane fade" id="conference">
+        <%
+            sum=0.0;
+            req=budget.getRequirement().getConference();
+            Map<Conference, Pair> conferencesMap = budget.getConferences();
+            Map<Consultation, Integer> consultationsMap = budget.getConsultations();
+            Consultation consultation=null;
+            for (Consultation item : consultationsMap.keySet()) {
+                consultation=item;
+            }
+            for (Conference conference : conferencesMap.keySet()) {
+                sum+=conferencesMap.get(conference).getDays()*((consultation.getPrice()*conference.getExperts())
+                        +conference.getPrice()*conferencesMap.get(conference).getPeople());
+            }
+        %>
+        <div class="center-block">
+            需求：<label id="conf-req"><%=req%>
+        </label>
+            实际：
+            <label id="conf-sum"><%=sum%>
+            </label>
+            还差：
+            <label id="conf-diff"><%=req - sum%>
+            </label>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -319,14 +357,12 @@
                 <th>名称</th>
                 <th>单价</th>
                 <th>需要专家</th>
-                <th>参会人数</th>
-                <th>会议次数</th>
+                <th>参会人数*会议次数</th>
             </tr>
             </thead>
 
             <tbody>
             <%
-                map = (Map) budget.getConferences();
                 IConferenceDao conferenceDao =
                         applicationContext.getBean(IConferenceDao.class);
                 List<Conference> conferences = conferenceDao.selectAll();
@@ -336,13 +372,14 @@
                     out.write("<td>" + item.getName() + "</td>");
                     out.write("<td>" + item.getPrice() + "</td>");
                     out.write("<td>" + item.getExperts() + "</td>");
-                    out.write("<td>" + item.getPeople() + "</td>");
-                    int num = 0;
-                    if (map.get(item) != null) {
-                        num = map.get(item);
+                    int people = 0, days = 0;
+                    if (conferencesMap.get(item) != null) {
+                        people = conferencesMap.get(item).getPeople();
+                        days = conferencesMap.get(item).getDays();
                     }
                     out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
+                            "<input type='number' value='" + people + "' />" +
+                            "<input type='number' value='" + days + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=conference(this)>确认</button>" +
                             "</td>");
                 }
@@ -503,8 +540,30 @@
     </div>
 
     <div class="tab-pane fade" id="indirect">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th hidden>ID</th>
+                <th>名称</th>
+                <th>费用</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody id="indirect-body">
+            </tbody>
+            <tr>
+                <td>
+                    <input type="text">
+                </td>
+                <td><input type="number">
+                </td>
+                <td>
+                    <input type="number">
+                    <button class="btn" onclick=updateIndirect(this)>添加</button>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 
@@ -619,17 +678,24 @@
 
     function conference(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
+        var people = btn.parentElement.childNodes.item(0).value;
+        var days = btn.parentElement.childNodes.item(1).value;
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Conference",
             type: "post",
             data: {
                 mode: 0,
                 id: id,
-                nums: num
+                people: people,
+                days: days
             },
-            success: function () {
-                alert("success");
+            success: function (data) {
+                req = Number(document.getElementById("conf-req").innerHTML)
+                data = Number(data)
+
+                document.getElementById("conf-sum").innerHTML = data
+                document.getElementById("conf-diff").innerHTML = req - data
+                //alert("success");
                 //location.reload();
             }
         })
@@ -660,16 +726,107 @@
         })
     }
 
-    /* function init() {
-         var updateEquips=document.getElementsByClassName("updateEquipment");
-         alert(updateEquips.length);
-         var i;
-         for(i=0;i<updateEquips.length;i++)
-         {
-             var btn=updateEquips[i];
-             var num=btn.parentElement.parentElement.firstElementChild.innerHTML
-             btn.addEventListener("click",function () { alert(num) })
-         }
-     }*/
+
+    /**
+     * 更新差值
+     * @param type 当前预算种类
+     */
+    function updateBudgetPage(type) {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Detail/Stats",
+            type: "post",
+            dataType:"json",
+            success: function (data) {
+                document.getElementById("total-req").innerHTML=data.req;
+                document.getElementById("total-sum").innerHTML=data.sum;
+                document.getElementById("total-diff").innerHTML=data.diff;
+                if(data.diff<0)
+                    document.getElementById("total-diff").style.color="red";
+                else
+                    document.getElementById("total-diff").style.color="green";
+
+                document.getElementById("this-req").innerHTML=data[type].req;
+                document.getElementById("this-sum").innerHTML=data[type].sum;
+                document.getElementById("this-diff").innerHTML=data[type].diff;
+                if(data[type].diff<0)
+                    document.getElementById("this-diff").style.color="red";
+                else
+                    document.getElementById("this-diff").style.color="green";
+                alert("updateBudgetPage");
+                //location.reload();
+            }
+        })
+    }
+
+    function showIndirect() {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Detail/Indirect",
+            type: "post",
+            dataType:"json",
+            success: function (data) {
+                var table=document.getElementById("indirect-body");
+                table.innerText="";
+                //alert(data.length)
+                list=data.indirects;
+                for(var i=0;i<list.length;i++)
+                {
+                    appendIndirect(list[i].id,list[i].name,list[i].price,list[i].nums)
+                }
+                updateBudgetPage("indirect");
+            },
+            error:function (data) {
+                alert(data);
+            }
+        })
+    }
+
+    function appendIndirect(id,name,price,nums)
+    {
+        var table=document.getElementById("indirect-body");
+        var tr=document.createElement("tr");
+       // var td=document.createElement("td");
+        //td.innerHTML=(id==null)?0:id;
+        //tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="text";
+        input.value=name;
+        td.appendChild(input);
+        tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="number";
+        input.value=price;
+        td.appendChild(input);
+        tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="number";
+        input.value=nums;
+        td.appendChild(input);
+        var button=document.createElement("button");
+        button.innerHTML="确认";
+        button.classList.add("btn");
+        button.onclick=function (ev) {  updateIndirect(button)};
+        td.appendChild(button);
+        tr.appendChild(td);
+        table.appendChild(tr);
+    }
+
+    function updateIndirect(btn) {
+        //alert(btn.innerHTML);
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Indirect",
+            type: "post",
+            dataType:"json",
+            success: function (data) {
+                showIndirect();
+                updateBudgetPage();
+            },
+            error:function (data) {
+                alert("error");
+            }
+        })
+    }
 
 </script>

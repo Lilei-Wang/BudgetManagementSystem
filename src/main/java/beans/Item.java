@@ -9,9 +9,10 @@ import java.util.Objects;
  */
 public class Item implements Serializable {
     private Integer id;
-    private String name=null;
+    private String name;
     private double price;
     private String comment;
+
 
     /**
      * 此方法返回每一类预算的价格，不等同于getPrice，由子类选择实现，因为存在差旅费等多个价格加算的预算

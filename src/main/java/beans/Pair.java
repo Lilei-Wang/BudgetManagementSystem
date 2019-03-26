@@ -28,4 +28,12 @@ public class Pair implements Serializable {
     public void setDays(int days) {
         this.days = days;
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "people=" + people +
+                ", days=" + days +
+                '}';
+    }
 }

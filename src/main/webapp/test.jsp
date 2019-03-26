@@ -51,7 +51,8 @@
     </div>
 </nav>
 
-
+<button class="btn btn-success" onclick=jsp()>test</button>
+<label id="xxx">123445</label>
 
 <a href="Crawler/Workstation">爬取工作站数据</a><br>
 <a href="Budget/Download">下载</a><br>
@@ -61,5 +62,14 @@ ${pageContext.request.contextPath}<br>
         <font size="<%=i%>"> hhhh</font>
  <%   }
 %>
+
+<script type="text/javascript">
+    var colors=["red","green","blue","orange"];
+   var i=0;
+    function jsp() {
+        document.getElementById("xxx").style.color=colors[i%colors.length];
+        i++;
+    }
+</script>
 </body>
 </html>
