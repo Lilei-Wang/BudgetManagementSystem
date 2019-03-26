@@ -130,7 +130,7 @@ public class BudgetService implements IBudgetService {
                 }
             });
             for (Equipment equipment : equipments) {
-                System.out.println(equipment);
+                map.put(equipment,0);
             }
             Equipment equipment = equipments.get(0);
             double sum=0.0;

@@ -1,6 +1,7 @@
 package handlers;
 
 import beans.Budget;
+import beans.Equipment;
 import beans.Indirect;
 
 
@@ -24,7 +25,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/Budget/Detail")
 public class DetailHandler {
-    @RequestMapping("Indirect")
+    @RequestMapping("/Indirect")
     public void showIndirect(HttpServletRequest request, HttpServletResponse response)
     {
         try {
@@ -79,6 +80,33 @@ public class DetailHandler {
             object.put("diff",req_sofar-sum_sofar);
 
             writer.write(object.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Equipment")
+    public void updateEquipment(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Equipment, Integer> equipments = budget.getEquipments();
+            List<JSONObject> list=new LinkedList<>();
+            for (Equipment item : equipments.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",equipments.get(item));
+                list.add(obj);
+            }
+            object.put("equipments",list);
+            writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();
         }

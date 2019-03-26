@@ -37,7 +37,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="showEquipment()">
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -69,7 +69,7 @@
 
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
-        <a href="#equipment" data-toggle="tab">
+        <a href="#equipment" data-toggle="tab" onclick=showEquipment()>
             设备费
         </a>
     </li>
@@ -119,7 +119,7 @@
                 equipSum += (equipmentMap.get(equipment) * equipment.computeUnitPrice());
             }
         %>
-        <div class="center-block">
+        <%--<div class="center-block">
             需求：<label id="equip-req"><%=budget.getRequirement().getEquip()%>
         </label>
             实际：
@@ -128,18 +128,18 @@
             还差：
             <label id="equip-diff"><%=budget.getRequirement().getEquip() - equipSum%>
             </label>
-        </div>
+        </div>--%>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
+                <th hidden>编号</th>
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
             </tr>
             </thead>
 
-            <tbody>
+            <tbody id="equipment-table">
             <%
                 budget = (Budget) request.getAttribute("budget");
                 Map<Item, Integer> map = (Map) budget.getEquipments();
@@ -149,7 +149,7 @@
 
                 IEquipmentDao equipmentDao = applicationContext.getBean(IEquipmentDao.class);
                 List<Equipment> equipments = equipmentDao.selectAll();
-                for (Equipment equipment : equipments) {
+                /*for (Equipment equipment : equipments) {
                     out.write("<tr>");
                     out.write("<td>" + equipment.getId() + "</td>");
                     out.write("<td>" + equipment.getName() + "</td>");
@@ -163,9 +163,20 @@
                             "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
                             equipment.getPrice() * num +
                             "</td>");
-                }
+                }*/
             %>
             </tbody>
+            <tr class="success">
+                <td>
+                    <input type="text" value="new" class="name">
+                </td>
+                <td><input type="number" value="0" class="price">
+                </td>
+                <td>
+                    <input type="number" value="0" class="nums">
+                    <button class="btn" onclick=updateEquipment(this,0)>添加</button>
+                </td>
+            </tr>
         </table>
     </div>
     <div class="tab-pane fade" id="material">
@@ -599,6 +610,91 @@
         })
     }
 
+    function updateEquipment(button,curd) {
+        var root=button.parentNode.parentNode;
+        var name=root.getElementsByClassName("name").item(0).value
+        var price=root.getElementsByClassName("price").item(0).value
+        var nums=root.getElementsByClassName("nums").item(0).value
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
+            type: "post",
+            data: {
+                name:name,
+                price: price,
+                nums: nums,
+                curd:curd
+            },
+            success: function (data) {
+                showEquipment();
+            }
+        })
+    }
+
+    function appendEquipment(id, name, price, nums,root) {
+        var table=root;
+        var tr=document.createElement("tr");
+        // var td=document.createElement("td");
+        //td.innerHTML=(id==null)?0:id;
+        //tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="text";
+        input.id="name";
+        input.value=name;input.setAttribute("readOnly",true);input.classList.add("name");
+        td.appendChild(input);
+        tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="number";
+        input.value=price;
+        input.id="price";input.classList.add("price");
+        td.appendChild(input);
+        tr.appendChild(td);
+        td=document.createElement("td");
+        input=document.createElement("input");
+        input.type="number";
+        input.value=nums;
+        input.id="nums";input.classList.add("nums");
+        td.appendChild(input);
+        var button=document.createElement("button");
+        button.innerHTML="确认";
+        button.classList.add("btn");
+        button.classList.add("btn-success");
+        button.onclick=function (ev) {  updateEquipment(button,2)};
+        var del=document.createElement("button");
+        del.innerHTML="删除";
+        del.classList.add("btn");
+        del.classList.add("btn-danger");
+        del.onclick=function (ev) {  updateEquipment(del,1)};
+        td.appendChild(button);
+        td.appendChild(del);
+        tr.appendChild(td);
+        table.appendChild(tr);
+    }
+
+    function showEquipment() {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Detail/Equipment",
+            type: "post",
+            dataType:"json",
+            success: function (data) {
+                var table=document.getElementById("equipment-table");
+                table.innerText="";
+                //alert(data.length)
+                list=data.equipments;
+                for(var i=0;i<list.length;i++)
+                {
+                    appendEquipment(list[i].id,list[i].name,list[i].price,list[i].nums,table)
+                }
+                //appendEquipment(0,"",0,0,table.nextElementSibling);
+                updateBudgetPage("equipment");
+            },
+            error:function (data) {
+                alert(data);
+            }
+        })
+    }
+
     function material(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
         var num = btn.parentElement.firstElementChild.value;
@@ -728,7 +824,7 @@
 
 
     /**
-     * 更新差值 
+     * 更新差值
      * @param type 当前预算种类
      */
     function updateBudgetPage(type) {
@@ -752,7 +848,7 @@
                     document.getElementById("this-diff").style.color="red";
                 else
                     document.getElementById("this-diff").style.color="green";
-                alert("updateBudgetPage");
+                //alert("updateBudgetPage");
                 //location.reload();
             }
         })

@@ -10,6 +10,10 @@ import java.util.Map;
 public class DetailService implements IDetailService {
     @Override
     public double sumEquipment(Map<Equipment, Integer> equipments) {
-        return 0;
+        double sum=0.0;
+        for (Equipment equipment : equipments.keySet()) {
+            sum+=equipment.getPrice()*equipments.get(equipment);
+        }
+        return sum;
     }
 }

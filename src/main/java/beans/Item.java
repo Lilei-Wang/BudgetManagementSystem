@@ -40,7 +40,7 @@ public class Item implements Serializable {
      */
     @Override
     public int hashCode() {
-        return (id==null)?0:id.hashCode();
+        return (name==null)?0:name.hashCode();
     }
 
     /**
@@ -54,7 +54,7 @@ public class Item implements Serializable {
         if(this==obj) return true;
         if(getClass()!=obj.getClass()) return false;
         Item other=(Item)obj;
-        return id.equals(other.getId());
+        return other.getName().equals(name);
     }
 
     public Integer getId() {
