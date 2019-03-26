@@ -728,7 +728,7 @@
 
 
     /**
-     * 更新差值
+     * 更新差值 
      * @param type 当前预算种类
      */
     function updateBudgetPage(type) {
