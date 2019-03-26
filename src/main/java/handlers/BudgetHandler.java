@@ -244,10 +244,22 @@ public class BudgetHandler {
         Map<Equipment, Integer> equipments = budget.getEquipments();
         //是否符合规则
         if(!checkService.checkEquipment(equipment)) return;
+        //删除
         if (curd.equals(1)) {
             equipments.remove(equipment);
-        } else
-            equipments.put(equipment, nums);
+        } else if(curd.equals(2))//增改
+        {
+            for (Equipment item : equipments.keySet()) {
+                if(item.equals(equipment))
+                {
+                    item.setPrice(equipment.getPrice());
+                    equipments.put(item,nums);
+                    break;
+                }
+            }
+        }
+        else
+            equipments.put(equipment,nums);
         serializeBudget(budget, getFilePath(sessionID));
         /*if (mode.equals(0))//修改预算
         {
