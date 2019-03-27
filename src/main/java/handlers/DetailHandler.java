@@ -72,15 +72,16 @@ public class DetailHandler {
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("equipment",sub);
-
+            req_sofar+=req;sum_sofar+=sum;
 
             sub=new JSONObject();
-            req=budget.getRequirement().getEquip();
-            sum=detailService.sumEquipment(budget.getEquipments());
+            req=budget.getRequirement().getTravel();
+            sum=detailService.sumTravel(budget.getTravels());
             sub.put("req",req);
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("travel",sub);
+            req_sofar+=req;sum_sofar+=sum;
 
             object.put("req",req_sofar);
             object.put("sum",sum_sofar);

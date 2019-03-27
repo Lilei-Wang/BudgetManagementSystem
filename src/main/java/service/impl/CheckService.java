@@ -10,6 +10,8 @@ import service.ICheckService;
 public class CheckService implements ICheckService {
     @Override
     public boolean checkEquipment(Equipment equipment) {
+        if(equipment==null
+                || equipment.getName()==null) return false;
         return true;
     }
 

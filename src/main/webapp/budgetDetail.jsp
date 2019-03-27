@@ -86,21 +86,22 @@
     <li><a href="#indirect" data-toggle="tab" onclick=showIndirect()>间接费用</a></li>
 
 </ul>
-
-<div>
-    <div class="text-center">
-        <label>总预算</label>
-        期望：<label id="total-req"></label>
-        实际：<label id="total-sum"></label>
-        还差：<label id="total-diff"></label>
+<h3>
+    <div>
+        <div class="text-center">
+            <label>总预算</label>
+            期望：<label id="total-req"></label>
+            实际：<label id="total-sum"></label>
+            <span id="total-hint"></span><label id="total-diff"></label>
+        </div>
+        <div class="text-center">
+            <label>本类预算</label>
+            期望：<label id="this-req"></label>
+            实际：<label id="this-sum"></label>
+            <span id="this-hint"></span><label id="this-diff"></label>
+        </div>
     </div>
-    <div class="text-center">
-        <label>本类预算</label>
-        期望：<label id="this-req"></label>
-        实际：<label id="this-sum"></label>
-        还差：<label id="this-diff"></label>
-    </div>
-</div>
+</h3>
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
@@ -260,7 +261,7 @@
 
         </table>
     </div>
-    <div class="tab-pane fade" id="power" >
+    <div class="tab-pane fade" id="power">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -309,20 +310,18 @@
 
             <tbody id="travel-table">
             </tbody>
-            <form>
             <tr class="success">
-                <td><input name="name" type="text"></td>
-                <td><input name="price" type="number"></td>
-                <td><input name="food" type="number"></td>
-                <td><input name="traffic" type="number" ></td>
-                <td><input name="accommodation" type="number"></td>
-                <td><input name="people" type="number" ></td>
-                <td><input name="days" type="number"></td>
+                <td><input required class="name" type="text" value="new"></td>
+                <td><input required class="price" type="number" value="0"></td>
+                <td><input required class="food" type="number" value="0"></td>
+                <td><input required class="traffic" type="number" value="0"></td>
+                <td><input required class="accommodation" type="number" value="0"></td>
+                <td><input required class="people" type="number" value="0"></td>
+                <td><input required class="days" type="number" value="0"></td>
                 <td>
-                    <button class="btn" onclick=updateTravel(this.form,0)>添加</button>
+                    <button class="btn" onclick=updateTravel(this,0)>添加</button>
                 </td>
             </tr>
-            </form>
         </table>
     </div>
 
@@ -794,12 +793,33 @@
         })
     }
 
-    function updateTravel(form,curd) {
-        form.action="${pageContext.request.contextPath}/Budget/Modify/Travel";
-        form.appendChild(getInput("number",curd,"curd",false));
-        form.method="post";
-        form.target="hidden_frame";
-        form.submit();
+    function updateTravel(button, curd) {
+        var root = button.parentNode.parentNode;
+        var name = root.getElementsByClassName("name").item(0).value
+        var price = root.getElementsByClassName("price").item(0).value
+        var food = root.getElementsByClassName("food").item(0).value
+        var traffic = root.getElementsByClassName("traffic").item(0).value
+        var accommodation = root.getElementsByClassName("accommodation").item(0).value
+        var people = root.getElementsByClassName("people").item(0).value
+        var days = root.getElementsByClassName("days").item(0).value
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Modify/Travel",
+            type: "post",
+            data: {
+                name: name,
+                price: price,
+                food: food,
+                traffic: traffic,
+                accommodation: accommodation,
+                people: people,
+                days: days,
+                curd: curd
+            },
+            success: function (data) {
+                showTravel();
+            }
+        })
     }
 
     function showTravel() {
@@ -809,7 +829,7 @@
             dataType: "json",
             success: function (data) {
                 var table = document.getElementById("travel-table");
-                table.innerText = "";
+                table.innerHTML = "";
                 list = data.travels;
                 for (var i = 0; i < list.length; i++) {
                     appendTravel(list[i].name, list[i].price, list[i].food,
@@ -828,56 +848,88 @@
     }
 
     function getTr(width) {
-        tr=document.createElement("tr");
-        tr.style.width=width;
+        tr = document.createElement("tr");
+        tr.style.width = width;
         return tr;
     }
 
     function getTd(width) {
-        td=document.createElement("td");
-        td.style.width=width;
+        td = document.createElement("td");
+        td.style.width = width;
         return td;
     }
 
-    function getInput(type, value, name, readOnly) {
-        var input=document.createElement("input");
-        input.type=type;
-        input.value=value;
-        input.name=name;
-        input.readOnly=readOnly;
+    function getInput(type, value, nameOrclazz, readOnly) {
+        var input = document.createElement("input");
+        input.type = type;
+        input.value = value;
+        input.name = nameOrclazz;
+        input.classList.add(nameOrclazz);
+        input.readOnly = readOnly;
         return input;
     }
 
     function getButton(innerHTML, claszzList, onclick) {
-        var button=document.createElement("button");
-        button.innerHTML=innerHTML;
-        button.onclick=onclick;
-        for(var i=0;i<claszzList.length;i++)
+        var button = document.createElement("button");
+        button.innerHTML = innerHTML;
+        button.onclick = onclick;
+        for (var i = 0; i < claszzList.length; i++)
             button.classList.add(claszzList[i]);
         return button;
     }
 
-    function appendTravel(name,price,food,traffic,accommodation,people,days,table) {
-        width=100;
-        var form=document.createElement("form");
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("text",name,"name",true))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",price,"price",false))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",food,"food",false))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",traffic,"traffic",false))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",accommodation,"accommodation",false))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",people,"people",false))));
-        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",days,"days",false))));
-        form.appendChild(getTr(width)
-            .appendChild(getTd(width).appendChild(getButton("确认",["btn","btn-success"],function () {
-                updateTravel(form,2);
-            }))));
-        form.appendChild(getTr(width)
-            .appendChild(getTd(width).appendChild(getButton("删除",["btn","btn-danger"],function () {
-                updateTravel(form,1);
-            }))));
-        form.appendChild(tr);
-        table.appendChild(form);
-        //body.appendChild(table);
+    function appendTravel(name, price, food, traffic, accommodation, people, days, table) {
+        width = 100;
+        tr = document.createElement("tr")
+        var input = getInput("text", name, "name", true);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", price, "price", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", food, "food", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", traffic, "traffic", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", accommodation, "accommodation", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", people, "people", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getInput("number", days, "days", false);
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getButton("确认", ["btn", "btn-success"], function () {
+            updateTravel(this, 2);
+        });
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+
+        var input = getButton("删除", ["btn", "btn-danger"], function () {
+            updateTravel(this, 1);
+        });
+        var td = getTd(width);
+        td.appendChild(input);
+        tr.appendChild(td);
+        table.appendChild(tr);
     }
 
 
@@ -891,25 +943,55 @@
             type: "post",
             dataType: "json",
             success: function (data) {
+                var over="预算超出：";
+                var under="预算不足，再来";
+                var equal="凑够啦！";
+                var colors={
+                    over:"red",
+                    under:"blue",
+                    equal:"green"
+                }
                 document.getElementById("total-req").innerHTML = data.req;
                 document.getElementById("total-sum").innerHTML = data.sum;
-                document.getElementById("total-diff").innerHTML = data.diff;
-                if (data.diff < 0)
-                    document.getElementById("total-diff").style.color = "red";
+                document.getElementById("total-diff").innerHTML = abs(data.diff);
+                if (data.diff < 0) {
+                    document.getElementById("total-diff").style.color = colors.over;
+                    document.getElementById("total-hint").innerHTML = over;
+                }
+                else if(data.diff > 0) {
+                    document.getElementById("total-diff").style.color = colors.under;
+                    document.getElementById("total-hint").innerHTML = under;
+                }
                 else
-                    document.getElementById("total-diff").style.color = "green";
+                {
+                    document.getElementById("total-diff").style.color = colors.equal;
+                    document.getElementById("total-hint").innerHTML = equal;
+                }
 
                 document.getElementById("this-req").innerHTML = data[type].req;
                 document.getElementById("this-sum").innerHTML = data[type].sum;
-                document.getElementById("this-diff").innerHTML = data[type].diff;
-                if (data[type].diff < 0)
-                    document.getElementById("this-diff").style.color = "red";
+                document.getElementById("this-diff").innerHTML = abs(data[type].diff);
+                if (data[type].diff < 0) {
+                    document.getElementById("this-hint").innerHTML =over
+                    document.getElementById("this-diff").style.color =colors.over
+                }
+                else if(data[type].diff > 0) {
+                    document.getElementById("this-hint").innerHTML =under
+                    document.getElementById("this-diff").style.color = colors.under;
+                }
                 else
-                    document.getElementById("this-diff").style.color = "green";
+                {
+                    document.getElementById("this-diff").style.color = colors.equal;
+                    document.getElementById("this-hint").innerHTML = equal;
+                }
                 //alert("updateBudgetPage");
                 //location.reload();
             }
         })
+    }
+    function abs(number) {
+        if(number<0) return -number;
+        return number;
     }
 
     function showIndirect() {

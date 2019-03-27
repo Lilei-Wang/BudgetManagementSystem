@@ -1,6 +1,8 @@
 package service.impl;
 
 import beans.Equipment;
+import beans.Pair;
+import beans.Travel;
 import org.springframework.stereotype.Service;
 import service.IDetailService;
 
@@ -13,6 +15,15 @@ public class DetailService implements IDetailService {
         double sum=0.0;
         for (Equipment equipment : equipments.keySet()) {
             sum+=equipment.getPrice()*equipments.get(equipment);
+        }
+        return sum;
+    }
+
+    @Override
+    public double sumTravel(Map<Travel, Pair> travels) {
+        double sum=0.0;
+        for (Travel travel : travels.keySet()) {
+            sum+=travel.cost(travels.get(travel));
         }
         return sum;
     }

@@ -21,15 +21,6 @@ public class Travel extends Item {
         return getPrice() + getFood() + getAccommodation() + getTraffic();
     }
 
-    @Override
-    public String getName() {
-        return getDest();
-    }
-
-    @Override
-    public void setName(String name) {
-        setDest(name);
-    }
 
     @Override
     public String toString() {
@@ -42,11 +33,11 @@ public class Travel extends Item {
     }
 
     public String getDest() {
-        return dest;
+        return getName();
     }
 
     public void setDest(String dest) {
-        this.dest = dest;
+        setName(dest);
     }
 
     public double getFood() {
