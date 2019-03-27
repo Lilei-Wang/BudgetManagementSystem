@@ -1,8 +1,6 @@
 package handlers;
 
-import beans.Budget;
-import beans.Equipment;
-import beans.Indirect;
+import beans.*;
 
 
 import com.alibaba.fastjson.JSON;
@@ -106,6 +104,37 @@ public class DetailHandler {
                 list.add(obj);
             }
             object.put("equipments",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Travel")
+    public void updateTravel(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Travel, Pair> travels = budget.getTravels();
+            List<JSONObject> list=new LinkedList<>();
+            for (Travel item : travels.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("food",item.getFood());
+                obj.put("traffic",item.getTraffic());
+                obj.put("accommodation",item.getAccommodation());
+                obj.put("people",travels.get(item).getPeople());
+                obj.put("days",travels.get(item).getDays());
+                list.add(obj);
+            }
+            object.put("travels",list);
             writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();

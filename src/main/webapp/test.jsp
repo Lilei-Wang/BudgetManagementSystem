@@ -31,6 +31,7 @@
             padding-top: 70px;
         }
     </style>
+    <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
 </head>
 <body>
 
@@ -59,15 +60,66 @@
 ${pageContext.request.contextPath}<br>
 <%
     for (int i = 1; i <= 3; i++) {%>
-        <font size="<%=i%>"> hhhh</font>
- <%   }
+<font size="<%=i%>"> hhhh</font>
+<% }
 %>
 
+<hr>
+<div id="1" ng-app="myApp" ng-controller="ctrl">
+    <table>
+        <tr ng-repeat="id1 in IDS1">
+            <td>{{ id1 }}</td>
+            <td>
+                <button class="btn btn-success" ng-click="update(this,0)">anwo</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="2" ng-app="myApp2" ng-controller="ctrl2">
+    <table>
+        <tr ng-repeat="id2 in IDS2">
+            <td>{{ id2 }}</td>
+            <td>
+                <button class="btn btn-success" ng-click="update(this,0)">anwo</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
 <script type="text/javascript">
-    var colors=["red","green","blue","orange"];
-   var i=0;
+    angular.module('myApp', []).controller('ctrl', function ($scope, $http) {
+        $scope.IDS1 = [1, 2, 3, 4, 5];
+        $scope.update = function (btn, curd) {
+            alert("update!!!")
+            $scope.showList()
+        }
+        $scope.showList = function () {
+            $scope.IDS1 = [6, 7, 8];
+            alert("showList")
+        }
+    });
+
+    angular.module('myApp2', []).controller('ctrl2', function ($scope, $http) {
+        $scope.IDS2 = [1, 2, 3, 4, 5];
+        $scope.update = function (btn, curd) {
+            alert("update!!!")
+            $scope.showList()
+        }
+        $scope.showList = function () {
+            $scope.IDS2 = [6, 7, 8];
+            alert("showList")
+        }
+    });
+    angular.bootstrap(document.getElementById("2"), ['myApp2']);
+
+
+    var colors = ["red", "green", "blue", "orange"];
+    var i = 0;
+
     function jsp() {
-        document.getElementById("xxx").style.color=colors[i%colors.length];
+        document.getElementById("xxx").style.color = colors[i % colors.length];
         i++;
     }
 </script>

@@ -1,5 +1,7 @@
 package beans;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -8,8 +10,11 @@ import java.util.Objects;
  * 继承之后每个类的toString方法要修改
  */
 public class Item implements Serializable {
+    @JSONField(name = "id")
     private Integer id;
+    @JSONField(name = "name")
     private String name;
+    @JSONField(name = "price")
     private double price;
     private String comment;
 

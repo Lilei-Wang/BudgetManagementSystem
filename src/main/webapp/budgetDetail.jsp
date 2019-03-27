@@ -35,7 +35,19 @@
         body {
             padding-top: 70px;
         }
+
+        /*td {
+            width: 1px;
+            white-space: nowrap; !* 自适应宽度*!
+            word-break:  keep-all; !* 避免长单词截断，保持全部 *!
+        }
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }*/
+
     </style>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
 </head>
 <body onload="showEquipment()">
 
@@ -76,7 +88,8 @@
     <li><a href="#material" data-toggle="tab" onclick=showMaterial()>材料费</a></li>
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
-    <li><a href="#travel" data-toggle="tab">差旅费</a></li>
+    <li ng-app="travel-app" ng-controller="travelService"><a href="#travel" data-toggle="tab" ng-click="showTravel()">差旅费</a>
+    </li>
     <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab">出版/文献/信息传播/知识产权事务费</a></li>
@@ -87,13 +100,6 @@
 
 </ul>
 
-<%
-    if (false) {
-%>
-<p>ssdd</p>
-<%
-    }
-%>
 <div>
     <div class="text-center">
         <label>总预算</label>
@@ -267,70 +273,75 @@
 
         </table>
     </div>
-    <div class="tab-pane fade" id="power">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+    <div class="tab-pane fade" id="power" ng-app="power-app" ng-controller="showPower">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th hidden>编号</th>
+                <th>名称</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody id="power-table">
+            <tr ng-repeat="item in items">
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.nums}}</td>
+            </tr>
+            </tbody>
+            <tr class="success">
+                <td>
+                    <input type="text" value="new" class="name">
+                </td>
+                <td><input type="number" value="0" class="price">
+                </td>
+                <td>
+                    <input type="number" value="0" class="nums">
+                    <button class="btn" onclick=updateEquipment(this,0)>添加</button>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <div class="tab-pane fade" id="travel">
-        <%
+    <div class="tab-pane fade" id="travel" ng-app="travel-app" ng-controller="travelService">
+        <%--<%
             sum = 0.00;
             req = budget.getRequirement().getTravel();
             Map<Travel, Pair> travelsMap = budget.getTravels();
             for (Travel travel : travelsMap.keySet()) {
                 sum += travel.cost(travelsMap.get(travel));
             }
-        %>
-        <div class="center-block">
-            需求：<label id="travel-req"><%=req%>
-        </label>
-            实际：
-            <label id="travel-sum"><%=sum%>
-            </label>
-            还差：
-            <label id="travel-diff"><%=req - sum%>
-            </label>
-        </div>
+        %>--%>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
                 <th>城市</th>
                 <th>往返价格</th>
                 <th>伙食补助</th>
                 <th>交通补助</th>
                 <th>住宿补助</th>
-                <th>人数*天数</th>
+                <th>人数</th>
+                <th>天数</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody>
-            <%
-                /*Map<Travel, Pair> travelsMap = budget.getTravels();*/
-                ITravelDao travelDao =
-                        applicationContext.getBean(ITravelDao.class);
-                List<Travel> travels = travelDao.selectAll();
-                for (Travel item : travels) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    out.write("<td>" + item.getFood() + "</td>");
-                    out.write("<td>" + item.getTraffic() + "</td>");
-                    out.write("<td>" + item.getAccommodation() + "</td>");
-                    int people = 0, days = 0;
-                    if (travelsMap.get(item) != null) {
-                        people = travelsMap.get(item).getPeople();
-                        days = travelsMap.get(item).getDays();
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + people + "' />" +
-                            "<input type='number' value='" + days + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=travel(this)>确认</button>" +
-                            item.cost(travelsMap.get(item)) +
-                            "</td>");
-                }
-            %>
+            <tr ng-repeat="item in items">
+                <td><input class="name" type="text" ng-model="item.name"></td>
+                <td><input class="price" type="number" value={{item.price}}></td>
+                <td><input class="food" type="number" ng-model="item.food"></td>
+                <td><input class="traffic" type="number" ng-model="item.traffic"></td>
+                <td><input class="accommodation" type="number" ng-model="item.accommodation"></td>
+                <td><input class="people" type="number" ng-model="item.people"></td>
+                <td><input class="days" type="number" ng-model="item.days"></td>
+                <td>
+                    <button class="btn btn-success" onclick={{travelService.updateTravel(this,2)}}>确认</button>
+                    <button class="btn btn-danger" ng-click="updateTravel(this,1)">删除</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -338,17 +349,17 @@
 
     <div class="tab-pane fade" id="conference">
         <%
-            sum=0.0;
-            req=budget.getRequirement().getConference();
+            sum = 0.0;
+            req = budget.getRequirement().getConference();
             Map<Conference, Pair> conferencesMap = budget.getConferences();
             Map<Consultation, Integer> consultationsMap = budget.getConsultations();
-            Consultation consultation=null;
+            Consultation consultation = null;
             for (Consultation item : consultationsMap.keySet()) {
-                consultation=item;
+                consultation = item;
             }
             for (Conference conference : conferencesMap.keySet()) {
-                sum+=conferencesMap.get(conference).getDays()*((consultation.getPrice()*conference.getExperts())
-                        +conference.getPrice()*conferencesMap.get(conference).getPeople());
+                sum += conferencesMap.get(conference).getDays() * ((consultation.getPrice() * conference.getExperts())
+                        + conference.getPrice() * conferencesMap.get(conference).getPeople());
             }
         %>
         <div class="center-block">
@@ -585,6 +596,33 @@
 
 <script>
 
+    angular.element(document).ready(function () {
+        angular.bootstrap(document.getElementById("travel"), ["travel-app"]);
+    })
+
+    angular.module("power-app", []).controller("showPower", function ($scope, $http) {
+        $http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment")
+            .then(function (result) {
+                $scope.items = result.data.equipments;
+            });
+    });
+
+    angular.module("travel-app", []).controller("travelService", function ($scope, $http) {
+        $scope.updateTravel = function (btn, curd) {
+            travel(btn,curd)
+            $scope.showTravel()
+        };
+        $scope.showTravel = function () {
+            $http.get("${pageContext.request.contextPath}/Budget/Detail/Travel")
+                .then(function (result) {
+                    $scope.items = result.data.travels;
+                    updateBudgetPage("travel");
+                });
+        };
+
+        $scope.showTravel();
+    });
+
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
         var price = btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
@@ -610,19 +648,19 @@
         })
     }
 
-    function updateEquipment(button,curd) {
-        var root=button.parentNode.parentNode;
-        var name=root.getElementsByClassName("name").item(0).value
-        var price=root.getElementsByClassName("price").item(0).value
-        var nums=root.getElementsByClassName("nums").item(0).value
+    function updateEquipment(button, curd) {
+        var root = button.parentNode.parentNode;
+        var name = root.getElementsByClassName("name").item(0).value
+        var price = root.getElementsByClassName("price").item(0).value
+        var nums = root.getElementsByClassName("nums").item(0).value
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
             type: "post",
             data: {
-                name:name,
+                name: name,
                 price: price,
                 nums: nums,
-                curd:curd
+                curd: curd
             },
             success: function (data) {
                 showEquipment();
@@ -630,42 +668,50 @@
         })
     }
 
-    function appendEquipment(id, name, price, nums,root) {
-        var table=root;
-        var tr=document.createElement("tr");
+    function appendEquipment(id, name, price, nums, root) {
+        var table = root;
+        var tr = document.createElement("tr");
         // var td=document.createElement("td");
         //td.innerHTML=(id==null)?0:id;
         //tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="text";
-        input.id="name";
-        input.value=name;input.setAttribute("readOnly",true);input.classList.add("name");
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "text";
+        input.id = "name";
+        input.value = name;
+        input.setAttribute("readOnly", true);
+        input.classList.add("name");
         td.appendChild(input);
         tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="number";
-        input.value=price;
-        input.id="price";input.classList.add("price");
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "number";
+        input.value = price;
+        input.id = "price";
+        input.classList.add("price");
         td.appendChild(input);
         tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="number";
-        input.value=nums;
-        input.id="nums";input.classList.add("nums");
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "number";
+        input.value = nums;
+        input.id = "nums";
+        input.classList.add("nums");
         td.appendChild(input);
-        var button=document.createElement("button");
-        button.innerHTML="确认";
+        var button = document.createElement("button");
+        button.innerHTML = "确认";
         button.classList.add("btn");
         button.classList.add("btn-success");
-        button.onclick=function (ev) {  updateEquipment(button,2)};
-        var del=document.createElement("button");
-        del.innerHTML="删除";
+        button.onclick = function (ev) {
+            updateEquipment(button, 2)
+        };
+        var del = document.createElement("button");
+        del.innerHTML = "删除";
         del.classList.add("btn");
         del.classList.add("btn-danger");
-        del.onclick=function (ev) {  updateEquipment(del,1)};
+        del.onclick = function (ev) {
+            updateEquipment(del, 1)
+        };
         td.appendChild(button);
         td.appendChild(del);
         tr.appendChild(td);
@@ -676,20 +722,19 @@
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Detail/Equipment",
             type: "post",
-            dataType:"json",
+            dataType: "json",
             success: function (data) {
-                var table=document.getElementById("equipment-table");
-                table.innerText="";
+                var table = document.getElementById("equipment-table");
+                table.innerText = "";
                 //alert(data.length)
-                list=data.equipments;
-                for(var i=0;i<list.length;i++)
-                {
-                    appendEquipment(list[i].id,list[i].name,list[i].price,list[i].nums,table)
+                list = data.equipments;
+                for (var i = 0; i < list.length; i++) {
+                    appendEquipment(list[i].id, list[i].name, list[i].price, list[i].nums, table)
                 }
                 //appendEquipment(0,"",0,0,table.nextElementSibling);
                 updateBudgetPage("equipment");
             },
-            error:function (data) {
+            error: function (data) {
                 alert(data);
             }
         })
@@ -797,27 +842,31 @@
         })
     }
 
-    function travel(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var people = btn.parentElement.childNodes.item(0).value;
-        var days = btn.parentElement.childNodes.item(1).value;
+    function travel(btn,curd) {
+        alert(btn.toString())
+        var root=btn.parentElement.parentElement;
+        var name = root.getElementsByClassName("name").item(0).value;
+        var price = root.getElementsByClassName("price").item(0).value;
+        var food = root.getElementsByClassName("food").item(0).value;
+        var traffic = root.getElementsByClassName("traffic").item(0).value;
+        var accommodation = root.getElementsByClassName("accommodation").item(0).value;
+        var people = root.getElementsByClassName("people").item(0).value;
+        var days = root.getElementsByClassName("days").item(0).value;
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Travel",
             type: "post",
             data: {
-                mode: 0,
-                id: id,
+                curd:curd,
+                name:name,
+                price:price,
+                food:food,
+                traffic:traffic,
+                accommodation:accommodation,
                 people: people,
                 days: days
             },
             success: function (data) {
-                req = Number(document.getElementById("travel-req").innerHTML)
-                data = Number(data)
 
-                document.getElementById("travel-sum").innerHTML = data
-                document.getElementById("travel-diff").innerHTML = req - data
-                //alert("success");
-                //location.reload();
             }
         })
     }
@@ -831,23 +880,23 @@
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Detail/Stats",
             type: "post",
-            dataType:"json",
+            dataType: "json",
             success: function (data) {
-                document.getElementById("total-req").innerHTML=data.req;
-                document.getElementById("total-sum").innerHTML=data.sum;
-                document.getElementById("total-diff").innerHTML=data.diff;
-                if(data.diff<0)
-                    document.getElementById("total-diff").style.color="red";
+                document.getElementById("total-req").innerHTML = data.req;
+                document.getElementById("total-sum").innerHTML = data.sum;
+                document.getElementById("total-diff").innerHTML = data.diff;
+                if (data.diff < 0)
+                    document.getElementById("total-diff").style.color = "red";
                 else
-                    document.getElementById("total-diff").style.color="green";
+                    document.getElementById("total-diff").style.color = "green";
 
-                document.getElementById("this-req").innerHTML=data[type].req;
-                document.getElementById("this-sum").innerHTML=data[type].sum;
-                document.getElementById("this-diff").innerHTML=data[type].diff;
-                if(data[type].diff<0)
-                    document.getElementById("this-diff").style.color="red";
+                document.getElementById("this-req").innerHTML = data[type].req;
+                document.getElementById("this-sum").innerHTML = data[type].sum;
+                document.getElementById("this-diff").innerHTML = data[type].diff;
+                if (data[type].diff < 0)
+                    document.getElementById("this-diff").style.color = "red";
                 else
-                    document.getElementById("this-diff").style.color="green";
+                    document.getElementById("this-diff").style.color = "green";
                 //alert("updateBudgetPage");
                 //location.reload();
             }
@@ -858,52 +907,52 @@
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Detail/Indirect",
             type: "post",
-            dataType:"json",
+            dataType: "json",
             success: function (data) {
-                var table=document.getElementById("indirect-body");
-                table.innerText="";
+                var table = document.getElementById("indirect-body");
+                table.innerText = "";
                 //alert(data.length)
-                list=data.indirects;
-                for(var i=0;i<list.length;i++)
-                {
-                    appendIndirect(list[i].id,list[i].name,list[i].price,list[i].nums)
+                list = data.indirects;
+                for (var i = 0; i < list.length; i++) {
+                    appendIndirect(list[i].id, list[i].name, list[i].price, list[i].nums)
                 }
                 updateBudgetPage("indirect");
             },
-            error:function (data) {
+            error: function (data) {
                 alert(data);
             }
         })
     }
 
-    function appendIndirect(id,name,price,nums)
-    {
-        var table=document.getElementById("indirect-body");
-        var tr=document.createElement("tr");
-       // var td=document.createElement("td");
+    function appendIndirect(id, name, price, nums) {
+        var table = document.getElementById("indirect-body");
+        var tr = document.createElement("tr");
+        // var td=document.createElement("td");
         //td.innerHTML=(id==null)?0:id;
         //tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="text";
-        input.value=name;
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "text";
+        input.value = name;
         td.appendChild(input);
         tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="number";
-        input.value=price;
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "number";
+        input.value = price;
         td.appendChild(input);
         tr.appendChild(td);
-        td=document.createElement("td");
-        input=document.createElement("input");
-        input.type="number";
-        input.value=nums;
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "number";
+        input.value = nums;
         td.appendChild(input);
-        var button=document.createElement("button");
-        button.innerHTML="确认";
+        var button = document.createElement("button");
+        button.innerHTML = "确认";
         button.classList.add("btn");
-        button.onclick=function (ev) {  updateIndirect(button)};
+        button.onclick = function (ev) {
+            updateIndirect(button)
+        };
         td.appendChild(button);
         tr.appendChild(td);
         table.appendChild(tr);
@@ -914,15 +963,17 @@
         $.ajax({
             url: "${pageContext.request.contextPath}/Budget/Modify/Indirect",
             type: "post",
-            dataType:"json",
+            dataType: "json",
             success: function (data) {
                 showIndirect();
                 updateBudgetPage();
             },
-            error:function (data) {
+            error: function (data) {
                 alert("error");
             }
         })
     }
+
+    function getTd()
 
 </script>

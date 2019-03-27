@@ -1,13 +1,19 @@
 package beans;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * 差旅费
  */
 public class Travel extends Item {
 
+    @JSONField(name = "dest")
     private String dest;
+    @JSONField(name = "food")
     private double food;
+    @JSONField(name = "traffic")
     private double traffic;
+    @JSONField(name = "accommodation")
     private double accommodation;
 
     @Override

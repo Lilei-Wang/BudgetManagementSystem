@@ -1,9 +1,14 @@
 package beans;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 
 public class Pair implements Serializable {
-    private int people, days;
+    @JSONField(name = "people")
+    private int people;
+    @JSONField(name = "days")
+    private int days;
 
     public Pair() {
     }

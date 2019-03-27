@@ -249,14 +249,16 @@ public class BudgetHandler {
             equipments.remove(equipment);
         } else if(curd.equals(2))//增改
         {
-            for (Equipment item : equipments.keySet()) {
+            equipments.remove(equipment);
+            equipments.put(equipment,nums);
+            /*for (Equipment item : equipments.keySet()) {
                 if(item.equals(equipment))
                 {
                     item.setPrice(equipment.getPrice());
                     equipments.put(item,nums);
                     break;
                 }
-            }
+            }*/
         }
         else
             equipments.put(equipment,nums);
@@ -654,13 +656,12 @@ public class BudgetHandler {
     /**
      * @param mode
      * @param travel
-     * @param nums
      * @param curd
      * @param request
      * @param response
      */
     @RequestMapping("/Modify/Travel")
-    public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Travel");
 
         if (mode.equals(0))//修改预算
@@ -672,21 +673,23 @@ public class BudgetHandler {
             assert budget != null;
 
             Map<Travel, Pair> items = budget.getTravels();
-            travel = travelDao.selectById(travel.getId());
-            if (travel != null)
-                items.put(travel, pair);
+            checkService.checkTravel(travel);
+            if(curd.equals(0))
+            {
+                items.put(travel,pair);
+            }else if(curd.equals(1))
+            {
+                items.remove(travel);
+            }
+            else
+            {
+                items.remove(travel);
+                items.put(travel,pair);
+            }
 
             serializeBudget(budget, getFilePath(sessionID));
-            try {
-                double sum = 0.0;
-                for (Travel item : items.keySet()) {
-                    sum += item.cost(items.get(item));
-                }
-                response.getWriter().print(sum);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else//修改规则
+
+        } /*else//修改规则
         {
             if (curd.equals(0))//增
             {
@@ -698,7 +701,7 @@ public class BudgetHandler {
             {
                 travelDao.updateTravel(travel);
             }
-        }
+        }*/
     }
 
 
