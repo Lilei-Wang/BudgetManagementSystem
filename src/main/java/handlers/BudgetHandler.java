@@ -233,6 +233,7 @@ public class BudgetHandler {
 
     @Autowired
     private ICheckService checkService;
+
     @RequestMapping("/Modify/Equip")
     public void modifyEquip(Integer mode, Equipment equipment, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Equip");
@@ -243,14 +244,14 @@ public class BudgetHandler {
         assert budget != null;
         Map<Equipment, Integer> equipments = budget.getEquipments();
         //是否符合规则
-        if(!checkService.checkEquipment(equipment)) return;
+        if (!checkService.checkEquipment(equipment)) return;
         //删除
         if (curd.equals(1)) {
             equipments.remove(equipment);
-        } else if(curd.equals(2))//增改
+        } else if (curd.equals(2))//增改
         {
             equipments.remove(equipment);
-            equipments.put(equipment,nums);
+            equipments.put(equipment, nums);
             /*for (Equipment item : equipments.keySet()) {
                 if(item.equals(equipment))
                 {
@@ -259,9 +260,8 @@ public class BudgetHandler {
                     break;
                 }
             }*/
-        }
-        else
-            equipments.put(equipment,nums);
+        } else
+            equipments.put(equipment, nums);
         serializeBudget(budget, getFilePath(sessionID));
         /*if (mode.equals(0))//修改预算
         {
@@ -664,32 +664,26 @@ public class BudgetHandler {
     public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Travel");
 
-        if (mode.equals(0))//修改预算
-        {
-            if (pair == null || pair.getDays() < 0 || pair.getPeople() < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if (pair == null || pair.getDays() < 0 || pair.getPeople() < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
+        assert budget != null;
 
-            Map<Travel, Pair> items = budget.getTravels();
-            checkService.checkTravel(travel);
-            if(curd.equals(0))
-            {
-                items.put(travel,pair);
-            }else if(curd.equals(1))
-            {
-                items.remove(travel);
-            }
-            else
-            {
-                items.remove(travel);
-                items.put(travel,pair);
-            }
+        Map<Travel, Pair> items = budget.getTravels();
+        checkService.checkTravel(travel);
+        if (curd.equals(0)) {
+            items.put(travel, pair);
+        } else if (curd.equals(1)) {
+            items.remove(travel);
+        } else {
+            items.remove(travel);
+            items.put(travel, pair);
+        }
 
-            serializeBudget(budget, getFilePath(sessionID));
+        serializeBudget(budget, getFilePath(sessionID));
 
-        } /*else//修改规则
+         /*else//修改规则
         {
             if (curd.equals(0))//增
             {

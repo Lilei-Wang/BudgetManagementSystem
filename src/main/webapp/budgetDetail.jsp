@@ -35,19 +35,7 @@
         body {
             padding-top: 70px;
         }
-
-        /*td {
-            width: 1px;
-            white-space: nowrap; !* 自适应宽度*!
-            word-break:  keep-all; !* 避免长单词截断，保持全部 *!
-        }
-        table {
-            table-layout: fixed;
-            width: 100%;
-        }*/
-
     </style>
-    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
 </head>
 <body onload="showEquipment()">
 
@@ -88,8 +76,7 @@
     <li><a href="#material" data-toggle="tab" onclick=showMaterial()>材料费</a></li>
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
-    <li ng-app="travel-app" ng-controller="travelService"><a href="#travel" data-toggle="tab" ng-click="showTravel()">差旅费</a>
-    </li>
+    <li><a href="#travel" data-toggle="tab" onclick=showTravel()>差旅费</a></li>
     <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab">出版/文献/信息传播/知识产权事务费</a></li>
@@ -273,7 +260,7 @@
 
         </table>
     </div>
-    <div class="tab-pane fade" id="power" ng-app="power-app" ng-controller="showPower">
+    <div class="tab-pane fade" id="power" >
         <table class="table table-hover">
             <thead>
             <tr>
@@ -305,15 +292,7 @@
         </table>
     </div>
 
-    <div class="tab-pane fade" id="travel" ng-app="travel-app" ng-controller="travelService">
-        <%--<%
-            sum = 0.00;
-            req = budget.getRequirement().getTravel();
-            Map<Travel, Pair> travelsMap = budget.getTravels();
-            for (Travel travel : travelsMap.keySet()) {
-                sum += travel.cost(travelsMap.get(travel));
-            }
-        %>--%>
+    <div class="tab-pane fade" id="travel">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -328,22 +307,22 @@
             </tr>
             </thead>
 
-            <tbody>
-            <tr ng-repeat="item in items">
-                <td><input class="name" type="text" ng-model="item.name"></td>
-                <td><input class="price" type="number" value={{item.price}}></td>
-                <td><input class="food" type="number" ng-model="item.food"></td>
-                <td><input class="traffic" type="number" ng-model="item.traffic"></td>
-                <td><input class="accommodation" type="number" ng-model="item.accommodation"></td>
-                <td><input class="people" type="number" ng-model="item.people"></td>
-                <td><input class="days" type="number" ng-model="item.days"></td>
+            <tbody id="travel-table">
+            </tbody>
+            <form>
+            <tr class="success">
+                <td><input name="name" type="text"></td>
+                <td><input name="price" type="number"></td>
+                <td><input name="food" type="number"></td>
+                <td><input name="traffic" type="number" ></td>
+                <td><input name="accommodation" type="number"></td>
+                <td><input name="people" type="number" ></td>
+                <td><input name="days" type="number"></td>
                 <td>
-                    <button class="btn btn-success" onclick={{travelService.updateTravel(this,2)}}>确认</button>
-                    <button class="btn btn-danger" ng-click="updateTravel(this,1)">删除</button>
+                    <button class="btn" onclick=updateTravel(this.form,0)>添加</button>
                 </td>
             </tr>
-            </tbody>
-
+            </form>
         </table>
     </div>
 
@@ -589,39 +568,12 @@
     </div>
 </div>
 
-
+<iframe name='hidden_frame' id="hidden_frame" style="display:none"></iframe>
 </body>
 </html>
 
 
 <script>
-
-    angular.element(document).ready(function () {
-        angular.bootstrap(document.getElementById("travel"), ["travel-app"]);
-    })
-
-    angular.module("power-app", []).controller("showPower", function ($scope, $http) {
-        $http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment")
-            .then(function (result) {
-                $scope.items = result.data.equipments;
-            });
-    });
-
-    angular.module("travel-app", []).controller("travelService", function ($scope, $http) {
-        $scope.updateTravel = function (btn, curd) {
-            travel(btn,curd)
-            $scope.showTravel()
-        };
-        $scope.showTravel = function () {
-            $http.get("${pageContext.request.contextPath}/Budget/Detail/Travel")
-                .then(function (result) {
-                    $scope.items = result.data.travels;
-                    updateBudgetPage("travel");
-                });
-        };
-
-        $scope.showTravel();
-    });
 
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
@@ -842,33 +794,90 @@
         })
     }
 
-    function travel(btn,curd) {
-        alert(btn.toString())
-        var root=btn.parentElement.parentElement;
-        var name = root.getElementsByClassName("name").item(0).value;
-        var price = root.getElementsByClassName("price").item(0).value;
-        var food = root.getElementsByClassName("food").item(0).value;
-        var traffic = root.getElementsByClassName("traffic").item(0).value;
-        var accommodation = root.getElementsByClassName("accommodation").item(0).value;
-        var people = root.getElementsByClassName("people").item(0).value;
-        var days = root.getElementsByClassName("days").item(0).value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Travel",
-            type: "post",
-            data: {
-                curd:curd,
-                name:name,
-                price:price,
-                food:food,
-                traffic:traffic,
-                accommodation:accommodation,
-                people: people,
-                days: days
-            },
-            success: function (data) {
+    function updateTravel(form,curd) {
+        form.action="${pageContext.request.contextPath}/Budget/Modify/Travel";
+        form.appendChild(getInput("number",curd,"curd",false));
+        form.method="post";
+        form.target="hidden_frame";
+        form.submit();
+    }
 
+    function showTravel() {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/Budget/Detail/Travel",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var table = document.getElementById("travel-table");
+                table.innerText = "";
+                list = data.travels;
+                for (var i = 0; i < list.length; i++) {
+                    appendTravel(list[i].name, list[i].price, list[i].food,
+                        list[i].traffic,
+                        list[i].accommodation,
+                        list[i].people,
+                        list[i].days,
+                        table)
+                }
+                updateBudgetPage("travel");
+            },
+            error: function (data) {
+                alert(data);
             }
         })
+    }
+
+    function getTr(width) {
+        tr=document.createElement("tr");
+        tr.style.width=width;
+        return tr;
+    }
+
+    function getTd(width) {
+        td=document.createElement("td");
+        td.style.width=width;
+        return td;
+    }
+
+    function getInput(type, value, name, readOnly) {
+        var input=document.createElement("input");
+        input.type=type;
+        input.value=value;
+        input.name=name;
+        input.readOnly=readOnly;
+        return input;
+    }
+
+    function getButton(innerHTML, claszzList, onclick) {
+        var button=document.createElement("button");
+        button.innerHTML=innerHTML;
+        button.onclick=onclick;
+        for(var i=0;i<claszzList.length;i++)
+            button.classList.add(claszzList[i]);
+        return button;
+    }
+
+    function appendTravel(name,price,food,traffic,accommodation,people,days,table) {
+        width=100;
+        var form=document.createElement("form");
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("text",name,"name",true))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",price,"price",false))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",food,"food",false))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",traffic,"traffic",false))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",accommodation,"accommodation",false))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",people,"people",false))));
+        form.appendChild(getTr(width).appendChild(getTd(width).appendChild(getInput("number",days,"days",false))));
+        form.appendChild(getTr(width)
+            .appendChild(getTd(width).appendChild(getButton("确认",["btn","btn-success"],function () {
+                updateTravel(form,2);
+            }))));
+        form.appendChild(getTr(width)
+            .appendChild(getTd(width).appendChild(getButton("删除",["btn","btn-danger"],function () {
+                updateTravel(form,1);
+            }))));
+        form.appendChild(tr);
+        table.appendChild(form);
+        //body.appendChild(table);
     }
 
 
@@ -973,7 +982,5 @@
             }
         })
     }
-
-    function getTd()
 
 </script>

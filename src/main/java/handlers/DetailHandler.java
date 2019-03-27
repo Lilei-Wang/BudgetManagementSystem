@@ -64,6 +64,7 @@ public class DetailHandler {
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
 
             double req_sofar=0.0,sum_sofar=0.0,req,sum;
+
             JSONObject sub=new JSONObject();
             req=budget.getRequirement().getEquip();
             sum=detailService.sumEquipment(budget.getEquipments());
@@ -72,6 +73,14 @@ public class DetailHandler {
             sub.put("diff",req-sum);
             object.put("equipment",sub);
 
+
+            sub=new JSONObject();
+            req=budget.getRequirement().getEquip();
+            sum=detailService.sumEquipment(budget.getEquipments());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("travel",sub);
 
             object.put("req",req_sofar);
             object.put("sum",sum_sofar);
