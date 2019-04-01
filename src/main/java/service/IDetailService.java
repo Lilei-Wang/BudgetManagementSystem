@@ -1,6 +1,7 @@
 package service;
 
 import beans.Equipment;
+import beans.Labour;
 import beans.Pair;
 import beans.Travel;
 
@@ -11,4 +12,6 @@ public interface IDetailService {
     double sumEquipment(Map<Equipment, Integer> equipments);
 
     double sumTravel(Map<Travel, Pair> travels);
+
+    double sumLabour(Map<Labour, Integer> labour);
 }

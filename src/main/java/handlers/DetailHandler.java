@@ -83,6 +83,15 @@ public class DetailHandler {
             object.put("travel",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            sub=new JSONObject();
+            req=budget.getRequirement().getLabour();
+            sum=detailService.sumLabour(budget.getLabour());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("labour",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
             object.put("req",req_sofar);
             object.put("sum",sum_sofar);
             object.put("diff",req_sofar-sum_sofar);
@@ -113,7 +122,7 @@ public class DetailHandler {
                 obj.put("nums",equipments.get(item));
                 list.add(obj);
             }
-            object.put("equipments",list);
+            object.put("data",list);
             writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,7 +153,7 @@ public class DetailHandler {
                 obj.put("days",travels.get(item).getDays());
                 list.add(obj);
             }
-            object.put("travels",list);
+            object.put("data",list);
             writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();

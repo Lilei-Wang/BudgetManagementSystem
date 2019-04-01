@@ -234,9 +234,9 @@ public class BudgetHandler {
     @Autowired
     private ICheckService checkService;
 
-    @RequestMapping("/Modify/Equip")
+    @RequestMapping("/Modify/Equipment")
     public void modifyEquip(Integer mode, Equipment equipment, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("/Modify/Equip");
+        System.out.println("/Modify/Equipment");
 
         if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
@@ -252,56 +252,10 @@ public class BudgetHandler {
         {
             equipments.remove(equipment);
             equipments.put(equipment, nums);
-            /*for (Equipment item : equipments.keySet()) {
-                if(item.equals(equipment))
-                {
-                    item.setPrice(equipment.getPrice());
-                    equipments.put(item,nums);
-                    break;
-                }
-            }*/
         } else
             equipments.put(equipment, nums);
         serializeBudget(budget, getFilePath(sessionID));
-        /*if (mode.equals(0))//修改预算
-        {
-            if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
-
-            Map<Equipment, Integer> items = budget.getEquipments();
-            Equipment mod=equipmentDao.selectById(id);
-            if(mod!=null)
-                items.put(mod,nums);
-            try {
-                double sum=0.0;
-                for (Equipment equipment : items.keySet()) {
-                    sum+=(equipment.getPrice()*items.get(equipment));
-                }
-                response.getWriter().print(sum);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
-        {
-            Equipment equipment = new Equipment();
-            equipment.setId(id);
-            equipment.setName(name);
-            equipment.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                equipmentDao.insertEquipment(equipment);
-            } else if (curd.equals(1))//删
-            {
-                equipmentDao.deleteEquipment(equipment);
-            } else//改
-            {
-                equipmentDao.updateEquipment(equipment);
-            }
-        }*/
     }
 
 
@@ -455,23 +409,6 @@ public class BudgetHandler {
                 items.put(property,nums);
             }
             serializeBudget(budget, getFilePath(sessionID));
-        /*} *//*else//修改规则
-        {
-            Property item = new Property();
-            item.setId(id);
-            item.setName(name);
-            item.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                propertyDao.insertProperty(item);
-            } else if (curd.equals(1))//删
-            {
-                propertyDao.deleteProperty(item);
-            } else//改
-            {
-                propertyDao.updateProperty(item);
-            }
-        }*/
     }
 
 
@@ -682,22 +619,7 @@ public class BudgetHandler {
             items.remove(travel);
             items.put(travel, pair);
         }
-
         serializeBudget(budget, getFilePath(sessionID));
-
-         /*else//修改规则
-        {
-            if (curd.equals(0))//增
-            {
-                travelDao.insertTravel(travel);
-            } else if (curd.equals(1))//删
-            {
-                travelDao.deleteTravel(travel);
-            } else//改
-            {
-                travelDao.updateTravel(travel);
-            }
-        }*/
     }
 
 

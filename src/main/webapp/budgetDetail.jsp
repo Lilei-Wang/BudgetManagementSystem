@@ -35,13 +35,16 @@
         body {
             padding-top: 70px;
         }
+        table{
+            ;
+        }
     </style>
 
     <%--Vue--%>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 </head>
-<body onload="showEquipment()">
+<body onload="equipmentVue.showlist()">
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -65,22 +68,18 @@
         </div>
     </div>
 </nav>
-<%--
-<div>
-    <button class="btn btn-success">同步预算</button>
-    <p class="help-block center-block">当且仅当在生成预算之后对规则进行了更改时需要此操作</p>
-</div>--%>
+
 
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
-        <a href="#equipment" data-toggle="tab" onclick=showEquipment()>
+        <a href="#equipment" data-toggle="tab" onclick=equipmentVue.showlist()>
             设备费
         </a>
     </li>
-    <li><a href="#material" data-toggle="tab" onclick=showMaterial()>材料费</a></li>
+    <li><a href="#material" data-toggle="tab">材料费</a></li>
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
-    <li><a href="#travel" data-toggle="tab" onclick=showTravel()>差旅费</a></li>
+    <li><a href="#travel" data-toggle="tab" onclick=travelVue.showlist()>差旅费</a></li>
     <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
@@ -109,24 +108,6 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade in active" id="equipment">
-        <%
-            Budget budget = (Budget) request.getAttribute("budget");
-            double equipSum = 0.00;
-            Map<Equipment, Integer> equipmentMap = budget.getEquipments();
-            for (Equipment equipment : equipmentMap.keySet()) {
-                equipSum += (equipmentMap.get(equipment) * equipment.computeUnitPrice());
-            }
-        %>
-        <%--<div class="center-block">
-            需求：<label id="equip-req"><%=budget.getRequirement().getEquip()%>
-        </label>
-            实际：
-            <label id="equip-sum"><%=equipSum%>
-            </label>
-            还差：
-            <label id="equip-diff"><%=budget.getRequirement().getEquip() - equipSum%>
-            </label>
-        </div>--%>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -134,68 +115,32 @@
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody id="equipment-table">
-            <%
-                budget = (Budget) request.getAttribute("budget");
-                Map<Item, Integer> map = (Map) budget.getEquipments();
-
-                ServletContext servletContext = this.getServletConfig().getServletContext();
-                ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-
-                IEquipmentDao equipmentDao = applicationContext.getBean(IEquipmentDao.class);
-                List<Equipment> equipments = equipmentDao.selectAll();
-                /*for (Equipment equipment : equipments) {
-                    out.write("<tr>");
-                    out.write("<td>" + equipment.getId() + "</td>");
-                    out.write("<td>" + equipment.getName() + "</td>");
-                    out.write("<td>" + equipment.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(equipment) != null) {
-                        num = map.get(equipment);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=equip(this)>确认</button>" +
-                            equipment.getPrice() * num +
-                            "</td>");
-                }*/
-            %>
-            </tbody>
-            <tr class="success">
+            <tr v-for="item in items">
+                <td><input type="text" readonly v-model="item.name"></td>
+                <td><input type="number" v-model="item.price"></td>
+                <td><input type="number" v-model="item.nums"></td>
                 <td>
-                    <input type="text" value="new" class="name">
-                </td>
-                <td><input type="number" value="0" class="price">
-                </td>
-                <td>
-                    <input type="number" value="0" class="nums">
-                    <button class="btn" onclick=updateEquipment(this,0)>添加</button>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
                 </td>
             </tr>
+            <tr class="success">
+                <td><input type="text" v-model="sample.name"></td>
+                <td><input type="number" v-model="sample.price"></td>
+                <td><input type="number" v-model="sample.nums"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
+            </tbody>
         </table>
     </div>
     <div class="tab-pane fade" id="material">
-        <%
-            double sum = 0.00;
-            double req = budget.getRequirement().getMaterial();
-            Map<Material, Integer> materialsMap = budget.getMaterials();
-            for (Material material : materialsMap.keySet()) {
-                sum += (material.computeUnitPrice() * materialsMap.get(material));
-            }
-        %>
-        <div class="center-block">
-            需求：<label id="material-req"><%=req%>
-        </label>
-            实际：
-            <label id="material-sum"><%=sum%>
-            </label>
-            还差：
-            <label id="material-diff"><%=req - sum%>
-            </label>
-        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -207,25 +152,7 @@
             </thead>
 
             <tbody>
-            <%
-                map = (Map) budget.getMaterials();
-                IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
-                List<Material> materials = materialDao.selectAll();
-                /*for (Material material : materials) {
-                    out.write("<tr>");
-                    out.write("<td>" + material.getId() + "</td>");
-                    out.write("<td>" + material.getName() + "</td>");
-                    out.write("<td>" + material.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(material) != null) {
-                        num = map.get(material);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
-                            material.computeUnitPrice() * num + "</td>");
-                }*/
-            %>
+
             </tbody>
 
         </table>
@@ -242,25 +169,7 @@
             </thead>
 
             <tbody>
-            <%
-                map = (Map) budget.getTestAndProcesses();
-                ITestAndProcessDao testAndProcessDao = applicationContext.getBean(ITestAndProcessDao.class);
-                List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
-                for (TestAndProcess testAndProcess : testAndProcesses) {
-                    out.write("<tr>");
-                    out.write("<td>" + testAndProcess.getId() + "</td>");
-                    out.write("<td>" + testAndProcess.getName() + "</td>");
-                    out.write("<td>" + testAndProcess.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(testAndProcess) != null) {
-                        num = map.get(testAndProcess);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=updateItem('test',this)>确认</button>" +
-                            "</td>");
-                }
-            %>
+
             </tbody>
 
         </table>
@@ -288,22 +197,11 @@
                 </td>
             </tr>
             </tbody>
-            <tr class="success">
-                <td>
-                    <input type="text" value="new" class="name">
-                </td>
-                <td><input type="number" value="0" class="price">
-                </td>
-                <td>
-                    <input type="number" value="0" class="nums">
-                    <button class="btn" onclick=updateEquipment(this,0)>添加</button>
-                </td>
-            </tr>
         </table>
     </div>
 
     <div class="tab-pane fade" id="travel">
-        <table class="table table-hover">
+        <table class="table table-hover text-nowrap">
             <thead>
             <tr>
                 <th>城市</th>
@@ -318,47 +216,37 @@
             </thead>
 
             <tbody id="travel-table">
+                <tr v-for="item in items" v-bind:title="item.name">
+                    <td><input type="text" readonly v-model="item.name"></td>
+                    <td><input type="number" v-model="item.price"></td>
+                    <td><input type="number" v-model="item.food"></td>
+                    <td><input type="number" v-model="item.traffic"></td>
+                    <td><input type="number" v-model="item.accommodation"></td>
+                    <td><input type="number" v-model="item.people"></td>
+                    <td><input type="number" v-model="item.days"></td>
+                    <td>
+                        <button class="btn btn-success" @click="update(item)">确认</button>
+                        <button class="btn btn-danger" @click="del(item)">删除</button>
+                    </td>
+                </tr>
+
+                <tr class="success">
+                    <td><input type="text" v-model="sample.name"></td>
+                    <td><input type="number" v-model="sample.price"></td>
+                    <td><input type="number" v-model="sample.food"></td>
+                    <td><input type="number" v-model="sample.traffic"></td>
+                    <td><input type="number" v-model="sample.accommodation"></td>
+                    <td><input type="number" v-model="sample.people"></td>
+                    <td><input type="number" v-model="sample.days"></td>
+                    <td>
+                        <button class="btn btn-success" @click="add(sample)">添加</button>
+                    </td>
+                </tr>
             </tbody>
-            <tr class="success">
-                <td><input required class="name" type="text" value="new"></td>
-                <td><input required class="price" type="number" value="0"></td>
-                <td><input required class="food" type="number" value="0"></td>
-                <td><input required class="traffic" type="number" value="0"></td>
-                <td><input required class="accommodation" type="number" value="0"></td>
-                <td><input required class="people" type="number" value="0"></td>
-                <td><input required class="days" type="number" value="0"></td>
-                <td>
-                    <button class="btn" onclick=updateTravel(this,0)>添加</button>
-                </td>
-            </tr>
         </table>
     </div>
 
     <div class="tab-pane fade" id="conference">
-        <%
-            sum = 0.0;
-            req = budget.getRequirement().getConference();
-            Map<Conference, Pair> conferencesMap = budget.getConferences();
-            Map<Consultation, Integer> consultationsMap = budget.getConsultations();
-            Consultation consultation = null;
-            for (Consultation item : consultationsMap.keySet()) {
-                consultation = item;
-            }
-            for (Conference conference : conferencesMap.keySet()) {
-                sum += conferencesMap.get(conference).getDays() * ((consultation.getPrice() * conference.getExperts())
-                        + conference.getPrice() * conferencesMap.get(conference).getPeople());
-            }
-        %>
-        <div class="center-block">
-            需求：<label id="conf-req"><%=req%>
-        </label>
-            实际：
-            <label id="conf-sum"><%=sum%>
-            </label>
-            还差：
-            <label id="conf-diff"><%=req - sum%>
-            </label>
-        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -371,28 +259,6 @@
             </thead>
 
             <tbody>
-            <%
-                IConferenceDao conferenceDao =
-                        applicationContext.getBean(IConferenceDao.class);
-                List<Conference> conferences = conferenceDao.selectAll();
-                for (Conference item : conferences) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    out.write("<td>" + item.getExperts() + "</td>");
-                    int people = 0, days = 0;
-                    if (conferencesMap.get(item) != null) {
-                        people = conferencesMap.get(item).getPeople();
-                        days = conferencesMap.get(item).getDays();
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + people + "' />" +
-                            "<input type='number' value='" + days + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=conference(this)>确认</button>" +
-                            "</td>");
-                }
-            %>
             </tbody>
 
         </table>
@@ -410,26 +276,7 @@
             </thead>
 
             <tbody>
-            <%
-                map = (Map) budget.getInternationalCommunications();
-                IInternationalCommunicationDao internationalCommunicationDao =
-                        applicationContext.getBean(IInternationalCommunicationDao.class);
-                List<InternationalCommunication> internationalCommunications = internationalCommunicationDao.selectAll();
-                for (InternationalCommunication item : internationalCommunications) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(item) != null) {
-                        num = map.get(item);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=international(this)>确认</button>" +
-                            "</td>");
-                }
-            %>
+
             </tbody>
 
         </table>
@@ -448,43 +295,23 @@
             </thead>
 
             <tbody>
-                <tr v-for="item in items">
-                    <td><input type="text" readonly v-model="item.name"></td>
-                    <td><input type="number" v-model="item.price"></td>
-                    <td><input type="number" v-model="item.nums"></td>
-                    <td>
-                        <button class="btn btn-success" @click="update(item)">确认</button>
-                        <button class="btn btn-danger" @click="del(item)">删除</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="text" readonly v-model="sample.name"></td>
-                    <td><input type="number" v-model="sample.price"></td>
-                    <td><input type="number" v-model="sample.nums"></td>
-                    <td>
-                        <button class="btn btn-success" @click="add(sample)">添加</button>
-                    </td>
-                </tr>
-            <%--<%
-                map = (Map) budget.getProperties();
-                IPropertyDao propertyDao =
-                        applicationContext.getBean(IPropertyDao.class);
-                List<Property> properties = propertyDao.selectAll();
-                for (Property item : properties) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(item) != null) {
-                        num = map.get(item);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=property(this)>确认</button>" +
-                            "</td>");
-                }
-            %>--%>
+            <tr v-for="item in items">
+                <td><input type="text" readonly v-model="item.name"></td>
+                <td><input type="number" v-model="item.price"></td>
+                <td><input type="number" v-model="item.nums"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="text" readonly v-model="sample.name"></td>
+                <td><input type="number" v-model="sample.price"></td>
+                <td><input type="number" v-model="sample.nums"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -502,26 +329,7 @@
             </thead>
 
             <tbody>
-            <%
-                map = (Map) budget.getLabour();
-                ILabourDao labourDao =
-                        applicationContext.getBean(ILabourDao.class);
-                List<Labour> labour = labourDao.selectAll();
-                for (Labour item : labour) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(item) != null) {
-                        num = map.get(item);
-                    }
-                    out.write("<td>" +
-                            "<input type='number' value='" + num + "' />" +
-                            "<button type='btn btn-default' class='updateItem' onclick=labour(this)>确认</button>" +
-                            "</td>");
-                }
-            %>
+
             </tbody>
 
         </table>
@@ -539,23 +347,7 @@
             </thead>
 
             <tbody>
-            <%
-                map = (Map) budget.getConsultations();
-                IConsultationDao consultationDao =
-                        applicationContext.getBean(IConsultationDao.class);
-                List<Consultation> consultations = consultationDao.selectAll();
-                for (Consultation item : consultations) {
-                    out.write("<tr>");
-                    out.write("<td>" + item.getId() + "</td>");
-                    out.write("<td>" + item.getName() + "</td>");
-                    out.write("<td>" + item.getPrice() + "</td>");
-                    int num = 0;
-                    if (map.get(item) != null) {
-                        num = map.get(item);
-                    }
-                    out.write("<td>" + num + "</td>");
-                }
-            %>
+
             </tbody>
         </table>
         <p class="help-block">此项由会议费决定，不可单独更改</p>
@@ -600,48 +392,48 @@
 
 
 <script>
-    var equipmentVue=new Vue({
-        el:"#equipment",
-        data:{
-            items:[],
-            sample:{name:"sample",price:0,nums:0}
+    var equipmentVue = new Vue({
+        el: "#equipment",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
         },
-        methods:{
+        methods: {
             update: function (item) {
-                this.doUpdate(item,2);
+                this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item,1);
+                this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item,0);
+                this.doUpdate(item, 0);
             },
-            showlist:function () {
+            showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment").then(
                     function (data) {
-                        this.items=data.body.data;
-                        //console.log("showlist");
-                    },function (error) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("equipment")
+                    }, function (error) {
                         console.log(error)
                     }
                 )
             },
-            doUpdate:function (item,curd) {
+            doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
                     {
-                        name:item.name,
-                        price:item.price,
-                        nums:item.nums,
-                        curd:curd
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
                     },
-                    {emulateJSON:true}
+                    {emulateJSON: true}
                 ).then(function (value) {
                     this.showlist();
-                    updateBudgetPage("equipment");
                 });
             }
         },
-        created:function () {
+        created: function () {
         }
     });
     var powerVue = new Vue({
@@ -664,7 +456,7 @@
             //alert("created");
             this.$http.get('${pageContext.request.contextPath}/Budget/Detail/Power').then(
                 function (result) {
-                    this.items=result.body.powers;
+                    this.items = result.body.powers;
                 }, function (error) {
                     alert(error)
                 }
@@ -672,166 +464,100 @@
         }
     });
 
-    var propertyVue=new Vue({
-        el:"#property",
-        data:{
-            items:[],
-            sample:{name:"sample",price:0,nums:0}
+    var propertyVue = new Vue({
+        el: "#property",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
         },
-        methods:{
+        methods: {
             update: function (item) {
-                this.doUpdate(item,2);
+                this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item,1);
+                this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item,0);
+                this.doUpdate(item, 0);
             },
-            showlist:function () {
+            showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Property").then(
                     function (data) {
-                        this.items=data.body.data;
+                        this.items = data.body.data;
                         console.log("showlist");
-                    },function (error) {
+                    updateBudgetPage("property");
+                    }, function (error) {
                         console.log(error)
                     }
                 )
             },
-            doUpdate:function (item,curd) {
+            doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Property",
                     {
-                        name:item.name,
-                        price:item.price,
-                        nums:item.nums,
-                        curd:curd
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
                     },
-                    {emulateJSON:true}
+                    {emulateJSON: true}
                 ).then(function (value) {
                     this.showlist();
-                    updateBudgetPage("property");
                 });
             }
         },
-        created:function () {
+        created: function () {
         }
     });
-    function equip(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var price = btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                price: price,
-                nums: num
+
+    var travelVue = new Vue({
+        el: "#travel",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
             },
-            success: function (data) {
-                req = Number(document.getElementById("equip-req").innerHTML)
-                data = Number(data)
-
-                document.getElementById("equip-sum").innerHTML = data
-                document.getElementById("equip-diff").innerHTML = req - data
-                //alert("success");
-                //location.reload();
-            }
-        })
-    }
-
-    function updateEquipment(button, curd) {
-        var root = button.parentNode.parentNode;
-        var name = root.getElementsByClassName("name").item(0).value
-        var price = root.getElementsByClassName("price").item(0).value
-        var nums = root.getElementsByClassName("nums").item(0).value
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Equip",
-            type: "post",
-            data: {
-                name: name,
-                price: price,
-                nums: nums,
-                curd: curd
+            del: function (item) {
+                this.doUpdate(item, 1);
             },
-            success: function (data) {
-                showEquipment();
-            }
-        })
-    }
-
-    function appendEquipment(id, name, price, nums, root) {
-        var table = root;
-        var tr = document.createElement("tr");
-        // var td=document.createElement("td");
-        //td.innerHTML=(id==null)?0:id;
-        //tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "text";
-        input.id = "name";
-        input.value = name;
-        input.setAttribute("readOnly", true);
-        input.classList.add("name");
-        td.appendChild(input);
-        tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "number";
-        input.value = price;
-        input.id = "price";
-        input.classList.add("price");
-        td.appendChild(input);
-        tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "number";
-        input.value = nums;
-        input.id = "nums";
-        input.classList.add("nums");
-        td.appendChild(input);
-        var button = document.createElement("button");
-        button.innerHTML = "确认";
-        button.classList.add("btn");
-        button.classList.add("btn-success");
-        button.onclick = function (ev) {
-            updateEquipment(button, 2)
-        };
-        var del = document.createElement("button");
-        del.innerHTML = "删除";
-        del.classList.add("btn");
-        del.classList.add("btn-danger");
-        del.onclick = function (ev) {
-            updateEquipment(del, 1)
-        };
-        td.appendChild(button);
-        td.appendChild(del);
-        tr.appendChild(td);
-        table.appendChild(tr);
-    }
-
-    function showEquipment() {
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Detail/Equipment",
-            type: "post",
-            dataType: "json",
-            success: function (data) {
-                var table = document.getElementById("equipment-table");
-                table.innerText = "";
-                //alert(data.length)
-                list = data.equipments;
-                for (var i = 0; i < list.length; i++) {
-                    appendEquipment(list[i].id, list[i].name, list[i].price, list[i].nums, table)
-                }
-                //appendEquipment(0,"",0,0,table.nextElementSibling);
-                updateBudgetPage("equipment");
+            add: function (item) {
+                this.doUpdate(item, 0);
             },
-            error: function (data) {
-                alert(data);
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Travel").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("travel")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Travel",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        food: item.food,
+                        accommodation: item.accommodation,
+                        traffic: item.traffic,
+                        days: item.days,
+                        people: item.people,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
             }
-        })
-    }
+        },
+        created: function () {
+        }
+    });
+
 
     function material(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
