@@ -1,9 +1,6 @@
 package service.impl;
 
-import beans.Equipment;
-import beans.Indirect;
-import beans.Material;
-import beans.Travel;
+import beans.*;
 import org.springframework.stereotype.Service;
 import service.ICheckService;
 @Service
@@ -27,6 +24,11 @@ public class CheckService implements ICheckService {
 
     @Override
     public boolean checkIndirect(Indirect indirect) {
+        return true;
+    }
+
+    @Override
+    public boolean checkProperty(Property property) {
         return true;
     }
 }

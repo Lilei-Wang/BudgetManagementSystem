@@ -422,25 +422,21 @@ public class BudgetHandler {
 
     @Autowired
     private IPropertyDao propertyDao;
-
     /**
-     * 修改预算中的国际交流合作费、规则中的国际交流合作费
      *
      * @param mode
-     * @param id
-     * @param name
-     * @param price
+     * @param property
      * @param nums
      * @param curd
      * @param request
      * @param response
      */
     @RequestMapping("/Modify/Property")
-    public void modifyProperty(Integer mode, Integer id, String name, Double price, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyProperty(Integer mode, Property property, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Property");
 
-        if (mode.equals(0))//修改预算
-        {
+        /*if (mode.equals(0))//修改预算
+        {*/
             if (nums < 0) return;
             String sessionID = getSessionID(request.getCookies());
             Budget budget = retrieveBudget(sessionID);
@@ -449,11 +445,17 @@ public class BudgetHandler {
 
             Map<Property, Integer> items = null;
             items = budget.getProperties();
-            Property mod = propertyDao.selectById(id);
-            if (mod != null)
-                items.put(mod, nums);
+            if(!checkService.checkProperty(property)) return;
+            if(curd.equals(0)){
+                items.put(property,nums);
+            }else if(curd.equals(1)){
+                items.remove(property);
+            }else{
+                items.remove(property);
+                items.put(property,nums);
+            }
             serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
+        /*} *//*else//修改规则
         {
             Property item = new Property();
             item.setId(id);
@@ -469,7 +471,7 @@ public class BudgetHandler {
             {
                 propertyDao.updateProperty(item);
             }
-        }
+        }*/
     }
 
 

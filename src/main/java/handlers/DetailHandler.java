@@ -150,4 +150,57 @@ public class DetailHandler {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping("/Power")
+    public void powerDetail(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Power, Integer> powers = budget.getPowers();
+            List<JSONObject> list=new LinkedList<>();
+            for (Power item : powers.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",powers.get(item));
+                list.add(obj);
+            }
+            object.put("powers",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping("/Property")
+    public void propertyDetail(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Property, Integer> propertyIntegerMap = budget.getProperties();
+            List<JSONObject> list=new LinkedList<>();
+            for (Property item : propertyIntegerMap.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",propertyIntegerMap.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

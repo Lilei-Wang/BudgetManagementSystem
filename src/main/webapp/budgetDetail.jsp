@@ -15,6 +15,7 @@
 <html>
 <head>
     <title>预算明细</title>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -28,7 +29,6 @@
             crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <%--<script type="text/javascript" src="${pageContext.request.contextPath}/js/modifyDetail.js"></script>--%>
     <style type="text/css">
@@ -36,6 +36,10 @@
             padding-top: 70px;
         }
     </style>
+
+    <%--Vue--%>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 </head>
 <body onload="showEquipment()">
 
@@ -79,7 +83,7 @@
     <li><a href="#travel" data-toggle="tab" onclick=showTravel()>差旅费</a></li>
     <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
-    <li><a href="#property" data-toggle="tab">出版/文献/信息传播/知识产权事务费</a></li>
+    <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
     <li><a href="#labour" data-toggle="tab">劳务费</a></li>
     <li><a href="#consultation" data-toggle="tab">咨询费</a></li>
     <li><a href="#others" data-toggle="tab">其他费用</a></li>
@@ -207,7 +211,7 @@
                 map = (Map) budget.getMaterials();
                 IMaterialDao materialDao = applicationContext.getBean(IMaterialDao.class);
                 List<Material> materials = materialDao.selectAll();
-                for (Material material : materials) {
+                /*for (Material material : materials) {
                     out.write("<tr>");
                     out.write("<td>" + material.getId() + "</td>");
                     out.write("<td>" + material.getName() + "</td>");
@@ -220,7 +224,7 @@
                             "<input type='number' value='" + num + "' />" +
                             "<button type='btn btn-default' class='updateItem' onclick=material(this)>确认</button>" +
                             material.computeUnitPrice() * num + "</td>");
-                }
+                }*/
             %>
             </tbody>
 
@@ -269,14 +273,19 @@
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody id="power-table">
-            <tr ng-repeat="item in items">
-                <td>{{item.name}}</td>
-                <td>{{item.price}}</td>
-                <td>{{item.nums}}</td>
+            <tr v-for="power in items">
+                <td><input type="text" readonly v-model="power.name"></td>
+                <td><input type="number" v-model="power.price"></td>
+                <td><input type="number" v-model="power.nums"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(power)">确认</button>
+                    <button class="btn btn-danger" @click="del(power)">删除</button>
+                </td>
             </tr>
             </tbody>
             <tr class="success">
@@ -430,15 +439,33 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
+                <th hidden>编号</th>
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody>
-            <%
+                <tr v-for="item in items">
+                    <td><input type="text" readonly v-model="item.name"></td>
+                    <td><input type="number" v-model="item.price"></td>
+                    <td><input type="number" v-model="item.nums"></td>
+                    <td>
+                        <button class="btn btn-success" @click="update(item)">确认</button>
+                        <button class="btn btn-danger" @click="del(item)">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="text" readonly v-model="sample.name"></td>
+                    <td><input type="number" v-model="sample.price"></td>
+                    <td><input type="number" v-model="sample.nums"></td>
+                    <td>
+                        <button class="btn btn-success" @click="add(sample)">添加</button>
+                    </td>
+                </tr>
+            <%--<%
                 map = (Map) budget.getProperties();
                 IPropertyDao propertyDao =
                         applicationContext.getBean(IPropertyDao.class);
@@ -457,7 +484,7 @@
                             "<button type='btn btn-default' class='updateItem' onclick=property(this)>确认</button>" +
                             "</td>");
                 }
-            %>
+            %>--%>
             </tbody>
 
         </table>
@@ -573,7 +600,122 @@
 
 
 <script>
+    var equipmentVue=new Vue({
+        el:"#equipment",
+        data:{
+            items:[],
+            sample:{name:"sample",price:0,nums:0}
+        },
+        methods:{
+            update: function (item) {
+                this.doUpdate(item,2);
+            },
+            del: function (item) {
+                this.doUpdate(item,1);
+            },
+            add: function (item) {
+                this.doUpdate(item,0);
+            },
+            showlist:function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment").then(
+                    function (data) {
+                        this.items=data.body.data;
+                        //console.log("showlist");
+                    },function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate:function (item,curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
+                    {
+                        name:item.name,
+                        price:item.price,
+                        nums:item.nums,
+                        curd:curd
+                    },
+                    {emulateJSON:true}
+                ).then(function (value) {
+                    this.showlist();
+                    updateBudgetPage("equipment");
+                });
+            }
+        },
+        created:function () {
+        }
+    });
+    var powerVue = new Vue({
+        el: "#power",
+        data: {
+            items: {}
+        },
+        methods: {
+            update: function (item) {
+                alert("update")
+            },
+            del: function (item) {
+                alert("delete")
+            },
+            add: function (item) {
+                alert("add")
+            }
+        },
+        created: function () {
+            //alert("created");
+            this.$http.get('${pageContext.request.contextPath}/Budget/Detail/Power').then(
+                function (result) {
+                    this.items=result.body.powers;
+                }, function (error) {
+                    alert(error)
+                }
+            )
+        }
+    });
 
+    var propertyVue=new Vue({
+        el:"#property",
+        data:{
+            items:[],
+            sample:{name:"sample",price:0,nums:0}
+        },
+        methods:{
+            update: function (item) {
+                this.doUpdate(item,2);
+            },
+            del: function (item) {
+                this.doUpdate(item,1);
+            },
+            add: function (item) {
+                this.doUpdate(item,0);
+            },
+            showlist:function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Property").then(
+                    function (data) {
+                        this.items=data.body.data;
+                        console.log("showlist");
+                    },function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate:function (item,curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Property",
+                    {
+                        name:item.name,
+                        price:item.price,
+                        nums:item.nums,
+                        curd:curd
+                    },
+                    {emulateJSON:true}
+                ).then(function (value) {
+                    this.showlist();
+                    updateBudgetPage("property");
+                });
+            }
+        },
+        created:function () {
+        }
+    });
     function equip(btn) {
         var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
         var price = btn.parentElement.parentElement.firstElementChild.nextElementSibling.nextElementSibling.innerHTML;
@@ -943,13 +1085,13 @@
             type: "post",
             dataType: "json",
             success: function (data) {
-                var over="预算超出：";
-                var under="预算不足，再来";
-                var equal="凑够啦！";
-                var colors={
-                    over:"red",
-                    under:"blue",
-                    equal:"green"
+                var over = "预算超出：";
+                var under = "预算不足，再来";
+                var equal = "凑够啦！";
+                var colors = {
+                    over: "red",
+                    under: "blue",
+                    equal: "green"
                 }
                 document.getElementById("total-req").innerHTML = data.req;
                 document.getElementById("total-sum").innerHTML = data.sum;
@@ -958,12 +1100,11 @@
                     document.getElementById("total-diff").style.color = colors.over;
                     document.getElementById("total-hint").innerHTML = over;
                 }
-                else if(data.diff > 0) {
+                else if (data.diff > 0) {
                     document.getElementById("total-diff").style.color = colors.under;
                     document.getElementById("total-hint").innerHTML = under;
                 }
-                else
-                {
+                else {
                     document.getElementById("total-diff").style.color = colors.equal;
                     document.getElementById("total-hint").innerHTML = equal;
                 }
@@ -972,15 +1113,14 @@
                 document.getElementById("this-sum").innerHTML = data[type].sum;
                 document.getElementById("this-diff").innerHTML = abs(data[type].diff);
                 if (data[type].diff < 0) {
-                    document.getElementById("this-hint").innerHTML =over
-                    document.getElementById("this-diff").style.color =colors.over
+                    document.getElementById("this-hint").innerHTML = over
+                    document.getElementById("this-diff").style.color = colors.over
                 }
-                else if(data[type].diff > 0) {
-                    document.getElementById("this-hint").innerHTML =under
+                else if (data[type].diff > 0) {
+                    document.getElementById("this-hint").innerHTML = under
                     document.getElementById("this-diff").style.color = colors.under;
                 }
-                else
-                {
+                else {
                     document.getElementById("this-diff").style.color = colors.equal;
                     document.getElementById("this-hint").innerHTML = equal;
                 }
@@ -989,8 +1129,9 @@
             }
         })
     }
+
     function abs(number) {
-        if(number<0) return -number;
+        if (number < 0) return -number;
         return number;
     }
 
