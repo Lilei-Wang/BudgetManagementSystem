@@ -35,8 +35,8 @@
         body {
             padding-top: 70px;
         }
-        table{
-            ;
+
+        table {;
         }
     </style>
 
@@ -86,7 +86,7 @@
     <li><a href="#labour" data-toggle="tab">劳务费</a></li>
     <li><a href="#consultation" data-toggle="tab">咨询费</a></li>
     <li><a href="#others" data-toggle="tab">其他费用</a></li>
-    <li><a href="#indirect" data-toggle="tab" onclick=showIndirect()>间接费用</a></li>
+    <li><a href="#indirect" data-toggle="tab" onclick="indirectVue.showlist()">间接费用</a></li>
 
 </ul>
 <h3>
@@ -216,32 +216,32 @@
             </thead>
 
             <tbody id="travel-table">
-                <tr v-for="item in items" v-bind:title="item.name">
-                    <td><input type="text" readonly v-model="item.name"></td>
-                    <td><input type="number" v-model="item.price"></td>
-                    <td><input type="number" v-model="item.food"></td>
-                    <td><input type="number" v-model="item.traffic"></td>
-                    <td><input type="number" v-model="item.accommodation"></td>
-                    <td><input type="number" v-model="item.people"></td>
-                    <td><input type="number" v-model="item.days"></td>
-                    <td>
-                        <button class="btn btn-success" @click="update(item)">确认</button>
-                        <button class="btn btn-danger" @click="del(item)">删除</button>
-                    </td>
-                </tr>
+            <tr v-for="item in items" v-bind:title="item.name">
+                <td><input type="text" readonly v-model="item.name"></td>
+                <td><input type="number" v-model="item.price"></td>
+                <td><input type="number" v-model="item.food"></td>
+                <td><input type="number" v-model="item.traffic"></td>
+                <td><input type="number" v-model="item.accommodation"></td>
+                <td><input type="number" v-model="item.people"></td>
+                <td><input type="number" v-model="item.days"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
 
-                <tr class="success">
-                    <td><input type="text" v-model="sample.name"></td>
-                    <td><input type="number" v-model="sample.price"></td>
-                    <td><input type="number" v-model="sample.food"></td>
-                    <td><input type="number" v-model="sample.traffic"></td>
-                    <td><input type="number" v-model="sample.accommodation"></td>
-                    <td><input type="number" v-model="sample.people"></td>
-                    <td><input type="number" v-model="sample.days"></td>
-                    <td>
-                        <button class="btn btn-success" @click="add(sample)">添加</button>
-                    </td>
-                </tr>
+            <tr class="success">
+                <td><input type="text" v-model="sample.name"></td>
+                <td><input type="number" v-model="sample.price"></td>
+                <td><input type="number" v-model="sample.food"></td>
+                <td><input type="number" v-model="sample.traffic"></td>
+                <td><input type="number" v-model="sample.accommodation"></td>
+                <td><input type="number" v-model="sample.people"></td>
+                <td><input type="number" v-model="sample.days"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -354,8 +354,7 @@
     </div>
 
     <div class="tab-pane fade" id="others">
-        <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-        </p>
+
     </div>
 
     <div class="tab-pane fade" id="indirect">
@@ -370,18 +369,13 @@
             </thead>
 
             <tbody id="indirect-body">
+                <tr v-for="item in items">
+                    <td>{{item.name}}</td>
+                    <td>{{item.price}}</td>
+                    <td>{{item.nums}}</td>
+                </tr>
             </tbody>
-            <tr>
-                <td>
-                    <input type="text">
-                </td>
-                <td><input type="number">
-                </td>
-                <td>
-                    <input type="number">
-                    <button class="btn" onclick=updateIndirect(this)>添加</button>
-                </td>
-            </tr>
+
         </table>
     </div>
 </div>
@@ -485,7 +479,7 @@
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                    updateBudgetPage("property");
+                        updateBudgetPage("property");
                     }, function (error) {
                         console.log(error)
                     }
@@ -558,247 +552,26 @@
         }
     });
 
-
-    function material(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Material",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                nums: num
-            },
-            success: function (data) {
-                req = Number(document.getElementById("material-req").innerHTML)
-                data = Number(data)
-
-                document.getElementById("material-sum").innerHTML = data
-                document.getElementById("material-diff").innerHTML = req - data
-                //alert("success");
-                //location.reload();
+    var indirectVue=new Vue({
+        el: "#indirect",
+        data: {
+            items: []
+        },
+        methods: {
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Indirect").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("indirect-showlist");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
             }
-        })
-    }
-
-    function international(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/International",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                nums: num
-            },
-            success: function () {
-                alert("success");
-                //location.reload();
-            }
-        })
-    }
-
-    function property(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Property",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                nums: num
-            },
-            success: function () {
-                alert("success");
-                //location.reload();
-            }
-        })
-    }
-
-    function labour(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var num = btn.parentElement.firstElementChild.value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Labour",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                nums: num
-            },
-            success: function () {
-                alert("success");
-                //location.reload();
-            }
-        })
-    }
-
-    function conference(btn) {
-        var id = btn.parentElement.parentElement.firstElementChild.innerHTML;
-        var people = btn.parentElement.childNodes.item(0).value;
-        var days = btn.parentElement.childNodes.item(1).value;
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Conference",
-            type: "post",
-            data: {
-                mode: 0,
-                id: id,
-                people: people,
-                days: days
-            },
-            success: function (data) {
-                req = Number(document.getElementById("conf-req").innerHTML)
-                data = Number(data)
-
-                document.getElementById("conf-sum").innerHTML = data
-                document.getElementById("conf-diff").innerHTML = req - data
-                //alert("success");
-                //location.reload();
-            }
-        })
-    }
-
-    function updateTravel(button, curd) {
-        var root = button.parentNode.parentNode;
-        var name = root.getElementsByClassName("name").item(0).value
-        var price = root.getElementsByClassName("price").item(0).value
-        var food = root.getElementsByClassName("food").item(0).value
-        var traffic = root.getElementsByClassName("traffic").item(0).value
-        var accommodation = root.getElementsByClassName("accommodation").item(0).value
-        var people = root.getElementsByClassName("people").item(0).value
-        var days = root.getElementsByClassName("days").item(0).value
-
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Travel",
-            type: "post",
-            data: {
-                name: name,
-                price: price,
-                food: food,
-                traffic: traffic,
-                accommodation: accommodation,
-                people: people,
-                days: days,
-                curd: curd
-            },
-            success: function (data) {
-                showTravel();
-            }
-        })
-    }
-
-    function showTravel() {
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Detail/Travel",
-            type: "post",
-            dataType: "json",
-            success: function (data) {
-                var table = document.getElementById("travel-table");
-                table.innerHTML = "";
-                list = data.travels;
-                for (var i = 0; i < list.length; i++) {
-                    appendTravel(list[i].name, list[i].price, list[i].food,
-                        list[i].traffic,
-                        list[i].accommodation,
-                        list[i].people,
-                        list[i].days,
-                        table)
-                }
-                updateBudgetPage("travel");
-            },
-            error: function (data) {
-                alert(data);
-            }
-        })
-    }
-
-    function getTr(width) {
-        tr = document.createElement("tr");
-        tr.style.width = width;
-        return tr;
-    }
-
-    function getTd(width) {
-        td = document.createElement("td");
-        td.style.width = width;
-        return td;
-    }
-
-    function getInput(type, value, nameOrclazz, readOnly) {
-        var input = document.createElement("input");
-        input.type = type;
-        input.value = value;
-        input.name = nameOrclazz;
-        input.classList.add(nameOrclazz);
-        input.readOnly = readOnly;
-        return input;
-    }
-
-    function getButton(innerHTML, claszzList, onclick) {
-        var button = document.createElement("button");
-        button.innerHTML = innerHTML;
-        button.onclick = onclick;
-        for (var i = 0; i < claszzList.length; i++)
-            button.classList.add(claszzList[i]);
-        return button;
-    }
-
-    function appendTravel(name, price, food, traffic, accommodation, people, days, table) {
-        width = 100;
-        tr = document.createElement("tr")
-        var input = getInput("text", name, "name", true);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", price, "price", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", food, "food", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", traffic, "traffic", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", accommodation, "accommodation", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", people, "people", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getInput("number", days, "days", false);
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getButton("确认", ["btn", "btn-success"], function () {
-            updateTravel(this, 2);
-        });
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-
-        var input = getButton("删除", ["btn", "btn-danger"], function () {
-            updateTravel(this, 1);
-        });
-        var td = getTd(width);
-        td.appendChild(input);
-        tr.appendChild(td);
-        table.appendChild(tr);
-    }
+        },
+        created: function () {
+        }
+    });
 
 
     /**
@@ -861,75 +634,5 @@
         return number;
     }
 
-    function showIndirect() {
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Detail/Indirect",
-            type: "post",
-            dataType: "json",
-            success: function (data) {
-                var table = document.getElementById("indirect-body");
-                table.innerText = "";
-                //alert(data.length)
-                list = data.indirects;
-                for (var i = 0; i < list.length; i++) {
-                    appendIndirect(list[i].id, list[i].name, list[i].price, list[i].nums)
-                }
-                updateBudgetPage("indirect");
-            },
-            error: function (data) {
-                alert(data);
-            }
-        })
-    }
-
-    function appendIndirect(id, name, price, nums) {
-        var table = document.getElementById("indirect-body");
-        var tr = document.createElement("tr");
-        // var td=document.createElement("td");
-        //td.innerHTML=(id==null)?0:id;
-        //tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "text";
-        input.value = name;
-        td.appendChild(input);
-        tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "number";
-        input.value = price;
-        td.appendChild(input);
-        tr.appendChild(td);
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "number";
-        input.value = nums;
-        td.appendChild(input);
-        var button = document.createElement("button");
-        button.innerHTML = "确认";
-        button.classList.add("btn");
-        button.onclick = function (ev) {
-            updateIndirect(button)
-        };
-        td.appendChild(button);
-        tr.appendChild(td);
-        table.appendChild(tr);
-    }
-
-    function updateIndirect(btn) {
-        //alert(btn.innerHTML);
-        $.ajax({
-            url: "${pageContext.request.contextPath}/Budget/Modify/Indirect",
-            type: "post",
-            dataType: "json",
-            success: function (data) {
-                showIndirect();
-                updateBudgetPage();
-            },
-            error: function (data) {
-                alert("error");
-            }
-        })
-    }
 
 </script>

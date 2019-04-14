@@ -408,6 +408,7 @@ public class BudgetHandler {
                 items.remove(property);
                 items.put(property,nums);
             }
+            afterUpdate(budget);
             serializeBudget(budget, getFilePath(sessionID));
     }
 
@@ -619,9 +620,18 @@ public class BudgetHandler {
             items.remove(travel);
             items.put(travel, pair);
         }
+        afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
     }
 
+
+    /**
+     * 预算修改的善后工作
+     * @param budget
+     */
+    private void afterUpdate(Budget budget){
+        budget.setIndirects(budget.computeIndirect());
+    }
 
     /**
      * 从Cookies中获取sessionID

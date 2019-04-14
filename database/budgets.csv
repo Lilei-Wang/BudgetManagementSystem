@@ -1,0 +1,4 @@
+列名,数据类型,字段类型,长度,是否为空,默认值,备注
+id,int(11),int,,NO,,""
+userid,int(11),int,,YES,0,用户id
+filename,varchar(50),varchar,50,YES,,预算文件名称

@@ -67,16 +67,6 @@
 
 
 <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
-    <%--<fieldset>--%>
-   <%-- <div class="form-group">
-        <label class="control-label col-sm-4">预算类型</label>
-        <div class="col-sm-4">
-            <select name="budget-type" class="form-control">
-                <option>专项</option>
-                <option>自筹</option>
-            </select>
-        </div>
-    </div>--%>
 
     <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>

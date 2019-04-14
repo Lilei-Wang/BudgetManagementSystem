@@ -16,6 +16,13 @@
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <context:component-scan base-package="handlers"/>
     <mvc:annotation-driven/>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/Login*"/>
+            <bean class="interceptors.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
     <mvc:resources mapping="/resources/**" location="/resources/"/>
     <mvc:resources mapping="/data/**" location="/data/"/>
     <mvc:resources mapping="/files/**" location="/files/"/>

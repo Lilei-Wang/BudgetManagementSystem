@@ -43,7 +43,7 @@ public class DetailHandler {
                 obj.put("nums",indirects.get(indirect));
                 list.add(obj);
             }
-            object.put("indirects",list);
+            object.put("data",list);
             writer.write(object.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,6 +65,7 @@ public class DetailHandler {
 
             double req_sofar=0.0,sum_sofar=0.0,req,sum;
 
+            //设备费
             JSONObject sub=new JSONObject();
             req=budget.getRequirement().getEquip();
             sum=detailService.sumEquipment(budget.getEquipments());
@@ -74,6 +75,7 @@ public class DetailHandler {
             object.put("equipment",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //差旅费
             sub=new JSONObject();
             req=budget.getRequirement().getTravel();
             sum=detailService.sumTravel(budget.getTravels());
@@ -83,6 +85,7 @@ public class DetailHandler {
             object.put("travel",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //劳务费
             sub=new JSONObject();
             req=budget.getRequirement().getLabour();
             sum=detailService.sumLabour(budget.getLabour());
@@ -90,6 +93,16 @@ public class DetailHandler {
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("labour",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
+            //产权费
+            sub=new JSONObject();
+            req=budget.getRequirement().getProperty();
+            sum=detailService.sumProperty(budget.getProperties());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("property",sub);
             req_sofar+=req;sum_sofar+=sum;
 
             object.put("req",req_sofar);
@@ -179,7 +192,7 @@ public class DetailHandler {
                 obj.put("nums",powers.get(item));
                 list.add(obj);
             }
-            object.put("powers",list);
+            object.put("data",list);
             writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,0 +1,8 @@
+列名,数据类型,字段类型,长度,是否为空,默认值,备注
+id,int(11),int,,NO,,""
+dest,varchar(50),varchar,50,YES,,目的地
+price,double,double,,YES,,往返价格
+food,double,double,,YES,,伙食标准
+traffic,double,double,,YES,,交通标准
+accommodation,double,double,,YES,,住宿标准
+comment,text,text,65535,YES,,备注

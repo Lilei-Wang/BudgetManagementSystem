@@ -1,0 +1,5 @@
+列名,数据类型,字段类型,长度,是否为空,默认值,备注
+id,int(11),int,,NO,,""
+name,varchar(100),varchar,100,YES,,专家信息（职称等）
+price,double,double,,YES,,咨询费
+comment,text,text,65535,YES,,""

@@ -1,0 +1,6 @@
+列名,数据类型,字段类型,长度,是否为空,默认值,备注
+id,int(11),int,,NO,,""
+name,varchar(100),varchar,100,YES,,名目（本硕博专）
+price,double,double,,YES,,单价（人月）
+priority,int(11),int,,YES,,优先级
+comment,text,text,65535,YES,,""

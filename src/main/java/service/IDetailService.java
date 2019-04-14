@@ -1,9 +1,6 @@
 package service;
 
-import beans.Equipment;
-import beans.Labour;
-import beans.Pair;
-import beans.Travel;
+import beans.*;
 
 import java.util.Map;
 
@@ -14,4 +11,6 @@ public interface IDetailService {
     double sumTravel(Map<Travel, Pair> travels);
 
     double sumLabour(Map<Labour, Integer> labour);
+
+    double sumProperty(Map<Property, Integer> properties);
 }
