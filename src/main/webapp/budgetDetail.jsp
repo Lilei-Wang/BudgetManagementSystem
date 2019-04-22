@@ -80,7 +80,7 @@
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab" onclick=travelVue.showlist()>差旅费</a></li>
-    <li><a href="#conference" data-toggle="tab">会议费(包含咨询费)</a></li>
+    <li><a href="#conference" data-toggle="tab" onclick="conferenceVue.showlist()">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
     <li><a href="#labour" data-toggle="tab">劳务费</a></li>
@@ -250,15 +250,37 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
+                <th hidden>编号</th>
                 <th>名称</th>
+                <th>专家类型</th>
+                <th>需要专家人数</th>
                 <th>单价</th>
-                <th>需要专家</th>
-                <th>参会人数*会议次数</th>
+                <th>参会人数</th>
+                <th>会议次数</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody>
+            <tr v-for="item in items" v-bind:title="item.name">
+                <td><input type="text" readonly v-model="item.name"></td>
+                <td>
+                    <select class="form-control" v-model="item.expertType">
+                        <option disabled value="">请选择其中一项</option>
+                        <option>专家</option>
+                        <option>B</option>
+                        <option>C</option>
+                    </select>
+                </td>
+                <td><input type="number" v-model="item.experts"></td>
+                <td><input type="number" v-model="item.price"></td>
+                <td><input type="number" v-model="item.people"></td>
+                <td><input type="number" v-model="item.days"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -369,11 +391,11 @@
             </thead>
 
             <tbody id="indirect-body">
-                <tr v-for="item in items">
-                    <td>{{item.name}}</td>
-                    <td>{{item.price}}</td>
-                    <td>{{item.nums}}</td>
-                </tr>
+            <tr v-for="item in items">
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.nums}}</td>
+            </tr>
             </tbody>
 
         </table>
@@ -552,7 +574,7 @@
         }
     });
 
-    var indirectVue=new Vue({
+    var indirectVue = new Vue({
         el: "#indirect",
         data: {
             items: []
@@ -572,6 +594,55 @@
         created: function () {
         }
     });
+
+    var conferenceVue = new Vue({
+        el: "#conference",
+        data: {
+            items: [],
+            sample: {name: "sample",expertType:"专家",experts:0, price: 0, people: 0,days:0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Conference").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("conference")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Conference",
+                    {
+                        name: item.name,
+                        expertType:item.expertType,
+                        experts:item.experts,
+                        price: item.price,
+                        people: item.people,
+                        days: item.days,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
+            }
+        },
+        created: function () {
+        }
+    });
+
 
 
     /**

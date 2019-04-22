@@ -225,4 +225,34 @@ public class DetailHandler {
             e.printStackTrace();
         }
     }
+
+
+    @RequestMapping("/Conference")
+    public void conferenceDetail(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Conference, Pair> conferencePairMap = budget.getConferences();
+            List<JSONObject> list=new LinkedList<>();
+            for (Conference item : conferencePairMap.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("experts",item.getExperts());
+                obj.put("expertType","专家");
+                obj.put("price",item.getPrice());
+                obj.put("people",conferencePairMap.get(item).getPeople());
+                obj.put("days",conferencePairMap.get(item).getDays());
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
