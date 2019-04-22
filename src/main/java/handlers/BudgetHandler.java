@@ -376,8 +376,8 @@ public class BudgetHandler {
 
     @Autowired
     private IPropertyDao propertyDao;
+
     /**
-     *
      * @param mode
      * @param property
      * @param nums
@@ -391,25 +391,25 @@ public class BudgetHandler {
 
         /*if (mode.equals(0))//修改预算
         {*/
-            if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
+        assert budget != null;
 
-            Map<Property, Integer> items = null;
-            items = budget.getProperties();
-            if(!checkService.checkProperty(property)) return;
-            if(curd.equals(0)){
-                items.put(property,nums);
-            }else if(curd.equals(1)){
-                items.remove(property);
-            }else{
-                items.remove(property);
-                items.put(property,nums);
-            }
-            afterUpdate(budget);
-            serializeBudget(budget, getFilePath(sessionID));
+        Map<Property, Integer> items = null;
+        items = budget.getProperties();
+        if (!checkService.checkProperty(property)) return;
+        if (curd.equals(0)) {
+            items.put(property, nums);
+        } else if (curd.equals(1)) {
+            items.remove(property);
+        } else {
+            items.remove(property);
+            items.put(property, nums);
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 
@@ -418,51 +418,35 @@ public class BudgetHandler {
 
     /**
      * 修改预算中的劳务费、规则中的劳务费
-     *
      * @param mode
-     * @param id
-     * @param name
-     * @param price
+     * @param labour
      * @param nums
      * @param curd
      * @param request
      * @param response
      */
     @RequestMapping("/Modify/Labour")
-    public void modifyLabour(Integer mode, Integer id, String name, Double price, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyLabour(Integer mode, Labour labour, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Labour");
 
-        if (mode.equals(0))//修改预算
-        {
-            if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
+        assert budget != null;
 
-            Map<Labour, Integer> items = null;
-            items = budget.getLabour();
-            Labour mod = labourDao.selectById(id);
-            if (mod != null)
-                items.put(mod, nums);
-            serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
-        {
-            Labour item = new Labour();
-            item.setId(id);
-            item.setName(name);
-            item.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                labourDao.insertLabour(item);
-            } else if (curd.equals(1))//删
-            {
-                labourDao.deleteLabour(item);
-            } else//改
-            {
-                labourDao.updateLabour(item);
-            }
+        Map<Labour, Integer> items = null;
+        items = budget.getLabour();
+        if (curd.equals(0)) {
+            items.put(labour, nums);
+        } else if (curd.equals(1)) {
+            items.remove(labour);
+        } else {
+            items.remove(labour);
+            items.put(labour, nums);
         }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 
@@ -627,9 +611,10 @@ public class BudgetHandler {
 
     /**
      * 预算修改的善后工作
+     *
      * @param budget
      */
-    private void afterUpdate(Budget budget){
+    private void afterUpdate(Budget budget) {
         budget.setIndirects(budget.computeIndirect());
     }
 
@@ -830,7 +815,7 @@ public class BudgetHandler {
             }
             writer.newLine();
 
-            writer.write("劳务费,费用名称,费用标准,数量,小计");
+            writer.write("劳务费,费用名称,费用标准,数量,小计(五险一金)");
             writer.newLine();
             items = (Map) budget.getLabour();
             for (Item item : items.keySet()) {

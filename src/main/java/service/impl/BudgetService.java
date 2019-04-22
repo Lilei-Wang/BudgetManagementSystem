@@ -119,28 +119,27 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Equipment, Integer> doEquipment(Double number) {
-        Map<Equipment,Integer> map=new HashMap<>();
+        Map<Equipment, Integer> map = new HashMap<>();
         List<Equipment> equipments = equipmentDao.selectAll();
-        if(equipments!=null && equipments.size()>0) {
-            Collections.sort(equipments,new Comparator<Equipment>() {
+        if (equipments != null && equipments.size() > 0) {
+            Collections.sort(equipments, new Comparator<Equipment>() {
                 @Override
                 public int compare(Equipment o1, Equipment o2) {
-                    double diff=o1.getPrice()-o2.getPrice();
-                    return (int)diff;
+                    double diff = o1.getPrice() - o2.getPrice();
+                    return (int) diff;
                 }
             });
             for (Equipment equipment : equipments) {
-                map.put(equipment,0);
+                map.put(equipment, 0);
             }
             Equipment equipment = equipments.get(0);
-            double sum=0.0;
-            int i=0;
-            while(sum<number)
-            {
-                sum+=equipment.getPrice();
+            double sum = 0.0;
+            int i = 0;
+            while (sum < number) {
+                sum += equipment.getPrice();
                 i++;
             }
-            map.put(equipment,i);
+            map.put(equipment, i);
         }
         return map;
     }
@@ -189,31 +188,28 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Travel, Pair> doTravel(Double number) {
-        Map<Travel,Pair> result=new HashMap<>();
+        Map<Travel, Pair> result = new HashMap<>();
         List<Travel> travels = travelDao.selectAll();
-        if(travels!=null && travels.size()!=0)
-        {
-            double sofar=0.0;
+        if (travels != null && travels.size() != 0) {
+            double sofar = 0.0;
             for (Travel travel : travels) {
-                if(sofar<number)
-                {
-                    Pair pair=new Pair(1,1);
-                    result.put(travel,pair);
-                    sofar+=travel.cost(pair);
+                if (sofar < number) {
+                    Pair pair = new Pair(1, 1);
+                    result.put(travel, pair);
+                    sofar += travel.cost(pair);
                 }
             }
-            while (sofar<number)
-            {
+            while (sofar < number) {
                 for (Travel travel : result.keySet()) {
-                    Pair pair=result.get(travel);
-                    double oldCost=travel.cost(pair);
-                    pair.setDays(pair.getDays()+1);
-                    double newCost=travel.cost(pair);
-                    sofar+=(newCost-oldCost);
-                    System.out.println("oldCost:"+oldCost);
-                    System.out.println("newCost:"+newCost);
-                    System.out.println("sofar:"+sofar);
-                    if(sofar>=number) {
+                    Pair pair = result.get(travel);
+                    double oldCost = travel.cost(pair);
+                    pair.setDays(pair.getDays() + 1);
+                    double newCost = travel.cost(pair);
+                    sofar += (newCost - oldCost);
+                    System.out.println("oldCost:" + oldCost);
+                    System.out.println("newCost:" + newCost);
+                    System.out.println("sofar:" + sofar);
+                    if (sofar >= number) {
                         System.out.println(result);
                         return result;
                     }
@@ -224,6 +220,7 @@ public class BudgetService implements IBudgetService {
     }
 
     /////////////////////////////////////////////////////////待解决
+
     /**
      * 合成会议费
      *
@@ -232,35 +229,32 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Conference, Pair> doConference(Double number) {
-        Map<Conference,Pair> map=new HashMap<>();
+        Map<Conference, Pair> map = new HashMap<>();
         List<Conference> conferences = conferenceDao.selectAll();
         List<Consultation> consultations = consultationDao.selectAll();
-        Consultation consultation=null;
-        if(consultations!=null && consultations.size()>0)
-        {
+        Consultation consultation = null;
+        if (consultations != null && consultations.size() > 0) {
             for (Consultation item : consultations) {
-                consultation=item;
+                consultation = item;
                 break;
             }
         }
-        double sum=0.0;
+        double sum = 0.0;
         for (Conference conference : conferences) {
-            if(sum<number)
-            {
+            if (sum < number) {
                 Pair value = new Pair(1, 1);
-                map.put(conference,value);
-                sum+=conference.cost(value,consultation);
+                map.put(conference, value);
+                sum += conference.cost(value, consultation);
             }
         }
-        while (sum<number)
-        {
+        while (sum < number) {
             for (Conference conference : map.keySet()) {
                 Pair pair = map.get(conference);
-                double oldCost=conference.cost(pair,consultation);
-                pair.setPeople(pair.getPeople()+1);
-                double newCost=conference.cost(pair,consultation);
-                sum+=(newCost-oldCost);
-                if(sum>=number) return map;
+                double oldCost = conference.cost(pair, consultation);
+                pair.setPeople(pair.getPeople() + 1);
+                double newCost = conference.cost(pair, consultation);
+                sum += (newCost - oldCost);
+                if (sum >= number) return map;
             }
         }
         return map;
@@ -298,8 +292,20 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Labour, Integer> doLabour(Double number) {
-        List<Labour> labour = labourDao.selectAll();
-        return generateMap((List) labour, number);
+        List<Labour> list = labourDao.selectAll();
+        Map<Labour,Integer> result=new HashMap<>();
+        try {
+            Labour labour = list.get(0);
+            labour.setPeople(1);
+            labour.setMonths(1);
+            while(labour.computeUnitPrice()<number){
+                labour.setMonths(labour.getMonths()+1);
+            }
+            result.put(labour,1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -342,11 +348,10 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<Consultation, Integer> doConsultation(int n) {
         List<Consultation> consultations = consultationDao.selectAll();
-        Map<Consultation,Integer> map=new HashMap<>();
-        if(consultations!=null && consultations.size()>0)
-        {
+        Map<Consultation, Integer> map = new HashMap<>();
+        if (consultations != null && consultations.size() > 0) {
             Consultation consultation = consultations.get(0);
-            map.put(consultation,n);
+            map.put(consultation, n);
         }
         return map;
     }

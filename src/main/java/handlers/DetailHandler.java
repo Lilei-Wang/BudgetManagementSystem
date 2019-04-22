@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import service.IDetailService;
+import util.SalaryCalculator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -103,6 +104,16 @@ public class DetailHandler {
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("property",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
+            //劳务费
+            sub=new JSONObject();
+            req=budget.getRequirement().getLabour();
+            sum=detailService.sumLabour(budget.getLabour());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("labour",sub);
             req_sofar+=req;sum_sofar+=sum;
 
             object.put("req",req_sofar);
@@ -247,6 +258,35 @@ public class DetailHandler {
                 obj.put("price",item.getPrice());
                 obj.put("people",conferencePairMap.get(item).getPeople());
                 obj.put("days",conferencePairMap.get(item).getDays());
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Labour")
+    public void labourDetail(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Labour, Integer> labourIntegerMap = budget.getLabour();
+            List<JSONObject> list=new LinkedList<>();
+            for (Labour item : labourIntegerMap.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("tax", item.computeUnitPrice()/(item.getMonths()*item.getPeople()));
+                obj.put("people",item.getPeople());
+                obj.put("months",item.getMonths());
+                obj.put("nums",labourIntegerMap.get(item));
                 list.add(obj);
             }
             object.put("data",list);

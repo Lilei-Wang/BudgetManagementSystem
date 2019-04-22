@@ -30,7 +30,7 @@ public class DetailService implements IDetailService {
     public double sumLabour(Map<Labour, Integer> labours) {
         double sum=0.0;
         for (Labour labour : labours.keySet()) {
-            sum+=(labour.getPrice()*labours.get(labour));
+            sum+=(labour.computeUnitPrice()*labours.get(labour));
         }
         return sum;
     }

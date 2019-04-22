@@ -83,7 +83,7 @@
     <li><a href="#conference" data-toggle="tab" onclick="conferenceVue.showlist()">会议费(包含咨询费)</a></li>
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
-    <li><a href="#labour" data-toggle="tab">劳务费</a></li>
+    <li><a href="#labour" data-toggle="tab" onclick="labourVue.showlist()">劳务费</a></li>
     <li><a href="#consultation" data-toggle="tab">咨询费</a></li>
     <li><a href="#others" data-toggle="tab">其他费用</a></li>
     <li><a href="#indirect" data-toggle="tab" onclick="indirectVue.showlist()">间接费用</a></li>
@@ -252,10 +252,11 @@
             <tr>
                 <th hidden>编号</th>
                 <th>名称</th>
-                <th>专家类型</th>
-                <th>需要专家人数</th>
+                <th hidden>专家类型</th>
+                <th hidden>需要专家人数</th>
                 <th>单价</th>
                 <th>参会人数</th>
+                <th>天数</th>
                 <th>会议次数</th>
                 <th>操作</th>
             </tr>
@@ -264,7 +265,7 @@
             <tbody>
             <tr v-for="item in items" v-bind:title="item.name">
                 <td><input type="text" readonly v-model="item.name"></td>
-                <td>
+                <%--<td>
                     <select class="form-control" v-model="item.expertType">
                         <option disabled value="">请选择其中一项</option>
                         <option>专家</option>
@@ -272,10 +273,11 @@
                         <option>C</option>
                     </select>
                 </td>
-                <td><input type="number" v-model="item.experts"></td>
+                <td><input type="number" v-model="item.experts"></td>--%>
                 <td><input type="number" v-model="item.price"></td>
                 <td><input type="number" v-model="item.people"></td>
                 <td><input type="number" v-model="item.days"></td>
+                <td><input type="number" v-model="item.nums"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
@@ -343,15 +345,25 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
-                <th>名称</th>
-                <th>单价</th>
-                <th>数量</th>
+                <th hidden>编号</th>
+                <th>类型</th>
+                <th>劳务费（每人每月）</th>
+                <th>人</th>
+                <th>月</th>
             </tr>
             </thead>
 
             <tbody>
-
+            <tr v-for="item in items" v-bind:title="item.name">
+                <td><input type="text" readonly v-model="item.name"></td>
+                <td><input type="number" v-model="item.price">五险一金：{{item.tax}}</td>
+                <td><input type="number" v-model="item.people"></td>
+                <td><input type="number" v-model="item.months"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -643,6 +655,53 @@
         }
     });
 
+
+    var labourVue = new Vue({
+        el: "#labour",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Labour").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("labour")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Labour",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        people: item.people,
+                        months: item.months,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
+            }
+        },
+        created: function () {
+        }
+    });
 
 
     /**
