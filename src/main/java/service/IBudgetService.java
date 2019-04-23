@@ -17,7 +17,8 @@ public interface IBudgetService {
 
     Map<Travel, Pair> doTravel(Double number);
 
-    Map<Conference, Pair> doConference(Double number);
+    //Map<Conference, Pair> doConference(Double number);
+    Map<Conference, Integer> doConference(Double number);
 
     Map<InternationalCommunication,Integer> doInternationalCommunication(Double number);
 

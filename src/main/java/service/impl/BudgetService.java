@@ -228,32 +228,23 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Map<Conference, Pair> doConference(Double number) {
-        Map<Conference, Pair> map = new HashMap<>();
+    public Map<Conference, Integer> doConference(Double number) {
+        Map<Conference, Integer> map = new HashMap<>();
         List<Conference> conferences = conferenceDao.selectAll();
-        List<Consultation> consultations = consultationDao.selectAll();
-        Consultation consultation = null;
-        if (consultations != null && consultations.size() > 0) {
-            for (Consultation item : consultations) {
-                consultation = item;
-                break;
-            }
-        }
         double sum = 0.0;
         for (Conference conference : conferences) {
             if (sum < number) {
-                Pair value = new Pair(1, 1);
-                map.put(conference, value);
-                sum += conference.cost(value, consultation);
+                conference.setPeople(1);
+                conference.setDays(1);
+                map.put(conference, 1);
+                sum += conference.computeUnitPrice();
             }
         }
         while (sum < number) {
             for (Conference conference : map.keySet()) {
-                Pair pair = map.get(conference);
-                double oldCost = conference.cost(pair, consultation);
-                pair.setPeople(pair.getPeople() + 1);
-                double newCost = conference.cost(pair, consultation);
-                sum += (newCost - oldCost);
+                int i=map.get(conference);
+                map.put(conference,++i);
+                sum += conference.computeUnitPrice();
                 if (sum >= number) return map;
             }
         }

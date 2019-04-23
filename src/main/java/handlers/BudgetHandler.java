@@ -75,8 +75,8 @@ public class BudgetHandler {
                     } else if (item.contains("conference")) {
                         budget.setConferences(budgetService.doConference(number));
                         budget.getRequirement().setConference(number);
-                        int experts = expertSum(budget.getConferences());
-                        budget.setConsultations(budgetService.doConsultation(experts));
+                        /*int experts = expertSum(budget.getConferences());
+                        budget.setConsultations(budgetService.doConsultation(experts));*/
                     } else if (item.contains("international")) {
                         budget.setInternationalCommunications(budgetService.doInternationalCommunication(number));
                         budget.getRequirement().setInternational(number);
@@ -418,6 +418,7 @@ public class BudgetHandler {
 
     /**
      * 修改预算中的劳务费、规则中的劳务费
+     *
      * @param mode
      * @param labour
      * @param nums
@@ -454,66 +455,35 @@ public class BudgetHandler {
     private IConferenceDao conferenceDao;
 
     /**
+     *
      * @param mode
      * @param conference
-     * @param pair
      * @param nums
      * @param curd
      * @param request
      * @param response
      */
     @RequestMapping("/Modify/Conference")
-    public void modifyConference(Integer mode, Conference conference, Pair pair, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyConference(Integer mode, Conference conference, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Conference");
 
-        if (mode.equals(0))//修改预算
-        {
-            if (pair == null || pair.getDays() < 0 || pair.getPeople() < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if(nums<0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
+        assert budget != null;
 
-            Map<Conference, Pair> items = budget.getConferences();
-            Conference mod = conferenceDao.selectById(conference.getId());
-            if (mod != null)
-                items.put(mod, pair);
-            int experts = 0;
-            for (Conference item : items.keySet()) {
-                experts += item.getExperts() * items.get(item).getDays();
-            }
-            budget.setConsultations(budgetService.doConsultation(experts));
-            try {
-                double sum = 0.0;
-                Map<Conference, Pair> conferencesMap = budget.getConferences();
-                Map<Consultation, Integer> consultationsMap = budget.getConsultations();
-                Consultation consultation = null;
-                for (Consultation item : consultationsMap.keySet()) {
-                    consultation = item;
-                }
-                for (Conference item : conferencesMap.keySet()) {
-                    sum += (consultation.getPrice() * item.getExperts()
-                            + item.getPrice() * conferencesMap.get(item).getPeople()) * conferencesMap.get(item).getDays();
-                }
-                response.getWriter().print(sum);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
-        {
-            Conference item = conference;
-            if (curd.equals(0))//增
-            {
-                conferenceDao.insertConference(item);
-            } else if (curd.equals(1))//删
-            {
-                conferenceDao.deleteConference(item);
-            } else//改
-            {
-                conferenceDao.updateConference(item);
-            }
+        Map<Conference, Integer> items = budget.getConferences();
+        if (curd.equals(0)) {
+            items.put(conference, nums);
+        } else if (curd.equals(1)) {
+            items.remove(conference);
+        } else {
+            items.remove(conference);
+            items.put(conference, nums);
         }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 
@@ -772,16 +742,17 @@ public class BudgetHandler {
             }
             writer.newLine();
 
-            writer.write("会议费,会议内容,费用标准,参会人数,会议次数,小计");
+            writer.write("会议费,会议内容,费用标准,参会人数,举办天数,会议次数,小计");
             writer.newLine();
-            Map<Conference, Pair> conferences = budget.getConferences();
+            Map<Conference, Integer> conferences = budget.getConferences();
             for (Item item : conferences.keySet()) {
                 if (item instanceof Conference) {
                     writer.write(comma + item.getName()
                             + comma + item.getPrice()
-                            + comma + conferences.get(item).getPeople()
-                            + comma + conferences.get(item).getDays()
-                            + comma + item.getPrice() * conferences.get(item).getPeople() * conferences.get(item).getDays());
+                            + comma + ((Conference) item).getPeople()
+                            + comma + ((Conference) item).getDays()
+                            + comma + conferences.get(item)
+                            + comma + item.computeUnitPrice() * conferences.get(item));
                     writer.newLine();
                 }
             }
@@ -830,24 +801,15 @@ public class BudgetHandler {
             writer.newLine();
 
             if (budget.getConferences() != null && budget.getConferences().size() > 0 && budget.getConsultations() != null) {
-                writer.write("咨询费,工作内容,人员类型,费用标准,每次人数,次数,小计");
+                writer.write("咨询费,人员类型,费用标准,人数,小计");
                 writer.newLine();
                 Map<Consultation, Integer> consultations = budget.getConsultations();
-                Consultation consultation = null;
-                for (Consultation item : consultations.keySet()) {
-                    consultation = item;
-                }
-                conferences = budget.getConferences();
-                for (Item item : conferences.keySet()) {
-                    if (item instanceof Conference) {
-                        writer.write(comma + item.getName()
-                                + comma + consultation.getName()
-                                + comma + consultation.getPrice()
-                                + comma + ((Conference) item).getExperts()
-                                + comma + conferences.get(item).getDays()
-                                + comma + ((Conference) item).getExperts() * consultation.getPrice() * conferences.get(item).getDays());
-                        writer.newLine();
-                    }
+                for (Consultation consultation : consultations.keySet()) {
+                    writer.write(comma + consultation.getName()
+                            + comma + consultation.getPrice()
+                            + comma + consultations.get(consultation)
+                            + comma + consultation.getPrice() * consultations.get(consultation));
+                    writer.newLine();
                 }
             }
             writer.newLine();

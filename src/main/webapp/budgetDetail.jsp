@@ -611,7 +611,7 @@
         el: "#conference",
         data: {
             items: [],
-            sample: {name: "sample",expertType:"专家",experts:0, price: 0, people: 0,days:0}
+            sample: {name: "sample",expertType:"专家",experts:0, price: 0, people: 0,days:0,nums:0}
         },
         methods: {
             update: function (item) {
@@ -643,6 +643,7 @@
                         price: item.price,
                         people: item.people,
                         days: item.days,
+                        nums: item.nums,
                         curd: curd
                     },
                     {emulateJSON: true}

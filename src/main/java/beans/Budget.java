@@ -14,7 +14,8 @@ public class Budget implements Serializable {
     private Map<TestAndProcess, Integer> testAndProcesses;
     private Map<Power, Integer> powers;
     private Map<Travel, Pair> travels;
-    private Map<Conference, Pair> conferences;
+    //private Map<Conference, Pair> conferences;
+    private Map<Conference, Integer> conferences;
     private Map<InternationalCommunication, Integer> internationalCommunications;
     private Map<Property, Integer> properties;
     private Map<Labour, Integer> labour;
@@ -79,11 +80,11 @@ public class Budget implements Serializable {
         this.travels = travels;
     }
 
-    public Map<Conference, Pair> getConferences() {
+    public Map<Conference, Integer> getConferences() {
         return conferences;
     }
 
-    public void setConferences(Map<Conference, Pair> conferences) {
+    public void setConferences(Map<Conference, Integer> conferences) {
         this.conferences = conferences;
     }
 
@@ -165,7 +166,7 @@ public class Budget implements Serializable {
             }
         if (conferences != null)
             for (Conference conference : conferences.keySet()) {
-                direct += conference.getPrice() * conferences.get(conference).getPeople() * conferences.get(conference).getDays();
+                direct += conference.computeUnitPrice()*conferences.get(conference);
             }
         if (consultations!=null) {
             for (Consultation consultation : consultations.keySet()) {

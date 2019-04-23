@@ -247,7 +247,7 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
-            Map<Conference, Pair> conferencePairMap = budget.getConferences();
+            Map<Conference, Integer> conferencePairMap = budget.getConferences();
             List<JSONObject> list=new LinkedList<>();
             for (Conference item : conferencePairMap.keySet()) {
                 JSONObject obj=new JSONObject();
@@ -256,8 +256,9 @@ public class DetailHandler {
                 obj.put("experts",item.getExperts());
                 obj.put("expertType","专家");
                 obj.put("price",item.getPrice());
-                obj.put("people",conferencePairMap.get(item).getPeople());
-                obj.put("days",conferencePairMap.get(item).getDays());
+                obj.put("people",item.getPeople());
+                obj.put("days",item.getDays());
+                obj.put("nums",conferencePairMap.get(item));
                 list.add(obj);
             }
             object.put("data",list);
