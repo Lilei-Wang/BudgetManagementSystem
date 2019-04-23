@@ -86,9 +86,9 @@ public class BudgetHandler {
                     } else if (item.contains("labour")) {
                         budget.setLabour(budgetService.doLabour(number));
                         budget.getRequirement().setLabour(number);
-                    } /*else if (item.contains("consulatation")) {
+                    } else if (item.contains("consulatation")) {
                         budget.setConsultations(budgetService.doConsultation(number));
-                    } */ else if (item.contains("others")) {
+                    } else if (item.contains("others")) {
                         budget.setOthers(budgetService.doOthers(number));
                         budget.getRequirement().setOthers(number);
                     }

@@ -26,9 +26,7 @@ public interface IBudgetService {
 
     Map<Labour,Integer> doLabour(Double number);
 
-    @Deprecated
     Map<Consultation,Integer> doConsultation(Double number);
-
 
     Map<Consultation,Integer> doConsultation(Map<Conference,Integer> conferences);
     Map<Consultation,Integer> doConsultation(int n);

@@ -306,7 +306,6 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    @Deprecated
     public Map<Consultation, Integer> doConsultation(Double number) {
         List<Consultation> consultations = consultationDao.selectAll();
         return generateMap((List) consultations, number);
