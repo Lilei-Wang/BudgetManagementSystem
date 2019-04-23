@@ -86,14 +86,14 @@ public class DetailHandler {
             object.put("travel",sub);
             req_sofar+=req;sum_sofar+=sum;
 
-            //劳务费
+            //会议费
             sub=new JSONObject();
-            req=budget.getRequirement().getLabour();
-            sum=detailService.sumLabour(budget.getLabour());
+            req=budget.getRequirement().getConference();
+            sum=detailService.sumConference(budget.getConferences());
             sub.put("req",req);
             sub.put("sum",sum);
             sub.put("diff",req-sum);
-            object.put("labour",sub);
+            object.put("conference",sub);
             req_sofar+=req;sum_sofar+=sum;
 
             //产权费

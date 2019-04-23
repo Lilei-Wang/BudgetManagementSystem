@@ -43,4 +43,13 @@ public class DetailService implements IDetailService {
         }
         return sum;
     }
+
+    @Override
+    public double sumConference(Map<Conference, Integer> conferences) {
+        double sum=0.0;
+        for (Conference item : conferences.keySet()) {
+            sum+=(item.computeUnitPrice()*conferences.get(item));
+        }
+        return sum;
+    }
 }

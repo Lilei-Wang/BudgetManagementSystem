@@ -34,8 +34,14 @@ public class Conference extends Item {
         this.experts = experts;
     }
 
+    /**
+     * 不能简单的把乘以天数，天数与费用的关系详见专家费用规定
+     * @return
+     */
     @Override
     public double computeUnitPrice() {
+        int d=getDays();
+
         return getPrice()*getPeople()*getDays();
     }
 

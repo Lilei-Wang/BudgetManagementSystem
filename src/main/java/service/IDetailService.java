@@ -13,4 +13,6 @@ public interface IDetailService {
     double sumLabour(Map<Labour, Integer> labour);
 
     double sumProperty(Map<Property, Integer> properties);
+
+    double sumConference(Map<Conference, Integer> conferences);
 }
