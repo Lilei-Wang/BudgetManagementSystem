@@ -242,8 +242,8 @@ public class BudgetService implements IBudgetService {
         }
         while (sum < number) {
             for (Conference conference : map.keySet()) {
-                int i=map.get(conference);
-                map.put(conference,++i);
+                int i = map.get(conference);
+                map.put(conference, ++i);
                 sum += conference.computeUnitPrice();
                 if (sum >= number) return map;
             }
@@ -284,15 +284,15 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<Labour, Integer> doLabour(Double number) {
         List<Labour> list = labourDao.selectAll();
-        Map<Labour,Integer> result=new HashMap<>();
+        Map<Labour, Integer> result = new HashMap<>();
         try {
             Labour labour = list.get(0);
             labour.setPeople(1);
             labour.setMonths(1);
-            while(labour.computeUnitPrice()<number){
-                labour.setMonths(labour.getMonths()+1);
+            while (labour.computeUnitPrice() < number) {
+                labour.setMonths(labour.getMonths() + 1);
             }
-            result.put(labour,1);
+            result.put(labour, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -308,7 +308,31 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<Consultation, Integer> doConsultation(Double number) {
         List<Consultation> consultations = consultationDao.selectAll();
-        return generateMap((List) consultations, number);
+        Map<Consultation, Integer> result = new HashMap<>();
+        if(consultations==null || consultations.size()==0) return result;
+        try {
+            Consultation consultation = null;
+
+            //取一个价格非0的元素，避免死循环
+            for (Consultation item : consultations) {
+                if (item.getPrice() > 0) {
+                    consultation = item;
+                    break;
+                }
+            }
+            if(consultation==null) return result;
+
+            result.put(consultation,0);
+            double sum=0.0;
+            while(sum<number){
+                int i=result.get(consultation);
+                result.put(consultation,++i);
+                sum+=consultation.getPrice();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**

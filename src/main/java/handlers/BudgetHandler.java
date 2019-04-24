@@ -86,8 +86,9 @@ public class BudgetHandler {
                     } else if (item.contains("labour")) {
                         budget.setLabour(budgetService.doLabour(number));
                         budget.getRequirement().setLabour(number);
-                    } else if (item.contains("consulatation")) {
+                    } else if (item.contains("consultation")) {
                         budget.setConsultations(budgetService.doConsultation(number));
+                        budget.getRequirement().setConsultation(number);
                     } else if (item.contains("others")) {
                         budget.setOthers(budgetService.doOthers(number));
                         budget.getRequirement().setOthers(number);
@@ -455,7 +456,6 @@ public class BudgetHandler {
     private IConferenceDao conferenceDao;
 
     /**
-     *
      * @param mode
      * @param conference
      * @param nums
@@ -467,7 +467,7 @@ public class BudgetHandler {
     public void modifyConference(Integer mode, Conference conference, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Conference");
 
-        if(nums<0) return;
+        if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
@@ -503,44 +503,28 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Consultation")
-    public void modifyConsultation(Integer mode, Integer id, String name, Double price, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyConsultation(Integer mode, Consultation consultation, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("/Modify/Consultation");
 
-        if (mode.equals(0))//修改预算
-        {
-            //咨询费的预算不需要单独更改
-            /*if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
+        assert budget != null;
 
-            Map<Consultation, Integer> items = null;
-            items = budget.getConsultations();
-            for (Consultation item : items.keySet()) {
-                if (item.getId().equals(id)) {
-                    items.put(item, nums);
-                    break;
-                }
-            }
-            serializeBudget(budget, getFilePath(sessionID));*/
-        } else//修改规则
-        {
-            Consultation item = new Consultation();
-            item.setId(id);
-            item.setName(name);
-            item.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                consultationDao.insertConsultation(item);
-            } else if (curd.equals(1))//删
-            {
-                consultationDao.deleteConsultation(item);
-            } else//改
-            {
-                consultationDao.updateConsultation(item);
-            }
+        Map<Consultation, Integer> items = null;
+        items = budget.getConsultations();
+        if (curd.equals(0)) {
+            items.put(consultation, nums);
+        } else if (curd.equals(1)) {
+            items.remove(consultation);
+        } else {
+            items.remove(consultation);
+            items.put(consultation, nums);
         }
+        afterUpdate(budget);
+
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 

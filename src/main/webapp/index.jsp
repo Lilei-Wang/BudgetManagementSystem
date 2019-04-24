@@ -63,6 +63,7 @@
         international = 6,
         property = 8,
         labour = 66,
+        consultation = 2,
         others = 0; %>
 
 
@@ -136,7 +137,6 @@
         </label>
         <div class="col-sm-4" id="tip">
             <input name="conference-number" class="form-control" type="number" value=<%=conference%>>
-            （系统计算相应的咨询费）
         </div>
     </div>
 
@@ -168,15 +168,14 @@
             <input name="labour-number" class="form-control" type="number" value="<%=labour%>"></div>
     </div>
 
-    <%--<div class="checkbox">
-          <span class="add-on">
-            <label class="checkbox">
-                咨询费
-              <input name="items" type="checkbox" value="consultation">
-            </label>
-          </span>
-        <input name="consultation-number" class="form-control" type="number" value="0">
-    </div>--%>
+    <div class="form-group">
+        <label class="control-label col-sm-4">
+            <input name="items" type="checkbox" value="consultation" checked>
+            咨询费
+        </label>
+        <div class="col-sm-4">
+            <input name="consultation-number" class="form-control" type="number" value="<%=consultation%>"></div>
+    </div>
 
     <div class="form-group">
         <label class="control-label col-sm-4">

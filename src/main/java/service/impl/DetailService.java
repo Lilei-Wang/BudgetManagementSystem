@@ -52,4 +52,13 @@ public class DetailService implements IDetailService {
         }
         return sum;
     }
+
+    @Override
+    public double sumConsultation(Map<Consultation, Integer> consultations) {
+        double sum=0.0;
+        for (Consultation item : consultations.keySet()) {
+            sum+=(item.computeUnitPrice()*consultations.get(item));
+        }
+        return sum;
+    }
 }

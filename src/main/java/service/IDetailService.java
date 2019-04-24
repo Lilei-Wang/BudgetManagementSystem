@@ -15,4 +15,6 @@ public interface IDetailService {
     double sumProperty(Map<Property, Integer> properties);
 
     double sumConference(Map<Conference, Integer> conferences);
+
+    double sumConsultation(Map<Consultation, Integer> consultations);
 }

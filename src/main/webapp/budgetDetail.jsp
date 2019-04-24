@@ -84,7 +84,7 @@
     <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
     <li><a href="#labour" data-toggle="tab" onclick="labourVue.showlist()">劳务费</a></li>
-    <li><a href="#consultation" data-toggle="tab">咨询费</a></li>
+    <li><a href="#consultation" data-toggle="tab" onclick="consultationVue.showlist()">咨询费</a></li>
     <li><a href="#others" data-toggle="tab">其他费用</a></li>
     <li><a href="#indirect" data-toggle="tab" onclick="indirectVue.showlist()">间接费用</a></li>
 
@@ -217,13 +217,13 @@
 
             <tbody id="travel-table">
             <tr v-for="item in items" v-bind:title="item.name">
-                <td><input type="text" readonly v-model="item.name"></td>
-                <td><input type="number" v-model="item.price"></td>
-                <td><input type="number" v-model="item.food"></td>
-                <td><input type="number" v-model="item.traffic"></td>
-                <td><input type="number" v-model="item.accommodation"></td>
-                <td><input type="number" v-model="item.people"></td>
-                <td><input type="number" v-model="item.days"></td>
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.food" class="form-control"></td>
+                <td><input type="number" v-model="item.traffic" class="form-control"></td>
+                <td><input type="number" v-model="item.accommodation" class="form-control"></td>
+                <td><input type="number" v-model="item.people" class="form-control"></td>
+                <td><input type="number" v-model="item.days" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
@@ -231,13 +231,13 @@
             </tr>
 
             <tr class="success">
-                <td><input type="text" v-model="sample.name"></td>
-                <td><input type="number" v-model="sample.price"></td>
-                <td><input type="number" v-model="sample.food"></td>
-                <td><input type="number" v-model="sample.traffic"></td>
-                <td><input type="number" v-model="sample.accommodation"></td>
-                <td><input type="number" v-model="sample.people"></td>
-                <td><input type="number" v-model="sample.days"></td>
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.food" class="form-control"></td>
+                <td><input type="number" v-model="sample.traffic" class="form-control"></td>
+                <td><input type="number" v-model="sample.accommodation" class="form-control"></td>
+                <td><input type="number" v-model="sample.people" class="form-control"></td>
+                <td><input type="number" v-model="sample.days" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="add(sample)">添加</button>
                 </td>
@@ -264,7 +264,7 @@
 
             <tbody>
             <tr v-for="item in items" v-bind:title="item.name">
-                <td><input type="text" readonly v-model="item.name"></td>
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
                 <%--<td>
                     <select class="form-control" v-model="item.expertType">
                         <option disabled value="">请选择其中一项</option>
@@ -274,10 +274,10 @@
                     </select>
                 </td>
                 <td><input type="number" v-model="item.experts"></td>--%>
-                <td><input type="number" v-model="item.price"></td>
-                <td><input type="number" v-model="item.people"></td>
-                <td><input type="number" v-model="item.days"></td>
-                <td><input type="number" v-model="item.nums"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.people" class="form-control"></td>
+                <td><input type="number" v-model="item.days" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
@@ -373,18 +373,31 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
+                <th hidden>编号</th>
                 <th>人员类型</th>
                 <th>费用标准</th>
                 <th>人数</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody>
-
+            <tr v-for="item in items" v-bind:title="item.name">
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <%--<td><input type="number" v-model="item.price"></td>--%>
+                <td>
+                    <select class="form-control" v-model="item.price">
+                        <option v-for="n in 2800" v-if="n%100==0">{{n}}</option>
+                    </select>
+                </td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
             </tbody>
         </table>
-        <p class="help-block">此项由会议费决定，不可单独更改</p>
     </div>
 
     <div class="tab-pane fade" id="others">
@@ -611,7 +624,7 @@
         el: "#conference",
         data: {
             items: [],
-            sample: {name: "sample",expertType:"专家",experts:0, price: 0, people: 0,days:0,nums:0}
+            sample: {name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0}
         },
         methods: {
             update: function (item) {
@@ -638,8 +651,8 @@
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Conference",
                     {
                         name: item.name,
-                        expertType:item.expertType,
-                        experts:item.experts,
+                        expertType: item.expertType,
+                        experts: item.experts,
                         price: item.price,
                         people: item.people,
                         days: item.days,
@@ -691,6 +704,52 @@
                         price: item.price,
                         people: item.people,
                         months: item.months,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
+            }
+        },
+        created: function () {
+        }
+    });
+
+
+    var consultationVue = new Vue({
+        el: "#consultation",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Consultation").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("consultation")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Consultation",
+                    {
+                        name: item.name,
+                        price: item.price,
                         nums: item.nums,
                         curd: curd
                     },

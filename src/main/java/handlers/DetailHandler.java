@@ -116,6 +116,16 @@ public class DetailHandler {
             object.put("labour",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //咨询费
+            sub=new JSONObject();
+            req=budget.getRequirement().getConsultation();
+            sum=detailService.sumConsultation(budget.getConsultations());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("consultation",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
             object.put("req",req_sofar);
             object.put("sum",sum_sofar);
             object.put("diff",req_sofar-sum_sofar);
@@ -288,6 +298,32 @@ public class DetailHandler {
                 obj.put("people",item.getPeople());
                 obj.put("months",item.getMonths());
                 obj.put("nums",labourIntegerMap.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Consultation")
+    public void consultationDetail(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            Map<Consultation, Integer> consultationIntegerMap = budget.getConsultations();
+            List<JSONObject> list=new LinkedList<>();
+            for (Consultation item : consultationIntegerMap.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",consultationIntegerMap.get(item));
                 list.add(obj);
             }
             object.put("data",list);

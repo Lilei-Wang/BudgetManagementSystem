@@ -32,6 +32,9 @@
         }
     </style>
     <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 </head>
 <body>
 
@@ -87,6 +90,13 @@ ${pageContext.request.contextPath}<br>
     </table>
 </div>
 
+<div id="VueTest">
+<select v-model="num">
+    <option v-for="n in 2800" v-if="n%100==0">{{n}}</option>
+</select>
+    <p>{{num}}</p>
+</div>
+
 
 <script type="text/javascript">
     angular.module('myApp', []).controller('ctrl', function ($scope, $http) {
@@ -122,6 +132,14 @@ ${pageContext.request.contextPath}<br>
         document.getElementById("xxx").style.color = colors[i % colors.length];
         i++;
     }
+
+    var vueTest=new Vue({
+        el:"#VueTest",
+        data:{
+            list:[1,2,3,4,5],
+            num:500
+        }
+    });
 </script>
 </body>
 </html>
