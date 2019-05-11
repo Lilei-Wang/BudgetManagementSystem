@@ -43,6 +43,7 @@
     <button type="button" class="btn btn-default" @click="login()">登录</button>
     <button type="button" class="btn btn-default" @click="register()">注册</button>
 </form>
+    <p id="hint" style="color: red"></p>
 </div>
 <script>
     var loginVue=new Vue({
@@ -62,11 +63,24 @@
                     {emulateJSON: true}
                 ).then(function (value) {
                     location.reload();
+                },function (reason) {
+                    document.getElementById("hint").innerText="用户名或密码不正确";
                 });
             },
             register:function () {
                 console.log(this.user.name);
                 console.log(this.user.password);
+                this.$http.post("${pageContext.request.contextPath}/Register",
+                    {
+                        name:this.user.name,
+                        password:this.user.password
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    location.reload();
+                },function (reason) {
+                    document.getElementById("hint").innerText="用户名已存在";
+                });
             }
         }
     });

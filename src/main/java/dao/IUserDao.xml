@@ -5,4 +5,8 @@
     <select id="selectUserByName" resultType="beans.User">
         select * from user where name=#{name}
     </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user(name,password) values(#{name},#{password})
+    </insert>
 </mapper>

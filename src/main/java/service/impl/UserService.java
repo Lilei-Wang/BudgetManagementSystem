@@ -11,9 +11,22 @@ public class UserService implements IUserService {
     private IUserDao userDao;
     @Override
     public boolean checkUser(User user) {
+        if(user==null) return false;
         User exist=userDao.selectUserByName(user.getName());
-        if(exist==null) return false;
+        if(exist==null || !exist.getPassword().equals(user.getPassword())) return false;
         user.setId(exist.getId());
         return true;
+    }
+
+    @Override
+    public boolean existUser(User user) {
+        User exist = userDao.selectUserByName(user.getName());
+        return exist!=null;
+    }
+
+    @Override
+    public void addUser(User user) {
+        if(user==null) return ;
+        userDao.insertUser(user);
     }
 }

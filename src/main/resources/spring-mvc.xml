@@ -20,6 +20,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <mvc:exclude-mapping path="/Login*"/>
+            <mvc:exclude-mapping path="/Register*"/>
             <bean class="interceptors.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

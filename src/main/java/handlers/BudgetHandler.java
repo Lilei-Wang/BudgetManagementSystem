@@ -110,12 +110,12 @@ public class BudgetHandler {
             String filePath = getFilePath(Long.toString(sessionID));
             serializeBudget(budget, filePath);
 
-            response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
+            //response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             System.out.println("ContextPath: " + request.getContextPath());
             System.out.println(session.getServletContext().getRealPath(""));
-            budgetToOutputStream(budget, response.getOutputStream());
+            //budgetToOutputStream(budget, response.getOutputStream());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -492,11 +492,8 @@ public class BudgetHandler {
 
     /**
      * 修改预算中的劳务费、规则中的劳务费
-     *
      * @param mode
-     * @param id
-     * @param name
-     * @param price
+     * @param consultation
      * @param nums
      * @param curd
      * @param request

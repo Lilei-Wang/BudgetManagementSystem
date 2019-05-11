@@ -11,19 +11,20 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("preHandle");
-        if(!checkCookie(request.getCookies(),"userid"))
-        {
-            request.getRequestDispatcher("/LoginPage").forward(request,response);
+        if (!checkCookie(request.getCookies(), "userid")) {
+            request.getRequestDispatcher("/LoginPage").forward(request, response);
+            //response.sendRedirect(request.getContextPath()+"/login.jsp");
             return false;
         }
         return true;
     }
 
     private boolean checkCookie(Cookie[] cookies, String name) {
-        for (Cookie cookie : cookies) {
-            if(cookie.getName().equals(name))
-                return true;
-        }
+        if (cookies != null)
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(name))
+                    return true;
+            }
         return false;
     }
 
