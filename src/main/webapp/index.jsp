@@ -67,8 +67,8 @@
         consultation = 2,
         others = 0; %>
 
-
-<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
+<iframe  hidden id="hidden_frame" name="hidden_frame"></iframe>
+<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate" target="hidden_frame">
 
     <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>
@@ -193,7 +193,6 @@
     </div>
 
 </form>
-
 
 </body>
 </html>

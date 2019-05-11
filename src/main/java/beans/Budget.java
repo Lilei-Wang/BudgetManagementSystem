@@ -9,6 +9,7 @@ import java.util.Map;
  * 经费报表对象，内含各种经费的集合
  */
 public class Budget implements Serializable {
+    private Long id;
     private Map<Equipment, Integer> equipments;
     private Map<Material, Integer> materials;
     private Map<TestAndProcess, Integer> testAndProcesses;
@@ -26,6 +27,14 @@ public class Budget implements Serializable {
 
     public Requirement getRequirement() {
         return requirement;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setRequirement(Requirement requirement) {

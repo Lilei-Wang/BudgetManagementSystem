@@ -206,11 +206,11 @@ public class BudgetService implements IBudgetService {
                     pair.setDays(pair.getDays() + 1);
                     double newCost = travel.cost(pair);
                     sofar += (newCost - oldCost);
-                    System.out.println("oldCost:" + oldCost);
-                    System.out.println("newCost:" + newCost);
-                    System.out.println("sofar:" + sofar);
+                    //System.out.println("oldCost:" + oldCost);
+                    //System.out.println("newCost:" + newCost);
+                    //System.out.println("sofar:" + sofar);
                     if (sofar >= number) {
-                        System.out.println(result);
+                        //System.out.println(result);
                         return result;
                     }
                 }

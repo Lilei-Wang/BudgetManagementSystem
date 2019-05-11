@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import service.IBudgetService;
 import service.ICheckService;
+import service.IUserBudgetService;
+import util.CookieUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -30,6 +32,9 @@ public class BudgetHandler {
 
     @Autowired
     private IBudgetService budgetService;
+
+    @Autowired
+    private IUserBudgetService userBudgetService;
 
     @RequestMapping("/Generate")
     public void generateBudget(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -50,6 +55,7 @@ public class BudgetHandler {
             response.addCookie(cookie);
 
             Budget budget = new Budget();
+            budget.setId(sessionID);
             Integer actualBudget = 0;
 
             if (items != null && items.length != 0) {
@@ -101,7 +107,7 @@ public class BudgetHandler {
             //budget.setOthers(budgetService.doOthers(totalBudget.doubleValue()*10000-actualBudget.doubleValue()));
             budget.setIndirects(budget.computeIndirect());
 
-            System.out.println(budget);
+            //System.out.println(budget);
 
 
             /*String filePath = this.getClass().getClassLoader().getResource("..").getPath() +
@@ -109,11 +115,16 @@ public class BudgetHandler {
                     File.separator + sessionID;*/
             String filePath = getFilePath(Long.toString(sessionID));
             serializeBudget(budget, filePath);
+            Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
+            Integer userid = Integer.valueOf(useridCookie.getValue());
+            System.out.println("get userid "+userid);
+            userBudgetService.addUserBudget(userid,budget.getId());
 
             //response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             System.out.println("ContextPath: " + request.getContextPath());
             System.out.println(session.getServletContext().getRealPath(""));
             //budgetToOutputStream(budget, response.getOutputStream());
+
 
         } catch (Exception e) {
             e.printStackTrace();
