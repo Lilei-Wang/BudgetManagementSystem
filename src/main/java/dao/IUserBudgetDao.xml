@@ -8,4 +8,7 @@
     <select id="selectBudgetByUserid" resultType="java.lang.Long">
         select budgetid from user_budget where userid=#{userid} order by budgetid desc
     </select>
+    <delete id="deleteUserBudget">
+        delete from user_budget where userid=#{userid} and budgetid=#{budgetid}
+    </delete>
 </mapper>

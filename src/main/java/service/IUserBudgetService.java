@@ -9,4 +9,6 @@ public interface IUserBudgetService {
     void addUserBudget(Integer userid, Long id);
 
     List<Long> getBudgetByUserid(Integer userid);
+
+    void deleteUserBudget(Integer userid, Long budgetId);
 }

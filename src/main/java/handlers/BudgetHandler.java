@@ -197,6 +197,21 @@ public class BudgetHandler {
         return modelAndView;
     }
 
+    @RequestMapping("/Delete/{budgetId}")
+    public void deleteBudgetById(@PathVariable("budgetId") Long budgetId,HttpServletRequest request, HttpServletResponse response) {
+        if (budgetId == null) return ;
+        Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
+        Integer userid = Integer.valueOf(useridCookie.getValue());
+        //删除数据库记录
+        userBudgetService.deleteUserBudget(userid,budgetId);
+        //删除文件
+        String filePath = getFilePath(budgetId.toString());
+        File budgetFile=new File(filePath);
+        if(budgetFile.delete()){
+            System.out.println("成功删除文件");
+        }
+    }
+
     @RequestMapping("/HistoryPage")
     public ModelAndView historyPage(HttpServletRequest request,HttpServletResponse response){
         ModelAndView modelAndView=new ModelAndView();

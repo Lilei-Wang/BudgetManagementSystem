@@ -8,4 +8,6 @@ public interface IUserBudgetDao {
     void insertUserBudget(@Param("userid") Integer userid, @Param("budgetid") Long budgetid);
 
     List<Long> selectBudgetByUserid(@Param("userid") Integer userid);
+
+    void deleteUserBudget(@Param("userid") Integer userid, @Param("budgetid") Long budgetId);
 }

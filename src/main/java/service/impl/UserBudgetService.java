@@ -23,4 +23,9 @@ public class UserBudgetService implements IUserBudgetService {
         List<Long> budgets=userBudgetDao.selectBudgetByUserid(userid);
         return budgets;
     }
+
+    @Override
+    public void deleteUserBudget(Integer userid, Long budgetId) {
+        userBudgetDao.deleteUserBudget(userid,budgetId);
+    }
 }
