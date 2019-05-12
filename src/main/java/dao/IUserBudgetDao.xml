@@ -5,4 +5,7 @@
     <insert id="insertUserBudget" useGeneratedKeys="true" keyProperty="id">
         insert into user_budget(userid,budgetid) values (#{userid},#{budgetid})
     </insert>
+    <select id="selectBudgetByUserid" resultType="java.lang.Long">
+        select budgetid from user_budget where userid=#{userid} order by budgetid desc
+    </select>
 </mapper>

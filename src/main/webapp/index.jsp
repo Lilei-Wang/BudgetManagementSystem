@@ -46,6 +46,7 @@
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
                 <li><a href="${pageContext.request.contextPath}/Logout">注销</a></li>
+                <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
             </ul>
         </div>
     </div>
@@ -68,7 +69,7 @@
         others = 0; %>
 
 <iframe  hidden id="hidden_frame" name="hidden_frame"></iframe>
-<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate" target="hidden_frame">
+<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate" target="_blank">
 
     <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>

@@ -4,6 +4,9 @@ import dao.IUserBudgetDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.IUserBudgetService;
+
+import java.util.List;
+
 @Service
 public class UserBudgetService implements IUserBudgetService {
     @Autowired
@@ -13,5 +16,11 @@ public class UserBudgetService implements IUserBudgetService {
         if(userid==null || budgetid==null) return ;
         userBudgetDao.insertUserBudget(userid,budgetid);
         System.out.println("add User-Budget");
+    }
+
+    @Override
+    public List<Long> getBudgetByUserid(Integer userid) {
+        List<Long> budgets=userBudgetDao.selectBudgetByUserid(userid);
+        return budgets;
     }
 }

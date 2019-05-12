@@ -1,6 +1,8 @@
 package handlers;
 
 import beans.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import dao.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/Budget")
@@ -124,8 +124,7 @@ public class BudgetHandler {
             System.out.println("ContextPath: " + request.getContextPath());
             System.out.println(session.getServletContext().getRealPath(""));
             //budgetToOutputStream(budget, response.getOutputStream());
-
-
+            response.getWriter().write("success");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,6 +182,41 @@ public class BudgetHandler {
         modelAndView.setViewName("/budgetDetail.jsp");
         modelAndView.addObject("budget", retrieveBudget(sessionID));
         return modelAndView;
+    }
+
+    @RequestMapping("/HistoryPage")
+    public ModelAndView historyPage(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.setViewName("/history.jsp");
+        return modelAndView;
+    }
+
+    @RequestMapping("/HistoryList")
+    public void historyList(HttpServletRequest request,HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            //String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
+            Integer userid = Integer.valueOf(useridCookie.getValue());
+
+            List<Long> budgetList=userBudgetService.getBudgetByUserid(userid);
+            List<JSONObject> list=new LinkedList<>();
+            SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (Long budget : budgetList) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",budget);
+                Date date=new Date(budget);
+                obj.put("date",format.format(date));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
