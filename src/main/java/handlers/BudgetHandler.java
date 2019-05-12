@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -181,6 +182,18 @@ public class BudgetHandler {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/budgetDetail.jsp");
         modelAndView.addObject("budget", retrieveBudget(sessionID));
+        return modelAndView;
+    }
+
+    @RequestMapping("/Detail/{budgetId}")
+    public ModelAndView budgetDetailById(@PathVariable("budgetId") Long budgetId,HttpServletRequest request, HttpServletResponse response) {
+        if (budgetId == null) return new ModelAndView("/");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/budgetDetail.jsp");
+        modelAndView.addObject("budget", retrieveBudget(budgetId.toString()));
+        Cookie sessionID = CookieUtil.getCookieByName(request.getCookies(), "sessionID");
+        sessionID.setValue(budgetId.toString());
+        response.addCookie(sessionID);
         return modelAndView;
     }
 

@@ -45,16 +45,12 @@
         <div>
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/">创建预算</a></li>
-
-                <li>
-                    <a href="${pageContext.request.contextPath}/Budget/Detail">
-                        修改预算
-                    </a>
-                </li>
-
-                <li class="active"><a href="#">修改规则</a></li>
+                <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
+                <li><a href="${pageContext.request.contextPath}/Budget/Detail" >修改预算</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
+                <li><a href="${pageContext.request.contextPath}/Logout">注销</a></li>
             </ul>
         </div>
     </div>
