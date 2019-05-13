@@ -30,7 +30,7 @@
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">预算辅助管理系统</a>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}/">预算辅助管理系统</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
@@ -40,7 +40,7 @@
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
-                <li><a href="${pageContext.request.contextPath}/Logout">注销</a></li>
+                <li><a href="${pageContext.request.contextPath}/usercenter.jsp">用户中心</a></li>
             </ul>
         </div>
     </div>

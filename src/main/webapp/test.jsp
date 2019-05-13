@@ -51,7 +51,7 @@
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li class="active"><a href="${pageContext.request.contextPath}/Test">测试</a></li>
-                <li><a href="${pageContext.request.contextPath}/Logout">注销</a></li>
+                <li><a href="${pageContext.request.contextPath}/usercenter.jsp">用户中心</a></li>
             </ul>
         </div>
     </div>
@@ -98,6 +98,16 @@ ${pageContext.request.contextPath}<br>
 </select>
     <p>{{num}}</p>
 </div>
+
+<button class="btn btn-danger" onclick="logout()">退出登录</button>
+
+<script type="text/javascript">
+    function logout() {
+        if(confirm("确认退出登录？")){
+            window.location.href="${pageContext.request.contextPath}/Logout";
+        }
+    }
+</script>
 
 
 <script type="text/javascript">

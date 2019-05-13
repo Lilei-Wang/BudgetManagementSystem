@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import service.IUserService;
+import util.CookieUtil;
 
 import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.Cookie;
@@ -33,8 +34,12 @@ public class LoginHandler {
     public void loginAction(User user,HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(userService.checkUser(user))
         {
-            response.addCookie(new Cookie("userid",user.getId().toString()));
-            response.addCookie(new Cookie("username",user.getName()));
+            Cookie useridCookie = new Cookie("userid", user.getId().toString());
+            useridCookie.setPath("/");
+            response.addCookie(useridCookie);
+            Cookie usernameCookie = new Cookie("username", user.getName());
+            usernameCookie.setPath("/");
+            response.addCookie(usernameCookie);
             //response.sendRedirect(request.getContextPath()+"/");
             System.out.println("back to index page");
         }
@@ -57,8 +62,12 @@ public class LoginHandler {
             return;
         }
         userService.addUser(user);
-        response.addCookie(new Cookie("userid",user.getId().toString()));
-        response.addCookie(new Cookie("username",user.getName()));
+        Cookie useridCookie = new Cookie("userid", user.getId().toString());
+        useridCookie.setPath("/");
+        response.addCookie(useridCookie);
+        Cookie usernameCookie = new Cookie("username", user.getName());
+        usernameCookie.setPath("/");
+        response.addCookie(usernameCookie);
         System.out.println("register done");
     }
 
@@ -70,13 +79,17 @@ public class LoginHandler {
      */
     @RequestMapping("/Logout")
     public void logoutAction(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        Cookie cookie=new Cookie("userid",null);
+        //Cookie cookie=new Cookie("userid",null);
+        Cookie cookie= CookieUtil.getCookieByName(request.getCookies(),"userid");
         cookie.setMaxAge(0);
-        cookie.setPath(request.getContextPath());
+        cookie.setPath("/");
+        System.out.println("Userid cookie:"+cookie.getPath());
         response.addCookie(cookie);
-        cookie=new Cookie("username",null);
+        //cookie=new Cookie("username",null);
+        cookie=CookieUtil.getCookieByName(request.getCookies(),"username");
         cookie.setMaxAge(0);
-        cookie.setPath(request.getContextPath());
+        cookie.setPath("/");
+        System.out.println("Username cookie:"+cookie.getPath());
         response.addCookie(cookie);
         response.sendRedirect(request.getContextPath());
     }

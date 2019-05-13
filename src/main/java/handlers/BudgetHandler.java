@@ -50,10 +50,10 @@ public class BudgetHandler {
 
             //以时间为标志，标志预算对象，用以鉴别不同用户
             long sessionID = new Date().getTime();
-            Cookie cookie = new Cookie("sessionID", Long.toString(sessionID));
-            cookie.setMaxAge(Integer.MAX_VALUE);
+            /*Cookie cookie = new Cookie("sessionID", Long.toString(sessionID));
+            cookie.setPath(request.getContextPath());
             cookie.setComment("会话鉴别，age=int_max，除非重新生成预算，否则长时间保持会话");
-            response.addCookie(cookie);
+            response.addCookie(cookie);*/
 
             Budget budget = new Budget();
             budget.setId(sessionID);
@@ -118,8 +118,8 @@ public class BudgetHandler {
             serializeBudget(budget, filePath);
             Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
             Integer userid = Integer.valueOf(useridCookie.getValue());
-            System.out.println("get userid "+userid);
-            userBudgetService.addUserBudget(userid,budget.getId());
+            System.out.println("get userid " + userid);
+            userBudgetService.addUserBudget(userid, budget.getId());
 
             //response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             System.out.println("ContextPath: " + request.getContextPath());
@@ -186,61 +186,66 @@ public class BudgetHandler {
     }
 
     @RequestMapping("/Detail/{budgetId}")
-    public ModelAndView budgetDetailById(@PathVariable("budgetId") Long budgetId,HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView budgetDetailById(@PathVariable("budgetId") Long budgetId, HttpServletRequest request, HttpServletResponse response) {
         if (budgetId == null) return new ModelAndView("/");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/budgetDetail.jsp");
         modelAndView.addObject("budget", retrieveBudget(budgetId.toString()));
         Cookie sessionID = CookieUtil.getCookieByName(request.getCookies(), "sessionID");
-        sessionID.setValue(budgetId.toString());
+        if (sessionID == null) {
+            sessionID = new Cookie("sessionID", budgetId.toString());
+        } else {
+            sessionID.setValue(budgetId.toString());
+        }
+        sessionID.setPath("/");
         response.addCookie(sessionID);
         return modelAndView;
     }
 
     @RequestMapping("/Delete/{budgetId}")
-    public void deleteBudgetById(@PathVariable("budgetId") Long budgetId,HttpServletRequest request, HttpServletResponse response) {
-        if (budgetId == null) return ;
+    public void deleteBudgetById(@PathVariable("budgetId") Long budgetId, HttpServletRequest request, HttpServletResponse response) {
+        if (budgetId == null) return;
         Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
         Integer userid = Integer.valueOf(useridCookie.getValue());
         //删除数据库记录
-        userBudgetService.deleteUserBudget(userid,budgetId);
+        userBudgetService.deleteUserBudget(userid, budgetId);
         //删除文件
         String filePath = getFilePath(budgetId.toString());
-        File budgetFile=new File(filePath);
-        if(budgetFile.delete()){
+        File budgetFile = new File(filePath);
+        if (budgetFile.delete()) {
             System.out.println("成功删除文件");
         }
     }
 
     @RequestMapping("/HistoryPage")
-    public ModelAndView historyPage(HttpServletRequest request,HttpServletResponse response){
-        ModelAndView modelAndView=new ModelAndView();
+    public ModelAndView historyPage(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/history.jsp");
         return modelAndView;
     }
 
     @RequestMapping("/HistoryList")
-    public void historyList(HttpServletRequest request,HttpServletResponse response){
+    public void historyList(HttpServletRequest request, HttpServletResponse response) {
         try {
             response.setCharacterEncoding("utf-8");
             response.setContentType("text/html;charset=utf-8");
             PrintWriter writer = response.getWriter();
-            JSONObject object=new JSONObject();
+            JSONObject object = new JSONObject();
             //String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
             Integer userid = Integer.valueOf(useridCookie.getValue());
 
-            List<Long> budgetList=userBudgetService.getBudgetByUserid(userid);
-            List<JSONObject> list=new LinkedList<>();
-            SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            List<Long> budgetList = userBudgetService.getBudgetByUserid(userid);
+            List<JSONObject> list = new LinkedList<>();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (Long budget : budgetList) {
-                JSONObject obj=new JSONObject();
-                obj.put("id",budget);
-                Date date=new Date(budget);
-                obj.put("date",format.format(date));
+                JSONObject obj = new JSONObject();
+                obj.put("id", budget);
+                Date date = new Date(budget);
+                obj.put("date", format.format(date));
                 list.add(obj);
             }
-            object.put("data",list);
+            object.put("data", list);
             writer.write(JSON.toJSONString(object));
         } catch (IOException e) {
             e.printStackTrace();
@@ -565,6 +570,7 @@ public class BudgetHandler {
 
     /**
      * 修改预算中的劳务费、规则中的劳务费
+     *
      * @param mode
      * @param consultation
      * @param nums

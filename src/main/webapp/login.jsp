@@ -70,17 +70,21 @@
             register:function () {
                 console.log(this.user.name);
                 console.log(this.user.password);
-                this.$http.post("${pageContext.request.contextPath}/Register",
-                    {
-                        name:this.user.name,
-                        password:this.user.password
-                    },
-                    {emulateJSON: true}
-                ).then(function (value) {
-                    location.reload();
-                },function (reason) {
-                    document.getElementById("hint").innerText="用户名已存在";
-                });
+                if(this.user.name==="" || this.user.password===""){
+                    document.getElementById("hint").innerText="用户名与密码不能为空";
+                }else{
+                    this.$http.post("${pageContext.request.contextPath}/Register",
+                        {
+                            name:this.user.name,
+                            password:this.user.password
+                        },
+                        {emulateJSON: true}
+                    ).then(function (value) {
+                        location.reload();
+                    },function (reason) {
+                        document.getElementById("hint").innerText="用户名已存在";
+                    });
+                }
             }
         }
     });
