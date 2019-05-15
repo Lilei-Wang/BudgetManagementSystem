@@ -260,7 +260,16 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<InternationalCommunication, Integer> doInternationalCommunication(Double number) {
         List<InternationalCommunication> internationalCommunications = internationalCommunicationDao.selectAll();
-        return generateMap((List) internationalCommunications, number);
+        Map<InternationalCommunication,Integer> result=new HashMap<>();
+        if(internationalCommunications==null || internationalCommunications.size()==0) return result;
+        InternationalCommunication internationalCommunication = internationalCommunications.get(0);
+        internationalCommunication.setDays(1);
+        internationalCommunication.setPeople(1);
+        while(internationalCommunication.computeUnitPrice()<number){
+            internationalCommunication.setDays(internationalCommunication.getDays()+1);
+        }
+        result.put(internationalCommunication,1);
+        return result;
     }
 
     /**

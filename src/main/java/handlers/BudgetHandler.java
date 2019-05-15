@@ -38,7 +38,7 @@ public class BudgetHandler {
     private IUserBudgetService userBudgetService;
 
     @RequestMapping("/Generate")
-    public void generateBudget(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public String generateBudget(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         //PrintWriter writer = null;
         try {
             //System.out.println(budgetService);
@@ -125,10 +125,11 @@ public class BudgetHandler {
             System.out.println("ContextPath: " + request.getContextPath());
             System.out.println(session.getServletContext().getRealPath(""));
             //budgetToOutputStream(budget, response.getOutputStream());
-            response.getWriter().write("success");
+            //response.getWriter().write("success");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return "/history.jsp";
     }
 
     private int expertSum(Map<Conference, Pair> conferences) {
@@ -214,6 +215,14 @@ public class BudgetHandler {
         File budgetFile = new File(filePath);
         if (budgetFile.delete()) {
             System.out.println("成功删除文件");
+        }
+        //删除budget相关cookie，防止删除后重新进入详情页面
+        String sessionID = getSessionID(request.getCookies());
+        if (sessionID.equals(budgetId.toString())) {
+            Cookie cookie = new Cookie("sessionID", null);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
         }
     }
 
@@ -314,25 +323,36 @@ public class BudgetHandler {
     private ICheckService checkService;
 
     @RequestMapping("/Modify/Equipment")
-    public void modifyEquip(Integer mode, Equipment equipment, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyEquip(Integer mode, Equipment equipment, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Equipment");
 
         if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
+
         Map<Equipment, Integer> equipments = budget.getEquipments();
-        //是否符合规则
-        if (!checkService.checkEquipment(equipment)) return;
         //删除
         if (curd.equals(1)) {
             equipments.remove(equipment);
-        } else if (curd.equals(2))//增改
-        {
-            equipments.remove(equipment);
-            equipments.put(equipment, nums);
-        } else
-            equipments.put(equipment, nums);
+        } else {
+            //是否符合规则
+            int status = 0;
+            if ((status = checkService.checkEquipment(equipment)) != checkService.isValid) {
+                response.getWriter().write(checkService.getMessage(status));
+                response.setStatus(444);
+                return;
+            }
+            if (curd.equals(2))//增改
+            {
+                equipments.remove(equipment);
+                equipments.put(equipment, nums);
+            } else
+                equipments.put(equipment, nums);
+        }
         serializeBudget(budget, getFilePath(sessionID));
 
     }
@@ -342,61 +362,50 @@ public class BudgetHandler {
     private IMaterialDao materialDao;
 
     /**
-     * 修改预算中的材料费以及规则里的材料费
+     * 修改预算中的材料费
      *
      * @param mode
-     * @param id
-     * @param name
-     * @param price
+     * @param material
      * @param nums
      * @param curd
      * @param request
      * @param response
+     * @throws IOException
      */
     @RequestMapping("/Modify/Material")
-    public void modifyMaterial(Integer mode, Integer id, String name, Double price, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyMaterial(Integer mode, Material material, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Material");
 
-        if (mode.equals(0))//修改预算
-        {
-            if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
-
-            assert budget != null;
-
-            Map<Material, Integer> items = null;
-            items = budget.getMaterials();
-            Material mod = materialDao.selectById(id);
-            if (mod != null)
-                items.put(mod, nums);
-            try {
-                double sum = 0.0;
-                for (Material material : items.keySet()) {
-                    sum += (material.getPrice() * items.get(material));
-                }
-                response.getWriter().print(sum);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
-        {
-            Material item = new Material();
-            item.setId(id);
-            item.setName(name);
-            item.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                materialDao.insertMaterial(item);
-            } else if (curd.equals(1))//删
-            {
-                materialDao.deleteMaterial(item);
-            } else//改
-            {
-                materialDao.updateMaterial(item);
-            }
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
         }
+
+        Map<Material, Integer> items = null;
+        items = budget.getMaterials();
+        //删除
+        if (curd.equals(1)) {
+            items.remove(material);
+        } else {
+            //是否符合规则
+            int status = 0;
+            if ((status = checkService.checkMaterial(material)) != checkService.isValid) {
+                response.setStatus(444);
+                response.getWriter().write(checkService.getMessage(status));
+                return;
+            }
+            if (curd.equals(2))//增改
+            {
+                items.remove(material);
+                items.put(material, nums);
+            } else
+                items.put(material, nums);
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 
@@ -416,40 +425,33 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/International")
-    public void modifyInternational(Integer mode, Integer id, String name, Double price, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyInternational(Integer mode, InternationalCommunication internationalCommunication, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/International");
 
-        if (mode.equals(0))//修改预算
-        {
-            if (nums < 0) return;
-            String sessionID = getSessionID(request.getCookies());
-            Budget budget = retrieveBudget(sessionID);
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
 
-            assert budget != null;
-
-            Map<InternationalCommunication, Integer> items = null;
-            items = budget.getInternationalCommunications();
-            InternationalCommunication mod = internationalCommunicationDao.selectById(id);
-            if (mod != null)
-                items.put(mod, nums);
-            serializeBudget(budget, getFilePath(sessionID));
-        } else//修改规则
-        {
-            InternationalCommunication item = new InternationalCommunication();
-            item.setId(id);
-            item.setName(name);
-            item.setPrice(price);
-            if (curd.equals(0))//增
-            {
-                internationalCommunicationDao.insertInternational(item);
-            } else if (curd.equals(1))//删
-            {
-                internationalCommunicationDao.deleteInternational(item);
-            } else//改
-            {
-                internationalCommunicationDao.updateInternational(item);
-            }
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
         }
+
+        Map<InternationalCommunication, Integer> items = null;
+        items = budget.getInternationalCommunications();
+        //删除
+        if (curd.equals(1)) {
+            items.remove(internationalCommunication);
+        } else {
+            if (curd.equals(2))//增改
+            {
+                items.remove(internationalCommunication);
+                items.put(internationalCommunication, nums);
+            } else
+                items.put(internationalCommunication, nums);
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
     }
 
 
@@ -465,7 +467,7 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Property")
-    public void modifyProperty(Integer mode, Property property, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyProperty(Integer mode, Property property, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Property");
 
         /*if (mode.equals(0))//修改预算
@@ -474,7 +476,10 @@ public class BudgetHandler {
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
 
         Map<Property, Integer> items = null;
         items = budget.getProperties();
@@ -506,14 +511,17 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Labour")
-    public void modifyLabour(Integer mode, Labour labour, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyLabour(Integer mode, Labour labour, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Labour");
 
         if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
 
         Map<Labour, Integer> items = null;
         items = budget.getLabour();
@@ -542,14 +550,17 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Conference")
-    public void modifyConference(Integer mode, Conference conference, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyConference(Integer mode, Conference conference, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Conference");
 
         if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
 
         Map<Conference, Integer> items = budget.getConferences();
         if (curd.equals(0)) {
@@ -579,14 +590,17 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Consultation")
-    public void modifyConsultation(Integer mode, Consultation consultation, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyConsultation(Integer mode, Consultation consultation, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Consultation");
 
         if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
 
         Map<Consultation, Integer> items = null;
         items = budget.getConsultations();
@@ -615,14 +629,17 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Travel")
-    public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer curd, HttpServletRequest request, HttpServletResponse response) {
+    public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Travel");
 
         if (pair == null || pair.getDays() < 0 || pair.getPeople() < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
-        assert budget != null;
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
 
         Map<Travel, Pair> items = budget.getTravels();
         checkService.checkTravel(travel);
@@ -689,7 +706,7 @@ public class BudgetHandler {
                 e.printStackTrace();
             }
         }
-        return new Budget();
+        return null;
     }
 
     /**

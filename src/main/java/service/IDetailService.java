@@ -17,4 +17,8 @@ public interface IDetailService {
     double sumConference(Map<Conference, Integer> conferences);
 
     double sumConsultation(Map<Consultation, Integer> consultations);
+
+    double sumMaterial(Map<Material, Integer> materials);
+
+    double sumInternational(Map<InternationalCommunication, Integer> internationalCommunications);
 }

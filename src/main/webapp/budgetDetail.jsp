@@ -55,7 +55,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/">创建预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
-                <li class="active"><a href="${pageContext.request.contextPath}/Budget/Detail" >修改预算</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/Budget/Detail">修改预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
@@ -72,12 +72,12 @@
             设备费
         </a>
     </li>
-    <li><a href="#material" data-toggle="tab">材料费</a></li>
+    <li><a href="#material" data-toggle="tab" onclick="materialVue.showlist()">材料费</a></li>
     <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab" onclick=travelVue.showlist()>差旅费</a></li>
-    <li><a href="#conference" data-toggle="tab" onclick="conferenceVue.showlist()">会议费(包含咨询费)</a></li>
-    <li><a href="#international" data-toggle="tab">国际交流合作费</a></li>
+    <li><a href="#conference" data-toggle="tab" onclick="conferenceVue.showlist()">会议费</a></li>
+    <li><a href="#international" data-toggle="tab" onclick="internationalVue.showlist()">国际交流合作费</a></li>
     <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
     <li><a href="#labour" data-toggle="tab" onclick="labourVue.showlist()">劳务费</a></li>
     <li><a href="#consultation" data-toggle="tab" onclick="consultationVue.showlist()">咨询费</a></li>
@@ -117,20 +117,21 @@
 
             <tbody id="equipment-table">
             <tr v-for="item in items">
-                <td><input type="text" readonly v-model="item.name"></td>
-                <td><input type="number" v-model="item.price"></td>
-                <td><input type="number" v-model="item.nums"></td>
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
                 </td>
             </tr>
             <tr class="success">
-                <td><input type="text" v-model="sample.name"></td>
-                <td><input type="number" v-model="sample.price"></td>
-                <td><input type="number" v-model="sample.nums"></td>
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.nums" class="form-control"></td>
                 <td>
-                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                    <button class="btn btn-success" @click="add(sample)">添加到本费用</button>
+                    <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
                 </td>
             </tr>
             </tbody>
@@ -140,7 +141,6 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
@@ -148,7 +148,23 @@
             </thead>
 
             <tbody>
-
+            <tr v-for="item in items">
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
+            <tr class="success">
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -201,9 +217,9 @@
             <thead>
             <tr>
                 <th>城市</th>
-                <th>往返价格</th>
+                <th>市际交通（往返）</th>
                 <th>伙食补助</th>
-                <th>交通补助</th>
+                <th>市内交通补助（公杂费）</th>
                 <th>住宿补助</th>
                 <th>人数</th>
                 <th>天数</th>
@@ -285,18 +301,57 @@
     </div>
 
     <div class="tab-pane fade" id="international">
+        <div>
+            <p class="help-block"><b>市际</b>交通：指代往返价格、会议注册费等一次性费用</p>
+            <p class="help-block"><b>市内</b>交通：指代一切公杂费</p>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
                 <th>名称</th>
-                <th>单价</th>
-                <th>数量</th>
+                <th>市际交通</th>
+                <th>伙食补贴</th>
+                <th>市内交通</th>
+                <th>住宿补贴</th>
+                <th>人数</th>
+                <th>天数</th>
+                <th>次数</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody>
+            <tr v-for="item in items" v-bind:title="item.name">
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td>
+                    <select class="form-control" v-model="item.price">
+                        <option v-for="n in 40000" v-if="n%1000==0">{{n}}</option>
+                    </select>
+                </td>
+                <td><input type="number" v-model="item.food" class="form-control"></td>
+                <td><input type="number" v-model="item.traffic" class="form-control"></td>
+                <td><input type="number" v-model="item.accommodation" class="form-control"></td>
+                <td><input type="number" v-model="item.people" class="form-control"></td>
+                <td><input type="number" v-model="item.days" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
 
+            <tr class="success">
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.food" class="form-control"></td>
+                <td><input type="number" v-model="sample.traffic" class="form-control"></td>
+                <td><input type="number" v-model="sample.accommodation" class="form-control"></td>
+                <td><input type="number" v-model="sample.people" class="form-control"></td>
+                <td><input type="number" v-model="sample.days" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -316,18 +371,18 @@
 
             <tbody>
             <tr v-for="item in items">
-                <td><input type="text" readonly v-model="item.name"></td>
-                <td><input type="number" v-model="item.price"></td>
-                <td><input type="number" v-model="item.nums"></td>
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
                 </td>
             </tr>
-            <tr>
-                <td><input type="text" readonly v-model="sample.name"></td>
-                <td><input type="number" v-model="sample.price"></td>
-                <td><input type="number" v-model="sample.nums"></td>
+            <tr class="success">
+                <td><input type="text" readonly v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.nums" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="add(sample)">添加</button>
                 </td>
@@ -351,10 +406,10 @@
 
             <tbody>
             <tr v-for="item in items" v-bind:title="item.name">
-                <td><input type="text" readonly v-model="item.name"></td>
-                <td><input type="number" v-model="item.price">五险一金：{{item.tax}}</td>
-                <td><input type="number" v-model="item.people"></td>
-                <td><input type="number" v-model="item.months"></td>
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control">五险一金：{{item.tax}}</td>
+                <td><input type="number" v-model="item.people" class="form-control"></td>
+                <td><input type="number" v-model="item.months" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
@@ -467,12 +522,110 @@
                     {emulateJSON: true}
                 ).then(function (value) {
                     this.showlist();
+                }, function (error) {
+                    alert(error.bodyText);
+                    this.showlist()
                 });
             }
         },
         created: function () {
         }
     });
+
+    var materialVue = new Vue({
+        el: "#material",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Material").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("material")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Material",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                }, function (error) {
+                    alert(error.bodyText);
+                    this.showlist()
+                });
+            }
+        }
+    });
+
+    var internationalVue = new Vue({
+        el: "#international",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/International").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("international")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/International",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        food: item.food,
+                        accommodation: item.accommodation,
+                        traffic: item.traffic,
+                        days: item.days,
+                        people: item.people,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
+            }
+        }
+    });
+
     var powerVue = new Vue({
         el: "#power",
         data: {
@@ -550,7 +703,7 @@
         el: "#travel",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0}
+            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}
         },
         methods: {
             update: function (item) {

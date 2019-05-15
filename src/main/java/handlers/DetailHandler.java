@@ -34,6 +34,10 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("indirect list error");
+                return;
+            }
             Map<Indirect, Integer> indirects = budget.getIndirects();
             List<JSONObject> list=new LinkedList<>();
             for (Indirect indirect : indirects.keySet()) {
@@ -64,6 +68,11 @@ public class DetailHandler {
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
 
+            if(budget==null) {
+                response.getWriter().write("stats error");
+                return;
+            }
+
             double req_sofar=0.0,sum_sofar=0.0,req,sum;
 
             //设备费
@@ -76,6 +85,16 @@ public class DetailHandler {
             object.put("equipment",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //材料费
+            sub=new JSONObject();
+            req=budget.getRequirement().getMaterial();
+            sum=detailService.sumMaterial(budget.getMaterials());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("material",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
             //差旅费
             sub=new JSONObject();
             req=budget.getRequirement().getTravel();
@@ -84,6 +103,16 @@ public class DetailHandler {
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("travel",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
+            //国际交流合作费
+            sub=new JSONObject();
+            req=budget.getRequirement().getInternational();
+            sum=detailService.sumInternational(budget.getInternationalCommunications());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("international",sub);
             req_sofar+=req;sum_sofar+=sum;
 
             //会议费
@@ -146,6 +175,11 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("equipment list error");
+                response.sendError(444,"budget not exists");
+                return;
+            }
             Map<Equipment, Integer> equipments = budget.getEquipments();
             List<JSONObject> list=new LinkedList<>();
             for (Equipment item : equipments.keySet()) {
@@ -154,6 +188,75 @@ public class DetailHandler {
                 obj.put("name",item.getName());
                 obj.put("price",item.getPrice());
                 obj.put("nums",equipments.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Material")
+    public void updateMaterial(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("material list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
+            Map<Material, Integer> materials = budget.getMaterials();
+            List<JSONObject> list=new LinkedList<>();
+            for (Material item : materials.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",materials.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/International")
+    public void detailInternational(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("travel list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
+            Map<InternationalCommunication, Integer> internationalCommunications = budget.getInternationalCommunications();
+            List<JSONObject> list=new LinkedList<>();
+            for (InternationalCommunication item : internationalCommunications.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("food",item.getFood());
+                obj.put("traffic",item.getTraffic());
+                obj.put("accommodation",item.getAccommodation());
+                obj.put("people",item.getPeople());
+                obj.put("days",item.getDays());
+                obj.put("nums",internationalCommunications.get(item));
                 list.add(obj);
             }
             object.put("data",list);
@@ -173,6 +276,11 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("travel list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
             Map<Travel, Pair> travels = budget.getTravels();
             List<JSONObject> list=new LinkedList<>();
             for (Travel item : travels.keySet()) {
@@ -203,6 +311,10 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("power list error");
+                return;
+            }
             Map<Power, Integer> powers = budget.getPowers();
             List<JSONObject> list=new LinkedList<>();
             for (Power item : powers.keySet()) {
@@ -230,6 +342,10 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("property list error");
+                return;
+            }
             Map<Property, Integer> propertyIntegerMap = budget.getProperties();
             List<JSONObject> list=new LinkedList<>();
             for (Property item : propertyIntegerMap.keySet()) {
@@ -257,6 +373,11 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("conference list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
             Map<Conference, Integer> conferencePairMap = budget.getConferences();
             List<JSONObject> list=new LinkedList<>();
             for (Conference item : conferencePairMap.keySet()) {
@@ -287,6 +408,11 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("labour list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
             Map<Labour, Integer> labourIntegerMap = budget.getLabour();
             List<JSONObject> list=new LinkedList<>();
             for (Labour item : labourIntegerMap.keySet()) {
@@ -316,6 +442,11 @@ public class DetailHandler {
             JSONObject object=new JSONObject();
             String sessionID = BudgetHandler.getSessionID(request.getCookies());
             Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("consultation list error, budget == null");
+                response.sendError(444,"budget not exists");
+                return;
+            }
             Map<Consultation, Integer> consultationIntegerMap = budget.getConsultations();
             List<JSONObject> list=new LinkedList<>();
             for (Consultation item : consultationIntegerMap.keySet()) {

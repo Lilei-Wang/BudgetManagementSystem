@@ -63,7 +63,7 @@
         others = 0; %>
 
 <iframe  hidden id="hidden_frame" name="hidden_frame"></iframe>
-<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate" target="_blank">
+<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
 
     <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>
@@ -78,7 +78,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="equipment" checked>
+            <input name="items" type="checkbox" value="equipment" checked required>
             设备费
         </label>
         <div class="col-sm-4">
@@ -88,7 +88,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="material" checked>
+            <input name="items" type="checkbox" value="material" checked required>
             材料费
         </label>
         <div class="col-sm-4">
@@ -98,7 +98,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="test-and-process" checked>
+            <input name="items" type="checkbox" value="test-and-process" checked required>
             测试化验加工费
         </label>
         <div class="col-sm-4">
@@ -108,7 +108,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="power" checked>
+            <input name="items" type="checkbox" value="power" checked required>
             燃料动力费
         </label>
         <div class="col-sm-4">
@@ -118,7 +118,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="travel" checked>
+            <input name="items" type="checkbox" value="travel" checked required>
             差旅费
         </label>
         <div class="col-sm-4">
@@ -128,7 +128,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="conference" checked>
+            <input name="items" type="checkbox" value="conference" checked required>
             会议费
         </label>
         <div class="col-sm-4" id="tip">
@@ -138,7 +138,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="international-communication" checked>
+            <input name="items" type="checkbox" value="international-communication" checked required>
             国际合作交流费
         </label>
         <div class="col-sm-4">
@@ -148,7 +148,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="property" checked>
+            <input name="items" type="checkbox" value="property" checked required>
             产权费
         </label>
         <div class="col-sm-4">
@@ -157,7 +157,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="labour" checked>
+            <input name="items" type="checkbox" value="labour" checked required>
             劳务费
         </label>
         <div class="col-sm-4">
@@ -166,7 +166,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="consultation" checked>
+            <input name="items" type="checkbox" value="consultation" checked required>
             咨询费
         </label>
         <div class="col-sm-4">
@@ -175,7 +175,7 @@
 
     <div class="form-group">
         <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="others" checked>
+            <input name="items" type="checkbox" value="others" checked required>
             其他费用
         </label>
         <div class="col-sm-4">

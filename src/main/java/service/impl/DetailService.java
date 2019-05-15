@@ -61,4 +61,22 @@ public class DetailService implements IDetailService {
         }
         return sum;
     }
+
+    @Override
+    public double sumMaterial(Map<Material, Integer> materials) {
+        double sum=0.0;
+        for (Material item : materials.keySet()) {
+            sum+=(item.computeUnitPrice()*materials.get(item));
+        }
+        return sum;
+    }
+
+    @Override
+    public double sumInternational(Map<InternationalCommunication, Integer> internationalCommunications) {
+        double sum=0.0;
+        for (InternationalCommunication item : internationalCommunications.keySet()) {
+            sum+=(item.computeUnitPrice()*internationalCommunications.get(item));
+        }
+        return sum;
+    }
 }
