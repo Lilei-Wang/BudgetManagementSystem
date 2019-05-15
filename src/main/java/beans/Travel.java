@@ -7,37 +7,26 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class Travel extends Item {
 
-    @JSONField(name = "dest")
-    private String dest;
-    @JSONField(name = "food")
     private double food;
-    @JSONField(name = "traffic")
     private double traffic;
-    @JSONField(name = "accommodation")
     private double accommodation;
+    private int people;
+    private int days;
 
-    @Override
-    public double computeUnitPrice() {
-        return getPrice() + getFood() + getAccommodation() + getTraffic();
+    public int getPeople() {
+        return people;
     }
 
-
-    @Override
-    public String toString() {
-        return "Travel{" +
-                "dest='" + dest + '\'' +
-                ", food=" + food +
-                ", traffic=" + traffic +
-                ", accommodation=" + accommodation +
-                "} " + super.toString();
+    public void setPeople(int people) {
+        this.people = people;
     }
 
-    public String getDest() {
-        return getName();
+    public int getDays() {
+        return days;
     }
 
-    public void setDest(String dest) {
-        setName(dest);
+    public void setDays(int days) {
+        this.days = days;
     }
 
     public double getFood() {
@@ -70,11 +59,17 @@ public class Travel extends Item {
      * @param pair
      * @return
      */
+    @Deprecated
     public double cost(Pair pair) {
         if(pair==null || pair.getPeople()<=0 || pair.getDays()<=0) return 0.0;
         return pair.getPeople() *
                 (getPrice()
                         + (getTraffic() + getFood()) * pair.getDays()
                         + getAccommodation() * (pair.getDays() - 1));
+    }
+
+    @Override
+    public double computeUnitPrice() {
+        return getPeople()*(getPrice() + (getTraffic()+getFood())*getDays() +getAccommodation()*(getDays()-1));
     }
 }

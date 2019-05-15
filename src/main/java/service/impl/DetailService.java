@@ -18,10 +18,10 @@ public class DetailService implements IDetailService {
     }
 
     @Override
-    public double sumTravel(Map<Travel, Pair> travels) {
+    public double sumTravel(Map<Travel, Integer> travels) {
         double sum=0.0;
         for (Travel travel : travels.keySet()) {
-            sum+=travel.cost(travels.get(travel));
+            sum+=travel.computeUnitPrice()*travels.get(travel);
         }
         return sum;
     }

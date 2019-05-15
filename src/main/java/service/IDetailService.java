@@ -8,7 +8,7 @@ public interface IDetailService {
 
     double sumEquipment(Map<Equipment, Integer> equipments);
 
-    double sumTravel(Map<Travel, Pair> travels);
+    double sumTravel(Map<Travel, Integer> travels);
 
     double sumLabour(Map<Labour, Integer> labour);
 

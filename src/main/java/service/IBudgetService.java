@@ -15,7 +15,7 @@ public interface IBudgetService {
 
     Map<Power,Integer> doPower(Double number);
 
-    Map<Travel, Pair> doTravel(Double number);
+    Map<Travel, Integer> doTravel(Double number);
 
     //Map<Conference, Pair> doConference(Double number);
     Map<Conference, Integer> doConference(Double number);

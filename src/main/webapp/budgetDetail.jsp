@@ -223,6 +223,7 @@
                 <th>住宿补助</th>
                 <th>人数</th>
                 <th>天数</th>
+                <th>次数</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -236,6 +237,7 @@
                 <td><input type="number" v-model="item.accommodation" class="form-control"></td>
                 <td><input type="number" v-model="item.people" class="form-control"></td>
                 <td><input type="number" v-model="item.days" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
@@ -305,7 +307,7 @@
             <p class="help-block"><b>市际</b>交通：指代往返价格、会议注册费等一次性费用</p>
             <p class="help-block"><b>市内</b>交通：指代一切公杂费</p>
         </div>
-        <table class="table table-hover">
+        <table class="table table-hover text-nowrap">
             <thead>
             <tr>
                 <th>名称</th>
@@ -380,7 +382,7 @@
                 </td>
             </tr>
             <tr class="success">
-                <td><input type="text" readonly v-model="sample.name" class="form-control"></td>
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
                 <td><input type="number" v-model="sample.price" class="form-control"></td>
                 <td><input type="number" v-model="sample.nums" class="form-control"></td>
                 <td>
@@ -736,6 +738,7 @@
                         traffic: item.traffic,
                         days: item.days,
                         people: item.people,
+                        nums:item.nums,
                         curd: curd
                     },
                     {emulateJSON: true}

@@ -413,16 +413,15 @@ public class BudgetHandler {
     private IInternationalCommunicationDao internationalCommunicationDao;
 
     /**
-     * 修改预算中的国际交流合作费、规则中的国际交流合作费
+     * 修改预算中的国际交流合作费
      *
      * @param mode
-     * @param id
-     * @param name
-     * @param price
+     * @param internationalCommunication
      * @param nums
      * @param curd
      * @param request
      * @param response
+     * @throws IOException
      */
     @RequestMapping("/Modify/International")
     public void modifyInternational(Integer mode, InternationalCommunication internationalCommunication, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -629,10 +628,10 @@ public class BudgetHandler {
      * @param response
      */
     @RequestMapping("/Modify/Travel")
-    public void modifyTravel(Integer mode, Travel travel, Pair pair, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void modifyTravel(Integer mode, Travel travel, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Travel");
 
-        if (pair == null || pair.getDays() < 0 || pair.getPeople() < 0) return;
+        if (nums < 0) return;
         String sessionID = getSessionID(request.getCookies());
         Budget budget = retrieveBudget(sessionID);
 
@@ -641,15 +640,15 @@ public class BudgetHandler {
             return;
         }
 
-        Map<Travel, Pair> items = budget.getTravels();
+        Map<Travel, Integer> items = budget.getTravels();
         checkService.checkTravel(travel);
         if (curd.equals(0)) {
-            items.put(travel, pair);
+            items.put(travel, nums);
         } else if (curd.equals(1)) {
             items.remove(travel);
         } else {
             items.remove(travel);
-            items.put(travel, pair);
+            items.put(travel, nums);
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -801,19 +800,20 @@ public class BudgetHandler {
             }
             writer.newLine();
 
-            writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,人数,天数,小计");
+            writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,人数,天数,次数,小计");
             writer.newLine();
-            Map<Travel, Pair> travels = budget.getTravels();
+            Map<Travel, Integer> travels = budget.getTravels();
             for (Item item : travels.keySet()) {
                 if (item instanceof Travel) {
-                    writer.write(comma + ((Travel) item).getDest()
+                    writer.write(comma + ((Travel) item).getName()
                             + comma + item.getPrice()
                             + comma + ((Travel) item).getFood()
                             + comma + ((Travel) item).getTraffic()
                             + comma + ((Travel) item).getAccommodation()
-                            + comma + travels.get(item).getPeople()
-                            + comma + travels.get(item).getDays()
-                            + comma + ((Travel) item).cost(travels.get(item)));
+                            + comma + ((Travel) item).getPeople()
+                            + comma + ((Travel) item).getDays()
+                            + comma + travels.get(item)
+                            + comma + item.computeUnitPrice() * travels.get(item));
                     writer.newLine();
                 }
             }
@@ -835,17 +835,20 @@ public class BudgetHandler {
             }
             writer.newLine();
 
-            writer.write("国际合作交流费,会议内容,费用标准,会议次数,小计");
+            writer.write("国际合作交流费,会议内容,市际交通（往返交通）,住宿补贴,伙食补贴,公杂费,人数,天数,次数,小计");
             writer.newLine();
-            items = (Map) budget.getInternationalCommunications();
-            for (Item item : items.keySet()) {
-                if (item instanceof InternationalCommunication) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + items.get(item)
-                            + comma + item.computeUnitPrice() * items.get(item));
-                    writer.newLine();
-                }
+            Map<InternationalCommunication, Integer> internationalCommunications = budget.getInternationalCommunications();
+            for (InternationalCommunication item : internationalCommunications.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + item.getPrice()
+                        + comma + item.getAccommodation()
+                        + comma + item.getFood()
+                        + comma + item.getTraffic()
+                        + comma + item.getPeople()
+                        + comma + item.getDays()
+                        + comma + items.get(item)
+                        + comma + item.computeUnitPrice() * internationalCommunications.get(item));
+                writer.newLine();
             }
             writer.newLine();
 

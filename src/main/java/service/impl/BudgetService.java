@@ -187,24 +187,25 @@ public class BudgetService implements IBudgetService {
      * @return
      */
     @Override
-    public Map<Travel, Pair> doTravel(Double number) {
-        Map<Travel, Pair> result = new HashMap<>();
+    public Map<Travel, Integer> doTravel(Double number) {
+        Map<Travel, Integer> result = new HashMap<>();
         List<Travel> travels = travelDao.selectAll();
         if (travels != null && travels.size() != 0) {
             double sofar = 0.0;
             for (Travel travel : travels) {
+                travel.setPeople(1);
+                travel.setDays(1);
                 if (sofar < number) {
-                    Pair pair = new Pair(1, 1);
-                    result.put(travel, pair);
-                    sofar += travel.cost(pair);
+                    result.put(travel, 1);
+                    sofar += travel.computeUnitPrice();
                 }
             }
             while (sofar < number) {
                 for (Travel travel : result.keySet()) {
-                    Pair pair = result.get(travel);
-                    double oldCost = travel.cost(pair);
-                    pair.setDays(pair.getDays() + 1);
-                    double newCost = travel.cost(pair);
+                    int days = travel.getDays();
+                    double oldCost = travel.computeUnitPrice();
+                    travel.setDays(days+1);
+                    double newCost = travel.computeUnitPrice();
                     sofar += (newCost - oldCost);
                     //System.out.println("oldCost:" + oldCost);
                     //System.out.println("newCost:" + newCost);

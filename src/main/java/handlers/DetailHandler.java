@@ -281,7 +281,7 @@ public class DetailHandler {
                 response.sendError(444,"budget not exists");
                 return;
             }
-            Map<Travel, Pair> travels = budget.getTravels();
+            Map<Travel, Integer> travels = budget.getTravels();
             List<JSONObject> list=new LinkedList<>();
             for (Travel item : travels.keySet()) {
                 JSONObject obj=new JSONObject();
@@ -291,8 +291,9 @@ public class DetailHandler {
                 obj.put("food",item.getFood());
                 obj.put("traffic",item.getTraffic());
                 obj.put("accommodation",item.getAccommodation());
-                obj.put("people",travels.get(item).getPeople());
-                obj.put("days",travels.get(item).getDays());
+                obj.put("people",item.getPeople());
+                obj.put("days",item.getDays());
+                obj.put("nums",travels.get(item));
                 list.add(obj);
             }
             object.put("data",list);
