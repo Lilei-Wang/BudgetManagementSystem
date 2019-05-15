@@ -1,3 +1,9 @@
+CREATE TABLE budgetmanagementsystem.budgets
+(
+    id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    userid int(11) DEFAULT '0' COMMENT '用户id',
+    filename varchar(50) COMMENT '预算文件名称'
+);
 CREATE TABLE budgetmanagementsystem.conference
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -45,10 +51,13 @@ CREATE TABLE budgetmanagementsystem.internationalcommunication
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name varchar(100),
     price double,
-    comment text
+    comment text,
+    accommodation double,
+    food double,
+    traffic double COMMENT '市内交通（公杂费）'
 );
-INSERT INTO budgetmanagementsystem.internationalcommunication (id, name, price, comment) VALUES (1, '澳大利亚', 39000, null);
-INSERT INTO budgetmanagementsystem.internationalcommunication (id, name, price, comment) VALUES (2, '北卡莱罗纳', 21000, null);
+INSERT INTO budgetmanagementsystem.internationalcommunication (id, name, price, comment, accommodation, food, traffic) VALUES (1, '澳大利亚', 24000, null, 1100, 380, 310);
+INSERT INTO budgetmanagementsystem.internationalcommunication (id, name, price, comment, accommodation, food, traffic) VALUES (2, '北卡莱罗纳', 21000, null, null, null, null);
 CREATE TABLE budgetmanagementsystem.labour
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -57,9 +66,9 @@ CREATE TABLE budgetmanagementsystem.labour
     priority int(11) COMMENT '优先级',
     comment text
 );
-INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (1, '博士生', 2000, 2, null);
-INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (2, '硕士生', 1000, 3, null);
-INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (3, '专职', 11536, 1, null);
+INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (1, '博士生', 2200, 2, null);
+INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (2, '硕士生', 1760, 3, null);
+INSERT INTO budgetmanagementsystem.labour (id, name, price, priority, comment) VALUES (3, '专职', 8000, 1, null);
 CREATE TABLE budgetmanagementsystem.material
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -71,7 +80,6 @@ CREATE TABLE budgetmanagementsystem.material
 );
 INSERT INTO budgetmanagementsystem.material (id, name, price, type, img, comment) VALUES (1, '硬盘', 2000, null, null, null);
 INSERT INTO budgetmanagementsystem.material (id, name, price, type, img, comment) VALUES (2, '加密移动硬盘', 3000, null, null, null);
-INSERT INTO budgetmanagementsystem.material (id, name, price, type, img, comment) VALUES (10, 'new', 0, null, null, null);
 CREATE TABLE budgetmanagementsystem.power
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -110,7 +118,7 @@ INSERT INTO budgetmanagementsystem.testandprocess (id, name, price, comment) VAL
 CREATE TABLE budgetmanagementsystem.travel
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    dest varchar(50) COMMENT '目的地',
+    name varchar(50) COMMENT '目的地',
     price double COMMENT '往返价格',
     food double COMMENT '伙食标准',
     traffic double COMMENT '交通标准',
@@ -121,6 +129,38 @@ INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accom
 INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (2, '南宁', 2000, 100, 80, 350, null);
 INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (3, '桂林', 2000, 100, 80, 350, null);
 INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (4, '北海', 2000, 100, 80, 350, null);
+CREATE TABLE budgetmanagementsystem.user
+(
+    id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    name varchar(50) DEFAULT 'username' COMMENT '用户名',
+    password varchar(20) DEFAULT 'password' COMMENT '密码'
+);
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (1, '1', '1');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (2, '2', '2');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (3, '222', '222');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (4, '333', '333');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (5, 'zhangsan', 'zhangsan');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (6, '444', '444');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (7, 'xxx', 'xxx');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (9, '44444', '44444');
+INSERT INTO budgetmanagementsystem.user (id, name, password) VALUES (10, 'aaa', 'aaa');
+CREATE TABLE budgetmanagementsystem.user_budget
+(
+    id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    userid int(11) NOT NULL,
+    budgetid mediumtext NOT NULL
+);
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (13, 1, '1557585969465');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (15, 4, '1557653424704');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (16, 4, '1557658609291');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (23, 5, '1557681943936');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (24, 5, '1557681978320');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (26, 3, '1557682461267');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (27, 3, '1557682473376');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (29, 9, '1557717529246');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (46, 10, '1557738195161');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (47, 10, '1557743667619');
+INSERT INTO budgetmanagementsystem.user_budget (id, userid, budgetid) VALUES (60, 7, '1557906528334');
 CREATE TABLE budgetmanagementsystem.workstation
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,

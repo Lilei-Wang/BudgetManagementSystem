@@ -109,10 +109,10 @@ CREATE TABLE budgetmanagementsystem.travel
     accommodation double COMMENT '住宿标准',
     comment text COMMENT '备注'
 );
-INSERT INTO budgetmanagementsystem.travel (id, dest, price, food, traffic, accommodation, comment) VALUES (1, '上海', 2000, 100, 80, 500, null);
-INSERT INTO budgetmanagementsystem.travel (id, dest, price, food, traffic, accommodation, comment) VALUES (2, '南宁', 2000, 100, 80, 350, null);
-INSERT INTO budgetmanagementsystem.travel (id, dest, price, food, traffic, accommodation, comment) VALUES (3, '桂林', 2000, 100, 80, 350, null);
-INSERT INTO budgetmanagementsystem.travel (id, dest, price, food, traffic, accommodation, comment) VALUES (4, '北海', 2000, 100, 80, 350, null);
+INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (1, '上海', 2000, 100, 80, 500, null);
+INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (2, '南宁', 2000, 100, 80, 350, null);
+INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (3, '桂林', 2000, 100, 80, 350, null);
+INSERT INTO budgetmanagementsystem.travel (id, name, price, food, traffic, accommodation, comment) VALUES (4, '北海', 2000, 100, 80, 350, null);
 CREATE TABLE budgetmanagementsystem.workstation
 (
     id int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
