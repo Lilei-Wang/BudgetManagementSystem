@@ -79,4 +79,13 @@ public class DetailService implements IDetailService {
         }
         return sum;
     }
+
+    @Override
+    public double sumTestAndProcess(Map<TestAndProcess, Integer> testAndProcesses) {
+        double sum=0.0;
+        for (TestAndProcess item : testAndProcesses.keySet()) {
+            sum+=(item.computeUnitPrice()*testAndProcesses.get(item));
+        }
+        return sum;
+    }
 }

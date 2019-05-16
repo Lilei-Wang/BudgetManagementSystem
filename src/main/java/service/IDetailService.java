@@ -21,4 +21,6 @@ public interface IDetailService {
     double sumMaterial(Map<Material, Integer> materials);
 
     double sumInternational(Map<InternationalCommunication, Integer> internationalCommunications);
+
+    double sumTestAndProcess(Map<TestAndProcess, Integer> testAndProcesses);
 }

@@ -55,11 +55,11 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/">创建预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
-                <li class="active"><a href="${pageContext.request.contextPath}/Budget/Detail">修改预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
                 <li><a href="${pageContext.request.contextPath}/usercenter.jsp">用户中心</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/Budget/Detail">修改预算</a></li>
             </ul>
         </div>
     </div>
@@ -73,7 +73,7 @@
         </a>
     </li>
     <li><a href="#material" data-toggle="tab" onclick="materialVue.showlist()">材料费</a></li>
-    <li><a href="#test" data-toggle="tab">测试化验加工费</a></li>
+    <li><a href="#test" data-toggle="tab" onclick="testVue.showlist()">测试化验加工费</a></li>
     <li><a href="#power" data-toggle="tab">燃料动力费</a></li>
     <li><a href="#travel" data-toggle="tab" onclick=travelVue.showlist()>差旅费</a></li>
     <li><a href="#conference" data-toggle="tab" onclick="conferenceVue.showlist()">会议费</a></li>
@@ -134,9 +134,26 @@
                     <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
                 </td>
             </tr>
+            <tr class="success">
+                <td>
+                    <select v-model="selectedIndex" class="form-control">
+                        <option v-for="(record,i) in database" :value="i">
+                            {{record.name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                </td>
+                <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
+
     <div class="tab-pane fade" id="material">
         <table class="table table-hover">
             <thead>
@@ -169,11 +186,11 @@
 
         </table>
     </div>
+
     <div class="tab-pane fade" id="test">
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
                 <th>名称</th>
                 <th>单价</th>
                 <th>数量</th>
@@ -181,11 +198,28 @@
             </thead>
 
             <tbody>
-
+            <tr v-for="item in items">
+                <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
+                <td><input type="number" v-model="item.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                    <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
+            <tr class="success">
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
     </div>
+
     <div class="tab-pane fade" id="power">
         <table class="table table-hover">
             <thead>
@@ -449,6 +483,25 @@
                     <button class="btn btn-danger" @click="del(item)">删除</button>
                 </td>
             </tr>
+
+            <tr class="success">
+                <td>
+                    <select v-model="selectedIndex" class="form-control">
+                        <option v-for="(record,i) in database" :value="i">
+                            {{record.name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" v-model="database[selectedIndex].price">
+                        <option v-for="n in 2800" v-if="n%100==0">{{n}}</option>
+                    </select>
+                </td>
+                <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -486,11 +539,21 @@
 
 
 <script>
+    function inItems(value,items) {
+        for(var i = 0; i < items.length; i++){
+            if(value.name === items[i].name){
+                return true;
+            }
+        }
+        return false;
+    }
     var equipmentVue = new Vue({
         el: "#equipment",
         data: {
+            sample: {name: "sample", price: 0, nums: 0},
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            database:[{name: "sample", price: 0, nums: 0}],
+            selectedIndex:0
         },
         methods: {
             update: function (item) {
@@ -508,6 +571,20 @@
                         this.items = data.body.data;
                         console.log("showlist");
                         updateBudgetPage("equipment")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                );
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Equipment").then(
+                    function (data) {
+                        this.database = data.body.data;
+                        for(var i=0;i<this.database.length;i++)
+                        {
+                            if(inItems(this.database[i],this.items)){
+                                this.database.splice(i,1);
+                            }
+                        }
+                        console.log("show database");
                     }, function (error) {
                         console.log(error)
                     }
@@ -563,6 +640,52 @@
             },
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Material",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                }, function (error) {
+                    alert(error.bodyText);
+                    this.showlist()
+                });
+            }
+        }
+    });
+
+    var testVue = new Vue({
+        el: "#test",
+        data: {
+            items: [],
+            sample: {name: "sample", price: 0, nums: 0}
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/TestAndProcess").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("testAndProcess")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/TestAndProcess",
                     {
                         name: item.name,
                         price: item.price,
@@ -645,14 +768,6 @@
             }
         },
         created: function () {
-            //alert("created");
-            this.$http.get('${pageContext.request.contextPath}/Budget/Detail/Power').then(
-                function (result) {
-                    this.items = result.body.powers;
-                }, function (error) {
-                    alert(error)
-                }
-            )
         }
     });
 
@@ -738,7 +853,7 @@
                         traffic: item.traffic,
                         days: item.days,
                         people: item.people,
-                        nums:item.nums,
+                        nums: item.nums,
                         curd: curd
                     },
                     {emulateJSON: true}
@@ -874,7 +989,9 @@
         el: "#consultation",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            sample: {name: "sample", price: 0, nums: 0},
+            database: [{name: "sample", price: 0, nums: 0}],
+            selectedIndex: 0
         },
         methods: {
             update: function (item) {
@@ -892,6 +1009,20 @@
                         this.items = data.body.data;
                         console.log("showlist");
                         updateBudgetPage("consultation")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                );
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Consultation").then(
+                    function (data) {
+                        this.database = data.body.data;
+                        for(var i=0;i<this.database.length;i++)
+                        {
+                            if(inItems(this.database[i],this.items)){
+                                this.database.splice(i,1);
+                            }
+                        }
+                        console.log("show database");
                     }, function (error) {
                         console.log(error)
                     }

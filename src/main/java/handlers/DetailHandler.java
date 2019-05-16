@@ -95,6 +95,16 @@ public class DetailHandler {
             object.put("material",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //测试化验加工费
+            sub=new JSONObject();
+            req=budget.getRequirement().getTest();
+            sum=detailService.sumTestAndProcess(budget.getTestAndProcesses());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("testAndProcess",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
             //差旅费
             sub=new JSONObject();
             req=budget.getRequirement().getTravel();
@@ -220,6 +230,38 @@ public class DetailHandler {
                 obj.put("name",item.getName());
                 obj.put("price",item.getPrice());
                 obj.put("nums",materials.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/TestAndProcess")
+    public void detailTest(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("equipment list error");
+                response.sendError(444,"budget not exists");
+                return;
+            }
+            Map<TestAndProcess, Integer> testAndProcesses = budget.getTestAndProcesses();
+            List<JSONObject> list=new LinkedList<>();
+            for (TestAndProcess item : testAndProcesses.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",testAndProcesses.get(item));
                 list.add(obj);
             }
             object.put("data",list);

@@ -409,6 +409,36 @@ public class BudgetHandler {
     }
 
 
+    @RequestMapping("/Modify/TestAndProcess")
+    public void modifyTestAndProcess(Integer mode, TestAndProcess testAndProcess, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("/Modify/TestAndProcess");
+
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
+
+        Map<TestAndProcess, Integer> items = null;
+        items = budget.getTestAndProcesses();
+        //删除
+        if (curd.equals(1)) {
+            items.remove(testAndProcess);
+        } else {
+            if (curd.equals(2))//增改
+            {
+                items.remove(testAndProcess);
+                items.put(testAndProcess, nums);
+            } else
+                items.put(testAndProcess, nums);
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
+    }
+
+
     @Autowired
     private IInternationalCommunicationDao internationalCommunicationDao;
 

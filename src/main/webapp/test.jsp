@@ -47,7 +47,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/">创建预算</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
-                <li><a href="${pageContext.request.contextPath}/Budget/Detail" >修改预算</a></li>
+                <%--<li><a href="${pageContext.request.contextPath}/Budget/Detail" >修改预算</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
                 <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
                 <li class="active"><a href="${pageContext.request.contextPath}/Test">测试</a></li>
@@ -100,6 +100,26 @@ ${pageContext.request.contextPath}<br>
 </div>
 
 <button class="btn btn-danger" onclick="logout()">退出登录</button>
+
+<div id="forTest">
+    <select v-model="selectedIndex">
+        <option v-for="(item,index) in items" :value="index">{{item.name}}</option>
+    </select>
+    <td><input type="text" v-model="items[selectedIndex].name"></td>
+    <td><input type="text" v-model="items[selectedIndex].age"></td>
+</div>
+<script type="text/javascript">
+    var vueTest=new Vue({
+        el:"#forTest",
+        data:{
+            items:[{ name : 'zhangsan', age : 24, tel : 110 },
+                { name : 'lisi', age : 20, tel:  120 },
+                { name : 'wangwu', age : 21, tel : 119 }],
+            text:"111",
+            selectedIndex:0
+        }
+    });
+</script>
 
 <script type="text/javascript">
     function logout() {
