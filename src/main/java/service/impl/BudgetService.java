@@ -129,9 +129,6 @@ public class BudgetService implements IBudgetService {
                     return (int) diff;
                 }
             });
-            for (Equipment equipment : equipments) {
-                map.put(equipment, 0);
-            }
             Equipment equipment = equipments.get(0);
             double sum = 0.0;
             int i = 0;

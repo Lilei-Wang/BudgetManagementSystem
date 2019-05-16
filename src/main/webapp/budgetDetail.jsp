@@ -134,7 +134,7 @@
                     <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
                 </td>
             </tr>
-            <tr class="success">
+            <tr class="info">
                 <td>
                     <select v-model="selectedIndex" class="form-control">
                         <option v-for="(record,i) in database" :value="i">
@@ -451,6 +451,24 @@
                     <button class="btn btn-danger" @click="del(item)">删除</button>
                 </td>
             </tr>
+
+            <tr class="info">
+                <td>
+                    <select v-model="selectedIndex" class="form-control">
+                        <option v-for="(record,i) in database" :value="i">
+                            {{record.name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                </td>
+                <td><input type="number" v-model="database[selectedIndex].people" class="form-control"></td>
+                <td><input type="number" v-model="database[selectedIndex].months" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -484,7 +502,7 @@
                 </td>
             </tr>
 
-            <tr class="success">
+            <tr class="info">
                 <td>
                     <select v-model="selectedIndex" class="form-control">
                         <option v-for="(record,i) in database" :value="i">
@@ -570,25 +588,28 @@
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("equipment")
+                        updateBudgetPage("equipment");
+
+                        this.$http.get("${pageContext.request.contextPath}/Database/Query/Equipment").then(
+                            function (data) {
+                                var tmp= data.body.data;
+                                for(var i=0;i<tmp.length;i++)
+                                {
+                                    if(inItems(tmp[i],this.items)){
+                                        tmp.splice(i,1);
+                                    }
+                                }
+                                this.database=tmp;
+                                console.log("show database");
+                            }, function (error) {
+                                console.log(error)
+                            }
+                        )
+
                     }, function (error) {
                         console.log(error)
                     }
                 );
-                this.$http.get("${pageContext.request.contextPath}/Database/Query/Equipment").then(
-                    function (data) {
-                        this.database = data.body.data;
-                        for(var i=0;i<this.database.length;i++)
-                        {
-                            if(inItems(this.database[i],this.items)){
-                                this.database.splice(i,1);
-                            }
-                        }
-                        console.log("show database");
-                    }, function (error) {
-                        console.log(error)
-                    }
-                )
             },
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
@@ -941,7 +962,9 @@
         el: "#labour",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            sample: {name: "sample", price: 0, nums: 0},
+            selectedIndex:0,
+            database:[{name: "sample", price: 0, nums: 0,people:0,months:0}]
         },
         methods: {
             update: function (item) {
@@ -951,6 +974,7 @@
                 this.doUpdate(item, 1);
             },
             add: function (item) {
+                item.nums=1;
                 this.doUpdate(item, 0);
             },
             showlist: function () {
@@ -959,6 +983,20 @@
                         this.items = data.body.data;
                         console.log("showlist");
                         updateBudgetPage("labour")
+                    }, function (error) {
+                        console.log(error)
+                    }
+                );
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Labour").then(
+                    function (data) {
+                        this.database = data.body.data;
+                        for(var i=0;i<this.database.length;i++)
+                        {
+                            if(inItems(this.database[i],this.items)){
+                                this.database.splice(i,1);
+                            }
+                        }
+                        console.log("show database");
                     }, function (error) {
                         console.log(error)
                     }
