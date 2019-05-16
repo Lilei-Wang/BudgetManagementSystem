@@ -134,7 +134,7 @@
                     <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
                 </td>
             </tr>
-            <tr class="info">
+            <tr class="info" v-if="database.length>0">
                 <td>
                     <select v-model="selectedIndex" class="form-control">
                         <option v-for="(record,i) in database" :value="i">
@@ -452,7 +452,7 @@
                 </td>
             </tr>
 
-            <tr class="info">
+            <tr class="info" v-if="database.length>0">
                 <td>
                     <select v-model="selectedIndex" class="form-control">
                         <option v-for="(record,i) in database" :value="i">
@@ -502,7 +502,7 @@
                 </td>
             </tr>
 
-            <tr class="info">
+            <tr class="info" v-if="database.length>0">
                 <td>
                     <select v-model="selectedIndex" class="form-control">
                         <option v-for="(record,i) in database" :value="i">
@@ -589,27 +589,30 @@
                         this.items = data.body.data;
                         console.log("showlist");
                         updateBudgetPage("equipment");
-
-                        this.$http.get("${pageContext.request.contextPath}/Database/Query/Equipment").then(
-                            function (data) {
-                                var tmp= data.body.data;
-                                for(var i=0;i<tmp.length;i++)
-                                {
-                                    if(inItems(tmp[i],this.items)){
-                                        tmp.splice(i,1);
-                                    }
-                                }
-                                this.database=tmp;
-                                console.log("show database");
-                            }, function (error) {
-                                console.log(error)
-                            }
-                        )
-
+                        this.showDatabase();
                     }, function (error) {
                         console.log(error)
                     }
                 );
+            },
+            showDatabase:function(){
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Equipment").then(
+                    function (data) {
+                        var tmp= data.body.data;
+                        for(var i=0;i<tmp.length;i++)
+                        {
+                            if(inItems(tmp[i],this.items)){
+                                console.log("inItems:true, "+tmp[i].name);
+                                tmp.splice(i,1);
+                                i--;
+                            }
+                        }
+                        this.database=tmp;
+                        console.log("show database");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
             },
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
@@ -982,20 +985,25 @@
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("labour")
+                        updateBudgetPage("labour");
+                        this.showDatabase()
                     }, function (error) {
                         console.log(error)
                     }
                 );
+            },
+            showDatabase:function(){
                 this.$http.get("${pageContext.request.contextPath}/Database/Query/Labour").then(
                     function (data) {
-                        this.database = data.body.data;
-                        for(var i=0;i<this.database.length;i++)
+                        var list = data.body.data;
+                        for(var i=0;i<list.length;i++)
                         {
-                            if(inItems(this.database[i],this.items)){
-                                this.database.splice(i,1);
+                            if(inItems(list[i],this.items)){
+                                list.splice(i,1);
+                                i--;
                             }
                         }
+                        this.database=list;
                         console.log("show database");
                     }, function (error) {
                         console.log(error)
@@ -1046,20 +1054,27 @@
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("consultation")
+                        updateBudgetPage("consultation");
+                        this.showDatabase();
                     }, function (error) {
                         console.log(error)
                     }
                 );
+            },
+            showDatabase:function(){
                 this.$http.get("${pageContext.request.contextPath}/Database/Query/Consultation").then(
                     function (data) {
-                        this.database = data.body.data;
-                        for(var i=0;i<this.database.length;i++)
+                        var list = data.body.data;
+                        console.log(this.items);
+                        for(var i=0;i<list.length;i++)
                         {
-                            if(inItems(this.database[i],this.items)){
-                                this.database.splice(i,1);
+                            if(inItems(list[i],this.items)){
+                                console.log("deleted: "+list[i].name);
+                                list.splice(i,1);
+                                i--;
                             }
                         }
+                        this.database=list;
                         console.log("show database");
                     }, function (error) {
                         console.log(error)
