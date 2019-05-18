@@ -67,7 +67,7 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>预算ID</th>
+            <th>预算名称</th>
             <th>创建时间</th>
             <th>操作</th>
         </tr>
@@ -75,12 +75,15 @@
 
         <tbody>
         <tr v-for="budget in budgetList">
-            <td>{{budget.id}}</td>
+            <td hidden>{{budget.id}}</td>
+            <td>{{budget.name}}</td>
             <td>{{budget.date}}</td>
             <td>
                 <a v-bind:href="'${pageContext.request.contextPath}/Budget/Detail/'+budget.id">
                     <button class="btn btn-success">查看详情</button>
                 </a>
+                <button class="btn btn-info">修改属性</button>
+                <button class="btn btn-info">下载说明文件</button>
                 <button class="btn btn-danger" @click="del(budget.id)">删除</button>
             </td>
         </tr>

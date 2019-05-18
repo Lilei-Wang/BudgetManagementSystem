@@ -66,6 +66,13 @@
 <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
 
     <div class="form-group">
+        <label class="control-label col-sm-4">预算名称</label>
+        <div class="col-sm-4">
+            <input name="name" type="text" placeholder="预算名称" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="form-group">
         <label class="control-label col-sm-4">总预算（万元）</label>
         <div class="col-sm-4">
             <input name="total" type="number" placeholder="" class="form-control" required value=<%=total%>>

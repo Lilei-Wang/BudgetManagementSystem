@@ -1,5 +1,6 @@
 package service.impl;
 
+import beans.UserBudget;
 import dao.IUserBudgetDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,18 @@ public class UserBudgetService implements IUserBudgetService {
     }
 
     @Override
-    public List<Long> getBudgetByUserid(Integer userid) {
-        List<Long> budgets=userBudgetDao.selectBudgetByUserid(userid);
+    public List<UserBudget> getBudgetByUserid(Integer userid) {
+        List<UserBudget> budgets=userBudgetDao.selectBudgetByUserid(userid);
         return budgets;
     }
 
     @Override
     public void deleteUserBudget(Integer userid, Long budgetId) {
         userBudgetDao.deleteUserBudget(userid,budgetId);
+    }
+
+    @Override
+    public void changeBudgetName(Long id, String budgetName) {
+        userBudgetDao.updateBudgetName(id,budgetName);
     }
 }

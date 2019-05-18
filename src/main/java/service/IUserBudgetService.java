@@ -1,5 +1,7 @@
 package service;
 
+import beans.UserBudget;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,9 @@ import java.util.List;
 public interface IUserBudgetService {
     void addUserBudget(Integer userid, Long id);
 
-    List<Long> getBudgetByUserid(Integer userid);
+    List<UserBudget> getBudgetByUserid(Integer userid);
 
     void deleteUserBudget(Integer userid, Long budgetId);
+
+    void changeBudgetName(Long id, String budgetName);
 }

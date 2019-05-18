@@ -165,9 +165,9 @@ public class DetailHandler {
             object.put("consultation",sub);
             req_sofar+=req;sum_sofar+=sum;
 
-            object.put("req",req_sofar);
+            object.put("req",budget.getRequirement().getTotal());
             object.put("sum",sum_sofar);
-            object.put("diff",req_sofar-sum_sofar);
+            object.put("diff",budget.getRequirement().getTotal()-sum_sofar);
 
             writer.write(object.toJSONString());
         } catch (IOException e) {

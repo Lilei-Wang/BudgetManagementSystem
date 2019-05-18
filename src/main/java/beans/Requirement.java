@@ -3,7 +3,16 @@ package beans;
 import java.io.Serializable;
 
 public class Requirement implements Serializable {
+    private double total;
     private double equip,material,conference,consultation,indirect,international,labour,others,power,property,test,travel;
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
     public double getEquip() {
         return equip;

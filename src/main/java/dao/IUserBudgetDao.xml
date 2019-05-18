@@ -5,10 +5,13 @@
     <insert id="insertUserBudget" useGeneratedKeys="true" keyProperty="id">
         insert into user_budget(userid,budgetid) values (#{userid},#{budgetid})
     </insert>
-    <select id="selectBudgetByUserid" resultType="java.lang.Long">
-        select budgetid from user_budget where userid=#{userid} order by budgetid desc
+    <select id="selectBudgetByUserid" resultType="beans.UserBudget">
+        select * from user_budget where userid=#{userid} order by budgetid desc
     </select>
     <delete id="deleteUserBudget">
         delete from user_budget where userid=#{userid} and budgetid=#{budgetid}
     </delete>
+    <update id="updateBudgetName">
+        update user_budget set budgetname=#{budgetname} where budgetid=#{budgetid}
+    </update>
 </mapper>

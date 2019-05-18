@@ -58,6 +58,7 @@ public class BudgetHandler {
             Budget budget = new Budget();
             budget.setId(sessionID);
             Integer actualBudget = 0;
+            budget.getRequirement().setTotal(totalBudget*10000);
 
             if (items != null && items.length != 0) {
                 for (String item : items) {
@@ -119,7 +120,9 @@ public class BudgetHandler {
             Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
             Integer userid = Integer.valueOf(useridCookie.getValue());
             System.out.println("get userid " + userid);
+            String budgetName = request.getParameter("name");
             userBudgetService.addUserBudget(userid, budget.getId());
+            userBudgetService.changeBudgetName(budget.getId(),budgetName);
 
             //response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             System.out.println("ContextPath: " + request.getContextPath());
@@ -218,7 +221,7 @@ public class BudgetHandler {
         }
         //删除budget相关cookie，防止删除后重新进入详情页面
         String sessionID = getSessionID(request.getCookies());
-        if (sessionID.equals(budgetId.toString())) {
+        if (sessionID!=null && sessionID.equals(budgetId.toString())) {
             Cookie cookie = new Cookie("sessionID", null);
             cookie.setPath("/");
             cookie.setMaxAge(0);
@@ -244,14 +247,15 @@ public class BudgetHandler {
             Cookie useridCookie = CookieUtil.getCookieByName(request.getCookies(), "userid");
             Integer userid = Integer.valueOf(useridCookie.getValue());
 
-            List<Long> budgetList = userBudgetService.getBudgetByUserid(userid);
+            List<UserBudget> budgetList = userBudgetService.getBudgetByUserid(userid);
             List<JSONObject> list = new LinkedList<>();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            for (Long budget : budgetList) {
+            for (UserBudget budget : budgetList) {
                 JSONObject obj = new JSONObject();
-                obj.put("id", budget);
-                Date date = new Date(budget);
+                obj.put("id", budget.getBudgetid());
+                Date date = new Date(budget.getBudgetid());
                 obj.put("date", format.format(date));
+                obj.put("name",budget.getBudgetname());
                 list.add(obj);
             }
             object.put("data", list);
