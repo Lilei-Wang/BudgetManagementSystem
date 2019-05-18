@@ -121,6 +121,30 @@ ${pageContext.request.contextPath}<br>
     });
 </script>
 
+<div id="computedTest">
+    <input type="number" v-model="arr[0]">
+    <input type="number" v-model="arr[1]">
+    <p>{{z}}</p>
+</div>
+<script type="text/javascript">
+    var computedVue=new Vue({
+        el:"#computedTest",
+        data:{
+            x:0,
+            y:0,
+            arr:[]
+        },
+        computed:{
+            z:function () {
+                var sum=Number(0);
+                for(var i =0;i<this.arr.length;i++)
+                    sum+=Number(this.arr[i]);
+                return sum;
+            }
+        }
+    })
+</script>
+
 <script type="text/javascript">
     function logout() {
         if(confirm("确认退出登录？")){

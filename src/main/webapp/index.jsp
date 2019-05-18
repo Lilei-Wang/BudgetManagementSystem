@@ -19,10 +19,12 @@
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style type="text/css">
-        body{
+        body {
             padding-top: 70px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 </head>
 
 <body>
@@ -50,152 +52,184 @@
 <%
     //一些默认值
     int total = 150,
-        equiment = 20,
-        material = 12,
-        test = 15,
-        power = 0,
-        travel = 12,
-        conference = 5,
-        international = 6,
-        property = 8,
-        labour = 66,
-        consultation = 2,
-        others = 0; %>
+            equiment = 20,
+            material = 12,
+            test = 15,
+            power = 0,
+            travel = 12,
+            conference = 5,
+            international = 6,
+            property = 8,
+            labour = 66,
+            consultation = 2,
+            others = 0; %>
 
-<iframe  hidden id="hidden_frame" name="hidden_frame"></iframe>
-<form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
+<iframe hidden id="hidden_frame" name="hidden_frame"></iframe>
+<div id="form">
+    <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/Budget/Generate">
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">预算名称</label>
-        <div class="col-sm-4">
-            <input name="name" type="text" placeholder="预算名称" class="form-control" required>
+        <div class="form-group">
+            <label class="control-label col-sm-4">预算名称</label>
+            <div class="col-sm-4">
+                <input name="name" type="text" placeholder="预算名称" class="form-control" required>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">总预算（万元）</label>
-        <div class="col-sm-4">
-            <input name="total" type="number" placeholder="" class="form-control" required value=<%=total%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">总预算（万元）</label>
+            <div class="col-sm-4">
+                <input name="total" type="number" placeholder="填写大于0的数字" class="form-control" required v-model="total">
+            </div>
+            <div class="col-sm-4">
+                <label>{{sum}}</label>
+            </div>
         </div>
-    </div>
 
-
-    <hr>
-
-
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="equipment" checked required>
-            设备费
-        </label>
-        <div class="col-sm-4">
-            <input name="equipment-number" class="form-control" type="number" value=<%=equiment%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">项目周期（年）</label>
+            <div class="col-sm-4">
+                <input name="years" type="number" placeholder="填写大于0的数字" class="form-control" required>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="material" checked required>
-            材料费
-        </label>
-        <div class="col-sm-4">
-            <input name="material-number" class="form-control" type="number" value=<%=material%>>
+
+        <hr>
+
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="equipment" checked required>
+                设备费
+            </label>
+            <div class="col-sm-4">
+                <input name="equipment-number" class="form-control" type="number" v-model="arr[0]">
+            </div>
+            <div class="col-sm-2">
+                <input name="equipment-distribution" class="form-control" type="text" required>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="test-and-process" checked required>
-            测试化验加工费
-        </label>
-        <div class="col-sm-4">
-            <input name="test-and-process-number" class="form-control" type="number" value=<%=test%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="material" checked required>
+                材料费
+            </label>
+            <div class="col-sm-4">
+                <input name="material-number" class="form-control" type="number"  v-model="arr[1]">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="power" checked required>
-            燃料动力费
-        </label>
-        <div class="col-sm-4">
-            <input name="power-number" class="form-control" type="number" value=<%=power%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="test-and-process" checked required>
+                测试化验加工费
+            </label>
+            <div class="col-sm-4">
+                <input name="test-and-process-number" class="form-control" type="number"  v-model="arr[2]">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="travel" checked required>
-            差旅费
-        </label>
-        <div class="col-sm-4">
-            <input name="travel-number" class="form-control" type="number" value=<%=travel%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="power" checked required>
+                燃料动力费
+            </label>
+            <div class="col-sm-4">
+                <input name="power-number" class="form-control" type="number"  v-model="arr[3]">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="conference" checked required>
-            会议费
-        </label>
-        <div class="col-sm-4" id="tip">
-            <input name="conference-number" class="form-control" type="number" value=<%=conference%>>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="travel" checked required>
+                差旅费
+            </label>
+            <div class="col-sm-4">
+                <input name="travel-number" class="form-control" type="number"  v-model="arr[4]">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="international-communication" checked required>
-            国际合作交流费
-        </label>
-        <div class="col-sm-4">
-            <input name="international-communication-number" class="form-control" type="number"
-                   value="<%=international%>"></div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="conference" checked required>
+                会议费
+            </label>
+            <div class="col-sm-4" id="tip">
+                <input name="conference-number" class="form-control" type="number"  v-model="arr[5]">
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="property" checked required>
-            产权费
-        </label>
-        <div class="col-sm-4">
-            <input name="property-number" class="form-control" type="number" value="<%=property%>"></div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="international-communication" checked required>
+                国际合作交流费
+            </label>
+            <div class="col-sm-4">
+                <input name="international-communication-number" class="form-control" type="number"
+                       v-model="arr[6]"></div>
+        </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="labour" checked required>
-            劳务费
-        </label>
-        <div class="col-sm-4">
-            <input name="labour-number" class="form-control" type="number" value="<%=labour%>"></div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="property" checked required>
+                产权费
+            </label>
+            <div class="col-sm-4">
+                <input name="property-number" class="form-control" type="number"  v-model="arr[7]"></div>
+        </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="consultation" checked required>
-            咨询费
-        </label>
-        <div class="col-sm-4">
-            <input name="consultation-number" class="form-control" type="number" value="<%=consultation%>"></div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="labour" checked required>
+                劳务费
+            </label>
+            <div class="col-sm-4">
+                <input name="labour-number" class="form-control" type="number"  v-model="arr[8]"></div>
+        </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-4">
-            <input name="items" type="checkbox" value="others" checked required>
-            其他费用
-        </label>
-        <div class="col-sm-4">
-            <input name="others-number" class="form-control" type="number" value="<%=others%>"></div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="consultation" checked required>
+                咨询费
+            </label>
+            <div class="col-sm-4">
+                <input name="consultation-number" class="form-control" type="number"  v-model="arr[9]"></div>
+        </div>
 
-    <!-- Button -->
-    <div title="所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可">
-        <button class="btn btn-default btn-lg center-block" type="submit">生成预算</button>
-        <p class="help-block" style="color:red">所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可</p>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">
+                <input name="items" type="checkbox" value="others" checked required>
+                其他费用
+            </label>
+            <div class="col-sm-4">
+                <input name="others-number" class="form-control" type="number"  v-model="arr[10]"></div>
+        </div>
 
-</form>
+        <!-- Button -->
+        <div title="所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可">
+            <button class="btn btn-default btn-lg center-block" type="submit">生成预算</button>
+            <p class="help-block" style="color:red">所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可</p>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var formVue = new Vue({
+        el: "#form",
+        data:{
+            arr:[20,12,15,0,12,5, 6,8,66,2,0],
+            total:150
+        },
+        computed:{
+            sum:function () {
+                var sum=Number(0);
+                for(var i =0;i<this.arr.length;i++)
+                    sum+=Number(this.arr[i]);
+                return sum;
+            }
+        }
+    })
+</script>
 
 </body>
 </html>
