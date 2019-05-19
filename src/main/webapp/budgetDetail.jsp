@@ -313,15 +313,6 @@
             <tbody>
             <tr v-for="item in items" v-bind:title="item.name">
                 <td><input type="text" readonly v-model="item.name" class="form-control"></td>
-                <%--<td>
-                    <select class="form-control" v-model="item.expertType">
-                        <option disabled value="">请选择其中一项</option>
-                        <option>专家</option>
-                        <option>B</option>
-                        <option>C</option>
-                    </select>
-                </td>
-                <td><input type="number" v-model="item.experts"></td>--%>
                 <td><input type="number" v-model="item.price" class="form-control"></td>
                 <td><input type="number" v-model="item.people" class="form-control"></td>
                 <td><input type="number" v-model="item.days" class="form-control"></td>
@@ -329,6 +320,17 @@
                 <td>
                     <button class="btn btn-success" @click="update(item)">确认</button>
                     <button class="btn btn-danger" @click="del(item)">删除</button>
+                </td>
+            </tr>
+
+            <tr class="success">
+                <td><input type="text" v-model="sample.name" class="form-control"></td>
+                <td><input type="number" v-model="sample.price" class="form-control"></td>
+                <td><input type="number" v-model="sample.people" class="form-control"></td>
+                <td><input type="number" v-model="sample.days" class="form-control"></td>
+                <td><input type="number" v-model="sample.nums" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(sample)">添加</button>
                 </td>
             </tr>
             </tbody>
