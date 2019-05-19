@@ -83,7 +83,12 @@
                     <button class="btn btn-success">查看详情</button>
                 </a>
                 <button class="btn btn-info">修改属性</button>
-                <button class="btn btn-info">下载说明文件</button>
+                <a v-bind:href="'${pageContext.request.contextPath}/Budget/Download/csv/'+budget.id">
+                    <button class="btn btn-success">下载csv</button>
+                </a>
+                <a v-bind:href="'${pageContext.request.contextPath}/Budget/Download/word/'+budget.id">
+                    <button class="btn btn-success">下载word</button>
+                </a>
                 <button class="btn btn-danger" @click="del(budget.id)">删除</button>
             </td>
         </tr>

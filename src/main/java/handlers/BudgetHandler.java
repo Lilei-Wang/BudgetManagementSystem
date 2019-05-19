@@ -179,6 +179,30 @@ public class BudgetHandler {
         }
     }
 
+
+
+    @RequestMapping("/Download/csv/{budgetid}")
+    public void downloadCsv(@PathVariable("budgetid") Long budgetid,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        //response.setContentType("application/octet-stream");
+        response.setContentType("text/html;charset=UTF-8");
+        String sessionID = budgetid.toString();
+        try {
+            Budget budget = retrieveBudget(sessionID);
+            //writer = response.getWriter();
+            response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
+            assert budget != null;
+            //budgetToOutputStream(budget, writer);
+            budgetToOutputStream(budget, response.getOutputStream());
+            System.out.println("Download...............");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     @RequestMapping("/Detail")
     public ModelAndView budgetDetailHandler(HttpServletRequest request) {
         String sessionID = getSessionID(request.getCookies());

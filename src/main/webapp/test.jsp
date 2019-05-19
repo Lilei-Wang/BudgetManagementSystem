@@ -56,6 +56,7 @@
         </div>
     </div>
 </nav>
+<%--
 
 <button class="btn btn-success" onclick=jsp()>test</button>
 <label id="xxx">123445</label>
@@ -91,6 +92,29 @@ ${pageContext.request.contextPath}<br>
         </tr>
     </table>
 </div>
+--%>
+
+
+<div>
+    <div id="menu">
+        控制
+    </div>
+    <div id="show">展示</div>
+</div>
+<script type="text/javascript">
+    var list=$("#show");
+    var menu=document.getElementById("menu");
+    list.hide();
+    menu.onmouseover=function (ev) {
+        list.show();
+    };
+    menu.onmouseleave=function (ev) {
+        list.hide();
+    };
+
+</script>
+
+
 
 <div id="VueTest">
 <select v-model="num">
