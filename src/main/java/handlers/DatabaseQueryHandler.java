@@ -1,14 +1,12 @@
 package handlers;
 
-import beans.Budget;
-import beans.Consultation;
-import beans.Equipment;
-import beans.Labour;
+import beans.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import dao.IConsultationDao;
 import dao.IEquipmentDao;
 import dao.ILabourDao;
+import dao.ITravelDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,6 +93,39 @@ public class DatabaseQueryHandler {
                 obj.put("id",item.getId());
                 obj.put("name",item.getName());
                 obj.put("price",item.getPrice());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @Autowired
+    private ITravelDao travelDao;
+    @RequestMapping("/Travel")
+    public void queryTravel(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Travel> travels = travelDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Travel item : travels) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("food",item.getFood());
+                obj.put("traffic",item.getTraffic());
+                obj.put("accommodation",item.getAccommodation());
+                obj.put("people",item.getPeople());
+                obj.put("days",item.getDays());
                 obj.put("nums",0);
                 list.add(obj);
             }
