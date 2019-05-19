@@ -689,6 +689,34 @@ public class BudgetHandler {
     }
 
 
+
+    @RequestMapping("/Modify/Indirect")
+    public void modifyIndirect(Integer mode, Indirect indirect, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("/Modify/Indirect");
+
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
+
+        Map<Indirect, Integer> items = null;
+        items = budget.getIndirects();
+        if (curd.equals(0)) {
+            items.put(indirect, nums);
+        } else if (curd.equals(1)) {
+            items.remove(indirect);
+        } else {
+            items.remove(indirect);
+            items.put(indirect, nums);
+        }
+        serializeBudget(budget, getFilePath(sessionID));
+    }
+
+
     /**
      * 预算修改的善后工作
      *

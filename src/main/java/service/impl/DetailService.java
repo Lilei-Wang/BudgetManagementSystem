@@ -88,4 +88,31 @@ public class DetailService implements IDetailService {
         }
         return sum;
     }
+
+    @Override
+    public double sumPower(Map<Power, Integer> powers) {
+        double sum=0.0;
+        for (Power item : powers.keySet()) {
+            sum+=(item.computeUnitPrice()*powers.get(item));
+        }
+        return sum;
+    }
+
+    @Override
+    public double sumOthers(Map<Others, Integer> others) {
+        double sum=0.0;
+        for (Others item : others.keySet()) {
+            sum+=(item.computeUnitPrice()*others.get(item));
+        }
+        return sum;
+    }
+
+    @Override
+    public double sumIndirect(Map<Indirect, Integer> indirects) {
+        double sum=0.0;
+        for (Indirect item : indirects.keySet()) {
+            sum+=(item.computeUnitPrice()*indirects.get(item));
+        }
+        return sum;
+    }
 }

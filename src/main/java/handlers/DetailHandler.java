@@ -115,6 +115,16 @@ public class DetailHandler {
             object.put("travel",sub);
             req_sofar+=req;sum_sofar+=sum;
 
+            //燃料动力费
+            sub=new JSONObject();
+            req=budget.getRequirement().getPower();
+            sum=detailService.sumPower(budget.getPowers());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("power",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
             //国际交流合作费
             sub=new JSONObject();
             req=budget.getRequirement().getInternational();
@@ -163,6 +173,26 @@ public class DetailHandler {
             sub.put("sum",sum);
             sub.put("diff",req-sum);
             object.put("consultation",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
+            //其他费用
+            sub=new JSONObject();
+            req=budget.getRequirement().getOthers();
+            sum=detailService.sumOthers(budget.getOthers());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("others",sub);
+            req_sofar+=req;sum_sofar+=sum;
+
+            //间接费用
+            sub=new JSONObject();
+            req=budget.getRequirement().getIndirect();
+            sum=detailService.sumIndirect(budget.getIndirects());
+            sub.put("req",req);
+            sub.put("sum",sum);
+            sub.put("diff",req-sum);
+            object.put("indirect",sub);
             req_sofar+=req;sum_sofar+=sum;
 
             object.put("req",budget.getRequirement().getTotal());

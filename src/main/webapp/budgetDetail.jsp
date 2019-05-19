@@ -536,14 +536,18 @@
                 <th>名称</th>
                 <th>费用</th>
                 <th>数量</th>
+                <th>操作</th>
             </tr>
             </thead>
 
             <tbody id="indirect-body">
             <tr v-for="item in items">
                 <td>{{item.name}}</td>
-                <td>{{item.price}}</td>
+                <td><input type="number" v-model="item.price" class="form-control"></td>
                 <td>{{item.nums}}</td>
+                <td>
+                    <button class="btn btn-success" @click="update(item)">确认</button>
+                </td>
             </tr>
             </tbody>
 
@@ -896,15 +900,38 @@
             items: []
         },
         methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Indirect").then(
                     function (data) {
                         this.items = data.body.data;
                         console.log("indirect-showlist");
+                        updateBudgetPage("indirect")
                     }, function (error) {
                         console.log(error)
                     }
                 )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Indirect",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                });
             }
         },
         created: function () {
