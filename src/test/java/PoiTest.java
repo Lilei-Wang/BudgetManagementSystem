@@ -1,9 +1,11 @@
 import org.apache.poi.xwpf.usermodel.*;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,8 +16,11 @@ public class PoiTest {
         FileOutputStream out = new FileOutputStream("F:/new.docx");
 
         XWPFParagraph paragraph = document.createParagraph();
+        paragraph.setSpacingBeforeLines(100);
         XWPFRun run = paragraph.createRun();
         run.setText("一、设备费");
+        run.setFontSize(18);
+        run.setBold(true);
 
         paragraph=document.createParagraph();
         run=paragraph.createRun();
