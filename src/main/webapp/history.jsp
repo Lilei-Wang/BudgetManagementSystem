@@ -84,10 +84,10 @@
                 </a>
                 <button class="btn btn-info">修改属性</button>
                 <a v-bind:href="'${pageContext.request.contextPath}/Budget/Download/csv/'+budget.id">
-                    <button class="btn btn-success">下载csv</button>
+                    <button class="btn btn-success">下载费用清单</button>
                 </a>
                 <a v-bind:href="'${pageContext.request.contextPath}/Budget/Download/word/'+budget.id">
-                    <button class="btn btn-success">下载word</button>
+                    <button class="btn btn-success">下载费用说明</button>
                 </a>
                 <button class="btn btn-danger" @click="del(budget.id)">删除</button>
             </td>

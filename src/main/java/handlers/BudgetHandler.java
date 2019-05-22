@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import service.IBudgetService;
 import service.ICheckService;
 import service.IUserBudgetService;
+import util.BudgetExportUtil;
 import util.CookieUtil;
 
 import javax.servlet.ServletOutputStream;
@@ -194,6 +195,34 @@ public class BudgetHandler {
             //budgetToOutputStream(budget, writer);
             budgetToOutputStream(budget, response.getOutputStream());
             System.out.println("Download...............");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 下载word说明
+     * @param budgetid
+     * @param request
+     * @param response
+     * @param session
+     */
+    @RequestMapping("/Download/word/{budgetid}")
+    public void downloadWord(@PathVariable("budgetid") Long budgetid,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        //response.setContentType("application/octet-stream");
+        response.setContentType("text/html;charset=UTF-8");
+        String sessionID = budgetid.toString();
+        try {
+            Budget budget = retrieveBudget(sessionID);
+            //writer = response.getWriter();
+            response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".docx");
+            assert budget != null;
+            //budgetToOutputStream(budget, writer);
+            //budgetToOutputStream(budget, response.getOutputStream());
+            BudgetExportUtil.toWord(budget,response.getOutputStream());
+            System.out.println("Download word...............");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Throwable e) {
