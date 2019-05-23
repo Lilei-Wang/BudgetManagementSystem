@@ -14,4 +14,7 @@
     <update id="updateBudgetName">
         update user_budget set budgetname=#{budgetname} where budgetid=#{budgetid}
     </update>
+    <select id="selectBudgetByBudgetid" resultType="beans.UserBudget">
+        select * from user_budget where budgetid=#{budgetid}
+    </select>
 </mapper>

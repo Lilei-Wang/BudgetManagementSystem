@@ -259,6 +259,78 @@ public class BudgetHandler {
         return modelAndView;
     }
 
+
+    @RequestMapping("/Setting/{budgetId}")
+    public ModelAndView budgetSettingById(@PathVariable("budgetId") Long budgetId, HttpServletRequest request, HttpServletResponse response) {
+        if (budgetId == null) return new ModelAndView("/");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/budgetSetting.jsp");
+        modelAndView.addObject("budget", retrieveBudget(budgetId.toString()));
+        Cookie sessionID = CookieUtil.getCookieByName(request.getCookies(), "sessionID");
+        if (sessionID == null) {
+            sessionID = new Cookie("sessionID", budgetId.toString());
+        } else {
+            sessionID.setValue(budgetId.toString());
+        }
+        sessionID.setPath("/");
+        response.addCookie(sessionID);
+        UserBudget userBudget=userBudgetService.getBudgetByBudgetid(budgetId);
+        modelAndView.addObject("name",userBudget.getBudgetname());
+        return modelAndView;
+    }
+
+    @RequestMapping("/Setting.do")
+    public void doBudgetSettingById(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String sessionID = getSessionID(request.getCookies());
+            if (sessionID == null) return;
+
+            Integer totalBudget = Integer.valueOf(request.getParameter("total"));
+            String[] items = request.getParameterValues("items");
+
+            Budget budget = retrieveBudget(sessionID);
+            if(budget==null) return ;
+            budget.getRequirement().setTotal(totalBudget);
+
+            if (items != null && items.length != 0) {
+                for (String item : items) {
+                    Double number = Double.valueOf(request.getParameter(item + "-number"));
+                    if (item.contains("equipment")) {
+                        budget.getRequirement().setEquip(number);
+                    } else if (item.contains("material")) {
+                        budget.getRequirement().setMaterial(number);
+                    } else if (item.contains("test")) {
+                        budget.getRequirement().setTest(number);
+                    } else if (item.contains("power")) {
+                        budget.getRequirement().setPower(number);
+                    } else if (item.contains("travel")) {
+                        budget.getRequirement().setTravel(number);
+                    } else if (item.contains("conference")) {
+                        budget.getRequirement().setConference(number);
+                    } else if (item.contains("international")) {
+                        budget.getRequirement().setInternational(number);
+                    } else if (item.contains("property")) {
+                        budget.getRequirement().setProperty(number);
+                    } else if (item.contains("labour")) {
+                        budget.getRequirement().setLabour(number);
+                    } else if (item.contains("consultation")) {
+                        budget.getRequirement().setConsultation(number);
+                    } else if (item.contains("others")) {
+                        budget.getRequirement().setOthers(number);
+                    }
+                }
+            }
+            serializeBudget(budget, getFilePath(sessionID));
+            String budgetName = request.getParameter("name");
+            userBudgetService.changeBudgetName(budget.getId(),budgetName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        response.sendRedirect(request.getContextPath()+"/Budget/HistoryPage");
+    }
+
+
+
     @RequestMapping("/Delete/{budgetId}")
     public void deleteBudgetById(@PathVariable("budgetId") Long budgetId, HttpServletRequest request, HttpServletResponse response) {
         if (budgetId == null) return;

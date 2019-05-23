@@ -13,4 +13,6 @@ public interface IUserBudgetDao {
     void deleteUserBudget(@Param("userid") Integer userid, @Param("budgetid") Long budgetId);
 
     void updateBudgetName(@Param("budgetid") Long id,@Param("budgetname") String budgetName);
+
+    UserBudget selectBudgetByBudgetid(@Param("budgetid") Long budgetId);
 }

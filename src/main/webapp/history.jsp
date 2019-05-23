@@ -47,7 +47,7 @@
                 <li class="active"><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
                 <%--<li><a href="${pageContext.request.contextPath}/Budget/Detail">修改预算</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
-                <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
+                <%--<li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
                 <li><a href="${pageContext.request.contextPath}/usercenter.jsp">用户中心</a></li>
             </ul>
@@ -80,9 +80,11 @@
             <td>{{budget.date}}</td>
             <td>
                 <a v-bind:href="'${pageContext.request.contextPath}/Budget/Detail/'+budget.id">
-                    <button class="btn btn-success">查看详情</button>
+                    <button class="btn btn-info">查看详情</button>
                 </a>
-                <button class="btn btn-info">修改属性</button>
+                <a v-bind:href="'${pageContext.request.contextPath}/Budget/Setting/'+budget.id">
+                    <button class="btn btn-success">修改预算属性</button>
+                </a>
                 <a v-bind:href="'${pageContext.request.contextPath}/Budget/Download/csv/'+budget.id">
                     <button class="btn btn-success">下载费用清单</button>
                 </a>

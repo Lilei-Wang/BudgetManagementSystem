@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import service.IDetailService;
+import service.IUserBudgetService;
 import util.SalaryCalculator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,8 @@ public class DetailHandler {
 
     @Autowired
     private IDetailService detailService;
+    @Autowired
+    private IUserBudgetService userBudgetService;
     @RequestMapping("/Stats")
     public void getStats(HttpServletRequest request,HttpServletResponse response)
     {
@@ -74,6 +77,7 @@ public class DetailHandler {
             }
 
             double req_sofar=0.0,sum_sofar=0.0,req,sum;
+
 
             //设备费
             JSONObject sub=new JSONObject();
@@ -198,6 +202,9 @@ public class DetailHandler {
             object.put("req",budget.getRequirement().getTotal());
             object.put("sum",sum_sofar);
             object.put("diff",budget.getRequirement().getTotal()-sum_sofar);
+
+            UserBudget userBudget = userBudgetService.getBudgetByBudgetid(Long.valueOf(sessionID));
+            object.put("name",userBudget.getBudgetname());
 
             writer.write(object.toJSONString());
         } catch (IOException e) {

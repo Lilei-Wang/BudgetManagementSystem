@@ -15,4 +15,6 @@ public interface IUserBudgetService {
     void deleteUserBudget(Integer userid, Long budgetId);
 
     void changeBudgetName(Long id, String budgetName);
+
+    UserBudget getBudgetByBudgetid(Long budgetId);
 }

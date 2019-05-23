@@ -34,4 +34,9 @@ public class UserBudgetService implements IUserBudgetService {
     public void changeBudgetName(Long id, String budgetName) {
         userBudgetDao.updateBudgetName(id,budgetName);
     }
+
+    @Override
+    public UserBudget getBudgetByBudgetid(Long budgetId) {
+        return userBudgetDao.selectBudgetByBudgetid(budgetId);
+    }
 }

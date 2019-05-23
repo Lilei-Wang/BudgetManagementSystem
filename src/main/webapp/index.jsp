@@ -40,7 +40,7 @@
                 <li><a href="${pageContext.request.contextPath}/Budget/HistoryPage">历史预算</a></li>
                 <%--<li><a href="${pageContext.request.contextPath}/Budget/Detail" >修改预算</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/Rule/">修改规则</a></li>
-                <li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>
+                <%--<li><a href="${pageContext.request.contextPath}/Budget/Download">导出最新预算</a></li>--%>
                 <li><a href="${pageContext.request.contextPath}/Test">测试</a></li>
                 <li><a href="${pageContext.request.contextPath}/usercenter.jsp">用户中心</a></li>
             </ul>
