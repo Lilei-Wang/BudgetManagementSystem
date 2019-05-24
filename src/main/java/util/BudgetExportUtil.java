@@ -51,7 +51,7 @@ public class BudgetExportUtil {
             run.setText(line.toString());
 
             line = new StringBuilder();
-            line.append("用途，")
+            line.append("【用途说明，例如“针对测试过程中产生的图形数据的存储和分析需要”】，")
                     .append(num).append("台，主要配置如下：").append(equipment.getComment())
                     .append("。工作站单价约").append(price).append("元，共需").append(num * price).append("元。");
             paragraph = document.createParagraph();
@@ -136,7 +136,7 @@ public class BudgetExportUtil {
         paragraph = document.createParagraph();
         run = paragraph.createRun();
         run.addTab();
-        run.setText("为顺利完成本课题实施方案中的工作内容，课题拟对上海、南宁、桂林、北海等地相关单位进行调研和技术交流。具体考察调研单位包括：上海市交通委员会、广西省交通运输厅、桂林运营公司、钦州运营公司等。");
+        run.setText("为顺利完成本课题实施方案中的工作内容，课题拟对【出差地点】等地相关单位进行调研和技术交流。具体考察调研单位包括：【上海市交通委员会、广西省交通运输厅、桂林运营公司、钦州运营公司等】。");
 
         paragraph = document.createParagraph();
         run = paragraph.createRun();
@@ -213,6 +213,14 @@ public class BudgetExportUtil {
             run.addTab();
             run.setText(line.toString());
         }
+        paragraph = document.createParagraph();
+        run = paragraph.createRun();
+        run.addTab();
+        run.setText("【会议任务举例】 牵头单位将组织和协调各课题组召开项目启动会，共同商讨各课题的具体目标、流程、关键节点及研究路线，" +
+                "牵头单位每年组织和协调各课题组召开一次项目及课题中期检查会，检查各课题进度，讨论遇到的问题，内部研讨，寻找解决问题的方法，" +
+                "为了做好项目的结题验收工作，牵头单位将组织各课题承担单位自查自纠，总结课题财务执行情况和撰写课题自评价报告，邀请专家进行项目预验收，" +
+                "项目牵头单位将根据项目进度要求，按时完成项目结题验收工作，并组织召开项目结题验收；" +
+                "在课题实施期间，要与相关领域其他学者进行研讨，预计受邀参加国内学术会议；");
 
 
         //国际交流合作费

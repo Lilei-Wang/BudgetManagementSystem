@@ -475,12 +475,25 @@ public class BudgetHandler {
                 response.setStatus(444);
                 return;
             }
-            if (curd.equals(2))//增改
+            if (curd.equals(2))//改
             {
-                equipments.remove(equipment);
+                Set<Equipment> keySet = equipments.keySet();
+                //更新key
+                for (Equipment item : keySet) {
+                    if(item.equals(equipment)){
+                        item.setPrice(equipment.getPrice());
+                    }
+                }
+                //更新value
                 equipments.put(equipment, nums);
-            } else
+            } else if(curd.equals(0))
                 equipments.put(equipment, nums);
+            else {
+                Equipment add = equipmentDao.selectByName(equipment.getName());
+                equipments.remove(add);
+                equipments.put(add,nums);
+                System.out.println("add form database:"+add.getComment());
+            }
         }
         serializeBudget(budget, getFilePath(sessionID));
 

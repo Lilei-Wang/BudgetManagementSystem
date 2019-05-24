@@ -200,7 +200,7 @@
 
         <!-- Button -->
         <div title="所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可">
-            <button class="btn btn-default btn-lg center-block" type="submit">生成预算</button>
+            <button class="btn btn-default btn-lg center-block" type="submit">保存修改</button>
             <p class="help-block" style="color:red">所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可</p>
         </div>
     </form>

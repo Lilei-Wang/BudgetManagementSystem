@@ -58,6 +58,7 @@
 
 <div>
     <h1>你好！<label id="username" style="color:green;"></label></h1>
+    <a href="Crawler/Workstation">爬取工作站数据</a><br>
     <button class="btn btn-danger" onclick="logout()">退出登录</button>
 </div>
 

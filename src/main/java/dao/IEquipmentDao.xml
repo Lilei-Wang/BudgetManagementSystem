@@ -3,13 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="dao.IEquipmentDao">
     <insert id="insertEquipment" useGeneratedKeys="true" keyProperty="id">
-        insert into equipment(name,price) values(#{name},#{price})
+        insert into equipment(name,price,comment,type) values(#{name},#{price},#{comment},#{type})
     </insert>
     <select id="selectByName" resultType="beans.Equipment">
         select * from equipment where name=#{name}
     </select>
     <update id="updateEquipment">
-        update equipment set price=#{price},name=#{name} where id=#{id}
+        update equipment set price=#{price},name=#{name},comment=#{comment},type=#{type} where id=#{id}
     </update>
     <select id="selectAll" resultType="beans.Equipment">
         select * from equipment

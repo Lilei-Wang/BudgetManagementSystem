@@ -147,7 +147,7 @@
                 </td>
                 <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
                 <td>
-                    <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                    <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加</button>
                 </td>
             </tr>
             </tbody>
@@ -609,6 +609,9 @@
             },
             add: function (item) {
                 this.doUpdate(item, 0);
+            },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment").then(
