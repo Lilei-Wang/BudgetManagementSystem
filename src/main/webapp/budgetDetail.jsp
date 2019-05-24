@@ -411,6 +411,27 @@
                     <button class="btn btn-success" @click="add(sample)">添加</button>
                 </td>
             </tr>
+
+            <tr class="info" v-if="database.length>0">
+                <td>
+                    <select v-model="selectedIndex" class="form-control">
+                        <option v-for="(record,i) in database" :value="i">
+                            {{record.name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                </td>
+                <td><input type="number" v-model="database[selectedIndex].food" class="form-control"></td>
+                <td><input type="number" v-model="database[selectedIndex].traffic" class="form-control"></td>
+                <td><input type="number" v-model="database[selectedIndex].accommodation" class="form-control"></td>
+                <td><input type="number" v-model="database[selectedIndex].people" class="form-control"></td>
+                <td><input type="number" v-model="database[selectedIndex].days" class="form-control"></td>
+                <td>
+                    <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                </td>
+            </tr>
             </tbody>
 
         </table>
@@ -761,7 +782,9 @@
         el: "#international",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}
+            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0},
+            database:[{name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}],
+            selectedIndex:0
         },
         methods: {
             update: function (item) {
@@ -778,7 +801,27 @@
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("international")
+                        updateBudgetPage("international");
+                        this.showDatabase();
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            showDatabase:function(){
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/International").then(
+                    function (data) {
+                        var tmp= data.body.data;
+                        for(var i=0;i<tmp.length;i++)
+                        {
+                            if(inItems(tmp[i],this.items)){
+                                console.log("inItems:true, "+tmp[i].name);
+                                tmp.splice(i,1);
+                                i--;
+                            }
+                        }
+                        this.database=tmp;
+                        console.log("show database");
                     }, function (error) {
                         console.log(error)
                     }

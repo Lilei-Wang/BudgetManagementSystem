@@ -92,7 +92,7 @@ public class BudgetExportUtil {
             run.setText(line.toString());
 
             line = new StringBuilder();
-            line.append("用途：，购置")
+            line.append("用途：【自行填写】，购置")
                     .append(num).append("台，")
                     .append("单价").append(price).append("元，共需").append(num * price).append("元。");
             paragraph = document.createParagraph();
@@ -216,9 +216,9 @@ public class BudgetExportUtil {
         paragraph = document.createParagraph();
         run = paragraph.createRun();
         run.addTab();
-        run.setText("【会议任务举例】 牵头单位将组织和协调各课题组召开项目启动会，共同商讨各课题的具体目标、流程、关键节点及研究路线，" +
-                "牵头单位每年组织和协调各课题组召开一次项目及课题中期检查会，检查各课题进度，讨论遇到的问题，内部研讨，寻找解决问题的方法，" +
-                "为了做好项目的结题验收工作，牵头单位将组织各课题承担单位自查自纠，总结课题财务执行情况和撰写课题自评价报告，邀请专家进行项目预验收，" +
+        run.setText("【会议任务举例】 牵头单位将组织和协调各课题组召开项目启动会，共同商讨各课题的具体目标、流程、关键节点及研究路线；" +
+                "牵头单位每年组织和协调各课题组召开一次项目及课题中期检查会，检查各课题进度，讨论遇到的问题，内部研讨，寻找解决问题的方法；" +
+                "为了做好项目的结题验收工作，牵头单位将组织各课题承担单位自查自纠，总结课题财务执行情况和撰写课题自评价报告，邀请专家进行项目预验收；" +
                 "项目牵头单位将根据项目进度要求，按时完成项目结题验收工作，并组织召开项目结题验收；" +
                 "在课题实施期间，要与相关领域其他学者进行研讨，预计受邀参加国内学术会议；");
 
