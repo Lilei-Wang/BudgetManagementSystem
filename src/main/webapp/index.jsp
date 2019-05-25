@@ -85,12 +85,12 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <%--<div class="form-group">
             <label class="control-label col-sm-4">项目周期（年）</label>
             <div class="col-sm-4">
                 <input name="years" type="number" placeholder="填写大于0的数字" class="form-control" required>
             </div>
-        </div>
+        </div>--%>
 
 
         <hr>
@@ -104,9 +104,9 @@
             <div class="col-sm-4">
                 <input name="equipment-number" class="form-control" type="number" v-model="arr[0]">
             </div>
-            <div class="col-sm-2">
+            <%--<div class="col-sm-2">
                 <input name="equipment-distribution" class="form-control" type="text" required>
-            </div>
+            </div>--%>
         </div>
 
         <div class="form-group">
@@ -208,7 +208,11 @@
         <!-- Button -->
         <div title="所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可">
             <button class="btn btn-default btn-lg center-block" type="submit">生成预算</button>
-            <p class="help-block" style="color:red">所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可</p>
+            <p class="help-block" style="color:red">
+                所有复选框必须勾选，如果不需要某类费用，后面的数字填0即可<br>
+                由于间接经费是自动生成的，并且参与总经费计算，因此最好预留一些经费给间接经费（间接经费等于除设备费之外的其他所有直接经费总和的约20%）。<br>
+                例如，总经费150万，则以上表单总和建议在120万。
+            </p>
         </div>
     </form>
 </div>
@@ -217,7 +221,7 @@
     var formVue = new Vue({
         el: "#form",
         data:{
-            arr:[20,12,15,0,12,5, 6,8,66,2,0],
+            arr:[20,12,10,0,12,3, 6,5,60,2,0],
             total:150
         },
         computed:{

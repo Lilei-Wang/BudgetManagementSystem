@@ -78,12 +78,12 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <%--<div class="form-group">
             <label class="control-label col-sm-4">项目周期（年）</label>
             <div class="col-sm-4">
                 <input name="years" type="number" placeholder="填写大于0的数字" class="form-control" required>
             </div>
-        </div>
+        </div>--%>
 
 
         <hr>
@@ -97,9 +97,9 @@
             <div class="col-sm-4">
                 <input name="equipment-number" class="form-control" type="number" v-model="budget.equipment.req">
             </div>
-            <div class="col-sm-2">
+            <%--<div class="col-sm-2">
                 <input name="equipment-distribution" class="form-control" type="text" required>
-            </div>
+            </div>--%>
         </div>
 
         <div class="form-group">

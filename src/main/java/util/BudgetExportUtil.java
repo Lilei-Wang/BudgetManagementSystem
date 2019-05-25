@@ -111,7 +111,7 @@ public class BudgetExportUtil {
         paragraph = document.createParagraph();
         run = paragraph.createRun();
         run.addTab();
-        run.setText("测试化验加工费：万元");
+        run.setText("测试化验加工费："+detailService.sumTestAndProcess(budget.getTestAndProcesses())+"万元。【具体用途自行填写】");
 
 
         //燃料动力费
@@ -123,7 +123,7 @@ public class BudgetExportUtil {
         paragraph = document.createParagraph();
         run = paragraph.createRun();
         run.addTab();
-        run.setText("燃料动力费：万元");
+        run.setText("燃料动力费："+detailService.sumPower(budget.getPowers())+"万元。【具体用途自行填写】");
 
 
         //差旅费

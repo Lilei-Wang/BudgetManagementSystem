@@ -161,8 +161,11 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<TestAndProcess, Integer> doTestAndProcess(Double number) {
-        List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
-        return generateMap((List) testAndProcesses, number);
+        Map<TestAndProcess,Integer> result=new HashMap<>();
+        TestAndProcess testAndProcess = new TestAndProcess();
+        testAndProcess.setPrice(number);
+        result.put(testAndProcess,1);
+        return result;
     }
 
     /**
@@ -173,8 +176,11 @@ public class BudgetService implements IBudgetService {
      */
     @Override
     public Map<Power, Integer> doPower(Double number) {
-        List<Power> powers = powerDao.selectAll();
-        return generateMap((List) powers, number);
+        Map<Power,Integer> result=new HashMap<>();
+        Power power = new Power();
+        power.setPrice(number);
+        result.put(power,1);
+        return result;
     }
 
     /**
