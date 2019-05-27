@@ -164,6 +164,7 @@ public class BudgetService implements IBudgetService {
         Map<TestAndProcess,Integer> result=new HashMap<>();
         TestAndProcess testAndProcess = new TestAndProcess();
         testAndProcess.setPrice(number);
+        testAndProcess.setName("测试化验加工费");
         result.put(testAndProcess,1);
         return result;
     }
@@ -179,6 +180,7 @@ public class BudgetService implements IBudgetService {
         Map<Power,Integer> result=new HashMap<>();
         Power power = new Power();
         power.setPrice(number);
+        power.setName("燃料动力费");
         result.put(power,1);
         return result;
     }
