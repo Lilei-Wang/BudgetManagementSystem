@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import service.ICrawlerService;
 
@@ -109,6 +110,12 @@ public class CrawlerService implements ICrawlerService {
             e.printStackTrace();
         }
         return builder.toString();
+    }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void MysqlConnection(){
+        List<Equipment> equipmentList = equipmentDao.selectAll();
+        System.out.println("scheduled...........");
     }
 
 }
