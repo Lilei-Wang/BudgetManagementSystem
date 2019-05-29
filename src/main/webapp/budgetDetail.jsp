@@ -304,6 +304,25 @@
                             <button class="btn btn-success" @click="add(sample)">添加</button>
                         </td>
                     </tr>
+                    <tr class="info" v-if="database.length>0">
+                        <td>
+                            <select v-model="selectedIndex" class="form-control">
+                                <option v-for="(record,i) in database" :value="i">
+                                    {{record.name}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                        </td>
+                        <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
+                            </button>
+                        </td>
+                    </tr>
                     </tbody>
 
                 </table>
@@ -335,6 +354,25 @@
                         <td><input type="number" v-model="sample.nums" class="form-control"></td>
                         <td>
                             <button class="btn btn-success" @click="add(sample)">添加</button>
+                        </td>
+                    </tr>
+                    <tr class="info" v-if="database.length>0">
+                        <td>
+                            <select v-model="selectedIndex" class="form-control">
+                                <option v-for="(record,i) in database" :value="i">
+                                    {{record.name}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                        </td>
+                        <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -477,6 +515,29 @@
                             <button class="btn btn-success" @click="add(sample)">添加</button>
                         </td>
                     </tr>
+
+                    <tr class="info" v-if="database.length>0">
+                        <td>
+                            <select v-model="selectedIndex" class="form-control">
+                                <option v-for="(record,i) in database" :value="i">
+                                    {{record.name}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                        </td>
+                        <td><input type="number" v-model="database[selectedIndex].people" class="form-control"></td>
+                        <td><input type="number" v-model="database[selectedIndex].days" class="form-control"></td>
+                        <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
+                            </button>
+                        </td>
+                    </tr>
+
                     </tbody>
 
                 </table>
@@ -553,7 +614,8 @@
                         <td><input type="number" v-model="database[selectedIndex].people" class="form-control"></td>
                         <td><input type="number" v-model="database[selectedIndex].days" class="form-control"></td>
                         <td>
-                            <button class="btn btn-success" @click="add(database[selectedIndex])">添加</button>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加</button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除</button>
                         </td>
                     </tr>
                     </tbody>
@@ -583,6 +645,7 @@
                             <button class="btn btn-danger" @click="del(item)">删除</button>
                         </td>
                     </tr>
+
                     <tr class="success">
                         <td><input type="text" v-model="sample.name" class="form-control"></td>
                         <td><input type="number" v-model="sample.price" class="form-control"></td>
@@ -591,6 +654,27 @@
                             <button class="btn btn-success" @click="add(sample)">添加</button>
                         </td>
                     </tr>
+
+                    <tr class="info" v-if="database.length>0">
+                        <td>
+                            <select v-model="selectedIndex" class="form-control">
+                                <option v-for="(record,i) in database" :value="i">
+                                    {{record.name}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                        </td>
+                        <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
+                            </button>
+                        </td>
+                    </tr>
+
                     </tbody>
 
                 </table>
@@ -722,7 +806,6 @@
                         <td><input type="number" v-model="sample.nums" class="form-control"></td>
                         <td>
                             <button class="btn btn-success" @click="add(sample)">添加到本费用</button>
-                            <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
                         </td>
                     </tr>
                     <tr class="info" v-if="database.length>0">
@@ -739,6 +822,8 @@
                         <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
                         <td>
                             <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
                             </button>
                         </td>
                     </tr>
@@ -781,6 +866,14 @@
 
 
 <script>
+    /*
+    curd额取值：0，1，2，3，4
+    0：自定义增加费用条目到费用列表和数据库，
+    1：删除已存在的费用条目，
+    2：修改费用列表中的条目
+    3：从数据库中添加到费用列表，
+    4：从数据库中删除条目
+     */
 
     function openNav() {
         document.getElementById("mySidenav").style.width = "250px";
@@ -814,7 +907,7 @@
         data: {
             sample: {id:0,name: "sample", price: 0, nums: 0, type: "", comment: ""},
             items: [],
-            database: [{name: "sample", price: 0, nums: 0, type: "", comment: ""}],
+            database: [{id:0,name: "sample", price: 0, nums: 0, type: "", comment: ""}],
             selectedIndex: 0
         },
         methods: {
@@ -892,7 +985,9 @@
         el: "#material",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            sample: {id:0,name: "sample", price: 0, nums: 0},
+            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            selectedIndex: 0
         },
         methods: {
             update: function (item) {
@@ -904,12 +999,37 @@
             add: function (item) {
                 this.doUpdate(item, 0);
             },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                this.doUpdate(item, 4);
+            },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Material").then(
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("material")
+                        updateBudgetPage("material");
+                        this.showDatabase();
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            showDatabase: function () {
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Material").then(
+                    function (data) {
+                        var tmp = data.body.data;
+                        for (var i = 0; i < tmp.length; i++) {
+                            if (inItems(tmp[i], this.items)) {
+                                console.log("inItems:true, " + tmp[i].name);
+                                tmp.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        this.database = tmp;
+                        console.log("show database");
                     }, function (error) {
                         console.log(error)
                     }
@@ -918,6 +1038,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Material",
                     {
+                        id:item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -938,7 +1059,9 @@
         el: "#test",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            sample: {id:0,name: "sample", price: 0, nums: 0},
+            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            selectedIndex: 0
         },
         methods: {
             update: function (item) {
@@ -950,12 +1073,37 @@
             add: function (item) {
                 this.doUpdate(item, 0);
             },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 4);
+            },
+            showDatabase: function () {
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/TestAndProcess").then(
+                    function (data) {
+                        var tmp = data.body.data;
+                        for (var i = 0; i < tmp.length; i++) {
+                            if (inItems(tmp[i], this.items)) {
+                                console.log("inItems:true, " + tmp[i].name);
+                                tmp.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        this.database = tmp;
+                        console.log("show database");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/TestAndProcess").then(
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("testAndProcess")
+                        updateBudgetPage("testAndProcess");
+                        this.showDatabase();
                     }, function (error) {
                         console.log(error)
                     }
@@ -964,6 +1112,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/TestAndProcess",
                     {
+                        id:item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -984,8 +1133,8 @@
         el: "#international",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0},
-            database: [{name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}],
+            sample: {id:0,name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0},
+            database: [{id:0,name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}],
             selectedIndex: 0
         },
         methods: {
@@ -997,6 +1146,12 @@
             },
             add: function (item) {
                 this.doUpdate(item, 0);
+            },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 4);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/International").then(
@@ -1031,6 +1186,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/International",
                     {
+                        id:item.id,
                         name: item.name,
                         price: item.price,
                         food: item.food,
@@ -1073,7 +1229,9 @@
         el: "#property",
         data: {
             items: [],
-            sample: {name: "sample", price: 0, nums: 0}
+            sample: {id:0,name: "sample", price: 0, nums: 0},
+            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            selectedIndex: 0
         },
         methods: {
             update: function (item) {
@@ -1085,12 +1243,37 @@
             add: function (item) {
                 this.doUpdate(item, 0);
             },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 4);
+            },
+            showDatabase: function () {
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Property").then(
+                    function (data) {
+                        var tmp = data.body.data;
+                        for (var i = 0; i < tmp.length; i++) {
+                            if (inItems(tmp[i], this.items)) {
+                                console.log("inItems:true, " + tmp[i].name);
+                                tmp.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        this.database = tmp;
+                        console.log("show database");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Property").then(
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
                         updateBudgetPage("property");
+                        this.showDatabase();
                     }, function (error) {
                         console.log(error)
                     }
@@ -1099,6 +1282,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Property",
                     {
+                        id:item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -1233,7 +1417,9 @@
         el: "#conference",
         data: {
             items: [],
-            sample: {name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0}
+            sample: {id:0,name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0},
+            database: [{id:0,name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0}],
+            selectedIndex: 0
         },
         methods: {
             update: function (item) {
@@ -1245,12 +1431,37 @@
             add: function (item) {
                 this.doUpdate(item, 0);
             },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 4);
+            },
+            showDatabase: function () {
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Conference").then(
+                    function (data) {
+                        var tmp = data.body.data;
+                        for (var i = 0; i < tmp.length; i++) {
+                            if (inItems(tmp[i], this.items)) {
+                                console.log("inItems:true, " + tmp[i].name);
+                                tmp.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        this.database = tmp;
+                        console.log("show database");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Conference").then(
                     function (data) {
                         this.items = data.body.data;
                         console.log("showlist");
-                        updateBudgetPage("conference")
+                        updateBudgetPage("conference");
+                        this.showDatabase();
                     }, function (error) {
                         console.log(error)
                     }
@@ -1259,9 +1470,8 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Conference",
                     {
+                        id:item.id,
                         name: item.name,
-                        expertType: item.expertType,
-                        experts: item.experts,
                         price: item.price,
                         people: item.people,
                         days: item.days,
@@ -1436,17 +1646,8 @@
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
             },
-            showlist: function () {
-                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Others").then(
-                    function (data) {
-                        this.items = data.body.data;
-                        console.log("showlist");
-                        updateBudgetPage("others");
-                        this.showDatabase();
-                    }, function (error) {
-                        console.log(error)
-                    }
-                );
+            deleteFromDatabase: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 4);
             },
             showDatabase: function () {
                 this.$http.get("${pageContext.request.contextPath}/Database/Query/Others").then(
@@ -1466,9 +1667,22 @@
                     }
                 )
             },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Others").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("others");
+                        this.showDatabase();
+                    }, function (error) {
+                        console.log(error)
+                    }
+                );
+            },
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Others",
                     {
+                        id:item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,

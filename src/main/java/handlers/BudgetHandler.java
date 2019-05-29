@@ -551,14 +551,25 @@ public class BudgetHandler {
             {
                 items.remove(material);
                 items.put(material, nums);
-            } else
+            } else if(curd.equals(0))
+            {
                 items.put(material, nums);
+                materialDao.insertMaterial(material);
+            }else if(curd.equals(3))
+            {
+                items.put(material, nums);
+            }else if(curd.equals(4))
+            {
+                materialDao.deleteMaterial(material);
+            }
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
     }
 
 
+    @Autowired
+    private ITestAndProcessDao testAndProcessDao;
     @RequestMapping("/Modify/TestAndProcess")
     public void modifyTestAndProcess(Integer mode, TestAndProcess testAndProcess, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/TestAndProcess");
@@ -581,8 +592,14 @@ public class BudgetHandler {
             {
                 items.remove(testAndProcess);
                 items.put(testAndProcess, nums);
-            } else
+            } else if(curd.equals(3))
                 items.put(testAndProcess, nums);
+            else if(curd.equals(0)){
+                items.put(testAndProcess,nums);
+                testAndProcessDao.insertTestAndProcess(testAndProcess);
+            }else if(curd.equals(4)){
+                testAndProcessDao.deleteTestAndProcess(testAndProcess);
+            }
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -630,6 +647,12 @@ public class BudgetHandler {
             {
                 items.put(internationalCommunication, nums);
                 internationalCommunicationDao.insertInternational(internationalCommunication);
+            }else if(curd.equals(3))
+            {
+                items.put(internationalCommunication, nums);
+            }else if(curd.equals(4))
+            {
+                internationalCommunicationDao.deleteInternational(internationalCommunication);
             }
         }
         afterUpdate(budget);
@@ -668,11 +691,16 @@ public class BudgetHandler {
         if (!checkService.checkProperty(property)) return;
         if (curd.equals(0)) {
             items.put(property, nums);
+            propertyDao.insertProperty(property);
         } else if (curd.equals(1)) {
             items.remove(property);
-        } else {
+        } else if(curd.equals(2)){
             items.remove(property);
             items.put(property, nums);
+        }else if(curd.equals(3)){
+            items.put(property,nums);
+        }else if(curd.equals(4)){
+            propertyDao.deleteProperty(property);
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -747,11 +775,16 @@ public class BudgetHandler {
         Map<Conference, Integer> items = budget.getConferences();
         if (curd.equals(0)) {
             items.put(conference, nums);
+            conferenceDao.insertConference(conference);
         } else if (curd.equals(1)) {
             items.remove(conference);
-        } else {
+        } else if(curd.equals(2)){
             items.remove(conference);
             items.put(conference, nums);
+        }else if(curd.equals(3)){
+            items.put(conference,nums);
+        }else if(curd.equals(4)){
+            conferenceDao.deleteConference(conference);
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -867,6 +900,8 @@ public class BudgetHandler {
 
 
 
+    @Autowired
+    private IOthersDao othersDao;
     @RequestMapping("/Modify/Others")
     public void modifyOthers(Integer mode, Others others, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("/Modify/Others");
@@ -884,11 +919,16 @@ public class BudgetHandler {
         items = budget.getOthers();
         if (curd.equals(0)) {
             items.put(others, nums);
+            othersDao.insertOthers(others);
         } else if (curd.equals(1)) {
             items.remove(others);
-        } else {
+        } else if(curd.equals(2)){
             items.remove(others);
             items.put(others, nums);
+        }else if(curd.equals(3)){
+            items.put(others, nums);
+        }else if(curd.equals(4)){
+            othersDao.deleteOthers(others);
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));

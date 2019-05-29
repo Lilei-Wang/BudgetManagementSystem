@@ -8,7 +8,7 @@
     <select id="selectById" resultType="beans.Property">
         select * from property where id=#{id}
     </select>
-    <insert id="insertProperty">
+    <insert id="insertProperty" useGeneratedKeys="true" keyProperty="id">
         insert into budgetmanagementsystem.property(name,price) values (#{name},#{price})
     </insert>
     <update id="updateProperty">

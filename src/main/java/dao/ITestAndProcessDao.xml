@@ -5,4 +5,10 @@
     <select id="selectAll" resultType="beans.TestAndProcess">
         select * from testandprocess
     </select>
+    <insert id="insertTestAndProcess" useGeneratedKeys="true" keyProperty="id">
+        insert into testandprocess(name,price) values(#{name},#{price})
+    </insert>
+    <delete id="deleteTestAndProcess">
+        delete from testandprocess where id=#{id}
+    </delete>
 </mapper>

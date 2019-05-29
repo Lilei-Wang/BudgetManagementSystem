@@ -48,6 +48,60 @@ public class DatabaseQueryHandler {
         }
     }
 
+
+    @Autowired
+    private IMaterialDao materialDao;
+    @RequestMapping("/Material")
+    public void queryMaterial(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Material> materials = materialDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Material item : materials) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Autowired
+    private ITestAndProcessDao testAndProcessDao;
+    @RequestMapping("/TestAndProcess")
+    public void queryTestAndProcess(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<TestAndProcess> testAndProcesses = testAndProcessDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (TestAndProcess item : testAndProcesses) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Autowired
     private ILabourDao labourDao;
     @RequestMapping("/Labour")
@@ -136,6 +190,61 @@ public class DatabaseQueryHandler {
     }
 
 
+    @Autowired
+    private IConferenceDao conferenceDao;
+    @RequestMapping("/Conference")
+    public void queryConference(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Conference> conferences = conferenceDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Conference item : conferences) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("people",item.getPeople());
+                obj.put("days",item.getDays());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Autowired
+    private IPropertyDao propertyDao;
+    @RequestMapping("/Property")
+    public void queryProperty(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Property> properties = propertyDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Property item : properties) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Autowired
     private IInternationalCommunicationDao internationalCommunicationDao;
@@ -158,6 +267,32 @@ public class DatabaseQueryHandler {
                 obj.put("accommodation",item.getAccommodation());
                 obj.put("people",item.getPeople());
                 obj.put("days",item.getDays());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Autowired
+    private IOthersDao othersDao;
+    @RequestMapping("/Others")
+    public void queryOthers(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Others> others = othersDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Others item : others) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
                 obj.put("nums",0);
                 list.add(obj);
             }

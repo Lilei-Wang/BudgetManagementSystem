@@ -9,7 +9,7 @@
         select * from conference where id=#{id}
     </select>
     <insert id="insertConference">
-        insert into budgetmanagementsystem.conference(name, price, experts,people) values (#{name},#{price},#{experts},#{people})
+        insert into budgetmanagementsystem.conference(name, price, experts,people,days) values (#{name},#{price},#{experts},#{people},#{days})
     </insert>
     <update id="updateConference">
         update budgetmanagementsystem.conference set name=#{name},price=#{price},experts=#{experts},people=#{people} where id=#{id};

@@ -150,7 +150,16 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<Material, Integer> doMaterial(Double number) {
         List<Material> materials = materialDao.selectAll();
-        return generateMap((List) materials, number);
+        Map<Material,Integer> result=new HashMap<>();
+        if(materials!=null && materials.size()>0){
+            Material material = materials.get(0);
+            int i=0;
+            while (i*material.getPrice()<number){
+                i++;
+            }
+            result.put(material,i);
+        }
+        return result;
     }
 
     /**
@@ -163,6 +172,7 @@ public class BudgetService implements IBudgetService {
     public Map<TestAndProcess, Integer> doTestAndProcess(Double number) {
         Map<TestAndProcess,Integer> result=new HashMap<>();
         TestAndProcess testAndProcess = new TestAndProcess();
+        testAndProcess.setId(0);
         testAndProcess.setPrice(number);
         testAndProcess.setName("测试化验加工费");
         result.put(testAndProcess,1);
@@ -179,6 +189,7 @@ public class BudgetService implements IBudgetService {
     public Map<Power, Integer> doPower(Double number) {
         Map<Power,Integer> result=new HashMap<>();
         Power power = new Power();
+        power.setId(1);
         power.setPrice(number);
         power.setName("燃料动力费");
         result.put(power,1);
@@ -196,31 +207,16 @@ public class BudgetService implements IBudgetService {
         Map<Travel, Integer> result = new HashMap<>();
         List<Travel> travels = travelDao.selectAll();
         if (travels != null && travels.size() != 0) {
-            double sofar = 0.0;
-            for (Travel travel : travels) {
-                travel.setPeople(1);
-                travel.setDays(1);
-                if (sofar < number) {
-                    result.put(travel, 1);
-                    sofar += travel.computeUnitPrice();
-                }
+            Travel travel = travels.get(0);
+            int i=1;
+            travel.setDays(1);
+            travel.setPeople(1);
+            while(travel.computeUnitPrice()<number){
+                i++;
+                travel.setPeople(i);
             }
-            while (sofar < number) {
-                for (Travel travel : result.keySet()) {
-                    int days = travel.getDays();
-                    double oldCost = travel.computeUnitPrice();
-                    travel.setDays(days+1);
-                    double newCost = travel.computeUnitPrice();
-                    sofar += (newCost - oldCost);
-                    //System.out.println("oldCost:" + oldCost);
-                    //System.out.println("newCost:" + newCost);
-                    //System.out.println("sofar:" + sofar);
-                    if (sofar >= number) {
-                        //System.out.println(result);
-                        return result;
-                    }
-                }
-            }
+            result.put(travel,1);
+
         }
         return result;
     }
@@ -237,22 +233,15 @@ public class BudgetService implements IBudgetService {
     public Map<Conference, Integer> doConference(Double number) {
         Map<Conference, Integer> map = new HashMap<>();
         List<Conference> conferences = conferenceDao.selectAll();
-        double sum = 0.0;
-        for (Conference conference : conferences) {
-            if (sum < number) {
-                conference.setPeople(1);
-                conference.setDays(1);
-                map.put(conference, 1);
-                sum += conference.computeUnitPrice();
+        if(conferences!=null && conferences.size()>0){
+            Conference conference = conferences.get(0);
+            conference.setDays(1);
+            conference.setPeople(1);
+            int i=1;
+            while(conference.computeUnitPrice()<number){
+                conference.setPeople(++i);
             }
-        }
-        while (sum < number) {
-            for (Conference conference : map.keySet()) {
-                int i = map.get(conference);
-                map.put(conference, ++i);
-                sum += conference.computeUnitPrice();
-                if (sum >= number) return map;
-            }
+            map.put(conference,1);
         }
         return map;
     }
@@ -287,7 +276,16 @@ public class BudgetService implements IBudgetService {
     @Override
     public Map<Property, Integer> doProperty(Double number) {
         List<Property> properties = propertyDao.selectAll();
-        return generateMap((List) properties, number);
+        Map<Property,Integer> result=new HashMap<>();
+        if(properties!=null && properties.size()>0){
+            Property property = properties.get(0);
+            int i=0;
+            while(i*property.getPrice()<number){
+                i++;
+            }
+            result.put(property,i);
+        }
+        return result;
     }
 
     /**
@@ -395,6 +393,7 @@ public class BudgetService implements IBudgetService {
     public Map<Others, Integer> doOthers(Double number) {
         Map<Others, Integer> others = new HashMap<>();
         Others item = new Others();
+        item.setId(0);
         item.setName("其他费用");
         item.setPrice(number);
         others.put(item, 1);
