@@ -22,9 +22,9 @@ public class CheckService implements ICheckService {
         if (material == null || material.getName() == null) {
             return 201;
         }
-        if (material.computeUnitPrice() >= 10000) {
+        /*if (material.computeUnitPrice() >= 10000) {
             return 202;
-        }
+        }*/
         return isValid;
     }
 

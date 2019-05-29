@@ -44,7 +44,7 @@ public class BudgetExportUtil {
 
             StringBuilder line = new StringBuilder();
             line.append("（").append(i).append("）");
-            line.append(equipment.getType())
+            line.append(equipment.getName())
                     .append(num).append("台,每台")
                     .append(price).append("元，共计")
                     .append(num * price).append("元");
@@ -112,6 +112,35 @@ public class BudgetExportUtil {
         run = paragraph.createRun();
         run.addTab();
         run.setText("测试化验加工费："+detailService.sumTestAndProcess(budget.getTestAndProcesses())+"万元。【具体用途自行填写】");
+
+        Map<TestAndProcess, Integer> testAndProcesses = budget.getTestAndProcesses();
+        i = 0;
+        for (TestAndProcess item : testAndProcesses.keySet()) {
+            i++;
+            int num = testAndProcesses.get(item);
+            double price = item.getPrice();
+
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+
+            StringBuilder line = new StringBuilder();
+            line.append("（").append(i).append("）");
+            line.append(item.getName())
+                    .append(num).append("次,每次")
+                    .append(price).append("元，共计")
+                    .append(num * price).append("元");
+            run.setText(line.toString());
+
+            line = new StringBuilder();
+            line.append("用途：【自行填写】，购买")
+                    .append(num).append("服务，")
+                    .append("单价").append(price).append("元，共需").append(num * price).append("元。");
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+            run.setText(line.toString());
+        }
 
 
         //燃料动力费

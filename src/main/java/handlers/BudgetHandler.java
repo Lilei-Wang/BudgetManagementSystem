@@ -482,17 +482,25 @@ public class BudgetHandler {
                 for (Equipment item : keySet) {
                     if(item.equals(equipment)){
                         item.setPrice(equipment.getPrice());
+                        item.setType(equipment.getType());
+                        item.setComment(equipment.getComment());
                     }
                 }
                 //更新value
                 equipments.put(equipment, nums);
             } else if(curd.equals(0))
+            {
                 equipments.put(equipment, nums);
-            else {
+                equipmentDao.insertEquipment(equipment);
+            }
+            else if(curd.equals(3)){
                 Equipment add = equipmentDao.selectByName(equipment.getName());
                 equipments.remove(add);
                 equipments.put(add,nums);
                 System.out.println("add form database:"+add.getComment());
+            }else if(curd.equals(4)){
+                equipmentDao.deleteEquipment(equipment);
+                System.out.println("delete form database:"+equipment.getName());
             }
         }
         serializeBudget(budget, getFilePath(sessionID));
@@ -618,8 +626,11 @@ public class BudgetHandler {
             {
                 items.remove(internationalCommunication);
                 items.put(internationalCommunication, nums);
-            } else
+            } else if(curd.equals(0))
+            {
                 items.put(internationalCommunication, nums);
+                internationalCommunicationDao.insertInternational(internationalCommunication);
+            }
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -853,6 +864,36 @@ public class BudgetHandler {
         }
         serializeBudget(budget, getFilePath(sessionID));
     }
+
+
+
+    @RequestMapping("/Modify/Others")
+    public void modifyOthers(Integer mode, Others others, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("/Modify/Others");
+
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
+
+        Map<Others, Integer> items = null;
+        items = budget.getOthers();
+        if (curd.equals(0)) {
+            items.put(others, nums);
+        } else if (curd.equals(1)) {
+            items.remove(others);
+        } else {
+            items.remove(others);
+            items.put(others, nums);
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
+    }
+
 
 
     /**

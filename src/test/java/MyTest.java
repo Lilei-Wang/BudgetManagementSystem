@@ -2,6 +2,11 @@ import beans.Budget;
 import beans.Conference;
 import beans.Equipment;
 import beans.Item;
+import handlers.BudgetHandler;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.xfer.FileSystemFile;
+import org.jsoup.select.Evaluator;
 import org.junit.Test;
 
 import java.io.*;
@@ -495,5 +500,30 @@ public class MyTest implements Serializable {
 
         System.out.println(e1.equals(c1));
         System.out.println(e1.equals(e2));
+    }
+
+    @Test
+    public void directoryTest() throws ClassNotFoundException {
+        System.out.println();
+        System.getProperty("user.home");
+    }
+
+    @Test
+    public void SFTPTestUp() throws IOException {
+        final SSHClient ssh = new SSHClient();
+        ssh.loadKnownHosts(new File("‪C:\\Users\\Song\\.ssh\\known_hosts"));
+        ssh.connect("47.92.3.69");
+        try {
+            ssh.authPublickey("root");
+            final String src = "‪F:\\Workspace\\BudgetManagementSystem\\pom.xml";
+            final SFTPClient sftp = ssh.newSFTPClient();
+            try {
+                sftp.put(new FileSystemFile(src), "/tmp");
+            } finally {
+                sftp.close();
+            }
+        } finally {
+            ssh.disconnect();
+        }
     }
 }

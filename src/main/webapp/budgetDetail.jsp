@@ -142,8 +142,8 @@
                 <td>{{budget.labour.sum}}</td>
             </tr>
             <tr>
-            <td>咨询费</td>
-            <td>{{budget.consultation.sum}}</td>
+                <td>咨询费</td>
+                <td>{{budget.consultation.sum}}</td>
             </tr>
             <tr>
                 <td>其他费用</td>
@@ -193,7 +193,7 @@
             <li><a href="#property" data-toggle="tab" onclick="propertyVue.showlist()">出版/文献/信息传播/知识产权事务费</a></li>
             <li><a href="#labour" data-toggle="tab" onclick="labourVue.showlist()">劳务费</a></li>
             <li><a href="#consultation" data-toggle="tab" onclick="consultationVue.showlist()">咨询费</a></li>
-            <li><a href="#others" data-toggle="tab">其他费用</a></li>
+            <li><a href="#others" data-toggle="tab" onclick="othersVue.showlist()">其他费用</a></li>
             <li><a href="#indirect" data-toggle="tab" onclick="indirectVue.showlist()">间接费用</a></li>
 
         </ul>
@@ -216,11 +216,13 @@
 
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade in active" id="equipment">
-                <table class="table table-hover">
+                <table class="table table-hover text-nowrap">
                     <thead>
                     <tr>
                         <th hidden>编号</th>
                         <th>名称</th>
+                        <th>分类</th>
+                        <th>描述</th>
                         <th>单价</th>
                         <th>数量</th>
                         <th>操作</th>
@@ -230,6 +232,8 @@
                     <tbody id="equipment-table">
                     <tr v-for="item in items">
                         <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                        <td><input type="text" v-model="item.type" class="form-control"></td>
+                        <td><input type="text" v-model="item.comment" class="form-control"></td>
                         <td><input type="number" v-model="item.price" class="form-control"></td>
                         <td><input type="number" v-model="item.nums" class="form-control"></td>
                         <td>
@@ -239,11 +243,12 @@
                     </tr>
                     <tr class="success">
                         <td><input type="text" v-model="sample.name" class="form-control"></td>
+                        <td><input type="text" v-model="sample.type" class="form-control"></td>
+                        <td><input type="text" v-model="sample.comment" class="form-control"></td>
                         <td><input type="number" v-model="sample.price" class="form-control"></td>
                         <td><input type="number" v-model="sample.nums" class="form-control"></td>
                         <td>
-                            <button class="btn btn-success" @click="add(sample)">添加到本费用</button>
-                            <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
+                            <button class="btn btn-success" @click="add(sample)">添加</button>
                         </td>
                     </tr>
                     <tr class="info" v-if="database.length>0">
@@ -254,12 +259,16 @@
                                 </option>
                             </select>
                         </td>
+                        <td><input type="text" v-model="database[selectedIndex].type" class="form-control"></td>
+                        <td><input type="text" v-model="database[selectedIndex].comment" class="form-control"></td>
                         <td>
                             <input type="number" v-model="database[selectedIndex].price" class="form-control">
                         </td>
                         <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
                         <td>
                             <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
                             </button>
                         </td>
                     </tr>
@@ -684,7 +693,57 @@
             </div>
 
             <div class="tab-pane fade" id="others">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th hidden>编号</th>
+                        <th>名称</th>
+                        <th>费用标准</th>
+                        <th>次数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
 
+                    <tbody>
+                    <tr v-for="item in items" v-bind:title="item.name">
+                        <td><input type="text" readonly v-model="item.name" class="form-control"></td>
+                        <%--<td><input type="number" v-model="item.price"></td>--%>
+                        <td><input type="number" v-model="item.price" class="form-control"></td>
+                        <td><input type="number" v-model="item.nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="update(item)">确认</button>
+                            <button class="btn btn-danger" @click="del(item)">删除</button>
+                        </td>
+                    </tr>
+
+                    <tr class="success">
+                        <td><input type="text" v-model="sample.name" class="form-control"></td>
+                        <td><input type="number" v-model="sample.price" class="form-control"></td>
+                        <td><input type="number" v-model="sample.nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="add(sample)">添加到本费用</button>
+                            <button class="btn btn-success" @click="addToDatabase(sample)">添加到数据库</button>
+                        </td>
+                    </tr>
+                    <tr class="info" v-if="database.length>0">
+                        <td>
+                            <select v-model="selectedIndex" class="form-control">
+                                <option v-for="(record,i) in database" :value="i">
+                                    {{record.name}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model="database[selectedIndex].price" class="form-control">
+                        </td>
+                        <td><input type="number" v-model="database[selectedIndex].nums" class="form-control"></td>
+                        <td>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="tab-pane fade" id="indirect">
@@ -743,19 +802,19 @@
     }
 
 
-    var sidenavVue=new Vue({
-        el:"#mySidenav",
-        data:{
-            budget:{}
+    var sidenavVue = new Vue({
+        el: "#mySidenav",
+        data: {
+            budget: {}
         }
     });
 
     var equipmentVue = new Vue({
         el: "#equipment",
         data: {
-            sample: {name: "sample", price: 0, nums: 0},
+            sample: {id:0,name: "sample", price: 0, nums: 0, type: "", comment: ""},
             items: [],
-            database: [{name: "sample", price: 0, nums: 0}],
+            database: [{name: "sample", price: 0, nums: 0, type: "", comment: ""}],
             selectedIndex: 0
         },
         methods: {
@@ -763,13 +822,17 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？"))
+                    this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
+            },
+            deleteFromDatabase: function (item) {
+                this.doUpdate(item, 4);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Equipment").then(
@@ -804,7 +867,10 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
                     {
+                        id:item.id,
                         name: item.name,
+                        type: item.type,
+                        comment: item.comment,
                         price: item.price,
                         nums: item.nums,
                         curd: curd
@@ -833,7 +899,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -879,7 +945,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -927,7 +993,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1014,7 +1080,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1061,7 +1127,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1129,7 +1195,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1174,7 +1240,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1226,7 +1292,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 item.nums = 1;
@@ -1295,7 +1361,7 @@
                 this.doUpdate(item, 2);
             },
             del: function (item) {
-                this.doUpdate(item, 1);
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
                 this.doUpdate(item, 0);
@@ -1349,6 +1415,78 @@
         }
     });
 
+    var othersVue = new Vue({
+        el: "#others",
+        data: {
+            sample: {name: "sample", price: 0, nums: 0},
+            items: [],
+            database: [{name: "sample", price: 0, nums: 0}],
+            selectedIndex: 0
+        },
+        methods: {
+            update: function (item) {
+                this.doUpdate(item, 2);
+            },
+            del: function (item) {
+                if (confirm("确认删除？")) this.doUpdate(item, 1);
+            },
+            add: function (item) {
+                this.doUpdate(item, 0);
+            },
+            addFromDatabase: function (item) {
+                this.doUpdate(item, 3);
+            },
+            showlist: function () {
+                this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Others").then(
+                    function (data) {
+                        this.items = data.body.data;
+                        console.log("showlist");
+                        updateBudgetPage("others");
+                        this.showDatabase();
+                    }, function (error) {
+                        console.log(error)
+                    }
+                );
+            },
+            showDatabase: function () {
+                this.$http.get("${pageContext.request.contextPath}/Database/Query/Others").then(
+                    function (data) {
+                        var tmp = data.body.data;
+                        for (var i = 0; i < tmp.length; i++) {
+                            if (inItems(tmp[i], this.items)) {
+                                console.log("inItems:true, " + tmp[i].name);
+                                tmp.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        this.database = tmp;
+                        console.log("show database");
+                    }, function (error) {
+                        console.log(error)
+                    }
+                )
+            },
+            doUpdate: function (item, curd) {
+                this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Others",
+                    {
+                        name: item.name,
+                        price: item.price,
+                        nums: item.nums,
+                        curd: curd
+                    },
+                    {emulateJSON: true}
+                ).then(function (value) {
+                    this.showlist();
+                }, function (error) {
+                    alert(error.bodyText);
+                    this.showlist()
+                });
+            }
+        },
+        created: function () {
+        }
+    });
+
 
     /**
      * 更新差值
@@ -1360,7 +1498,7 @@
             type: "post",
             dataType: "json",
             success: function (data) {
-                sidenavVue.budget=data;
+                sidenavVue.budget = data;
                 var over = "预算超出：";
                 var under = "预算不足，再来";
                 var equal = "凑够啦！";

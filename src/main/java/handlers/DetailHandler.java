@@ -233,6 +233,8 @@ public class DetailHandler {
                 JSONObject obj=new JSONObject();
                 obj.put("id",item.getId());
                 obj.put("name",item.getName());
+                obj.put("type",item.getType());
+                obj.put("comment",item.getComment());
                 obj.put("price",item.getPrice());
                 obj.put("nums",equipments.get(item));
                 list.add(obj);
@@ -539,6 +541,37 @@ public class DetailHandler {
             }
             object.put("data",list);
             writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/Others")
+    public void showOthers(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            String sessionID = BudgetHandler.getSessionID(request.getCookies());
+            Budget budget = BudgetHandler.retrieveBudget(sessionID);
+            if(budget==null) {
+                response.getWriter().write("indirect list error");
+                return;
+            }
+            Map<Others, Integer> others = budget.getOthers();
+            List<JSONObject> list=new LinkedList<>();
+            for (Others item : others.keySet()) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",others.get(item));
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(object.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
         }

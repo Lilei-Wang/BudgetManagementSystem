@@ -35,6 +35,8 @@ public class DatabaseQueryHandler {
                 JSONObject obj=new JSONObject();
                 obj.put("id",item.getId());
                 obj.put("name",item.getName());
+                obj.put("type",item.getType());
+                obj.put("comment",item.getComment());
                 obj.put("price",item.getPrice());
                 obj.put("nums",0);
                 list.add(obj);
