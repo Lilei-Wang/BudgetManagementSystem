@@ -103,6 +103,32 @@ public class DatabaseQueryHandler {
     }
 
     @Autowired
+    private IPowerDao powerDao;
+    @RequestMapping("/Power")
+    public void queryPower(HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            JSONObject object=new JSONObject();
+            List<Power> powers = powerDao.selectAll();
+            List<JSONObject> list=new LinkedList<>();
+            for (Power item : powers) {
+                JSONObject obj=new JSONObject();
+                obj.put("id",item.getId());
+                obj.put("name",item.getName());
+                obj.put("price",item.getPrice());
+                obj.put("nums",0);
+                list.add(obj);
+            }
+            object.put("data",list);
+            writer.write(JSON.toJSONString(object));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Autowired
     private ILabourDao labourDao;
     @RequestMapping("/Labour")
     public void queryLabour(HttpServletRequest request, HttpServletResponse response){

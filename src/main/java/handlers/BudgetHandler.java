@@ -144,13 +144,13 @@ public class BudgetHandler {
         return experts;
     }
 
-    /**
+/*    *//**
      * 下载最新报表
      *
      * @param request
      * @param response
      * @param session
-     */
+     *//*
     @RequestMapping("/Download")
     public void downloadBudgetHandler(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         Cookie[] cookies = request.getCookies();
@@ -178,7 +178,7 @@ public class BudgetHandler {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 
@@ -193,7 +193,8 @@ public class BudgetHandler {
             response.setHeader("content-disposition", "attachment;filename=Budget" + sessionID + ".csv");
             assert budget != null;
             //budgetToOutputStream(budget, writer);
-            budgetToOutputStream(budget, response.getOutputStream());
+            //budgetToOutputStream(budget, response.getOutputStream());
+            BudgetExportUtil.toCsv(budget,response.getOutputStream());
             System.out.println("Download...............");
         } catch (IOException e) {
             e.printStackTrace();
@@ -607,6 +608,45 @@ public class BudgetHandler {
 
 
     @Autowired
+    private IPowerDao powerDao;
+    @RequestMapping("/Modify/Power")
+    public void modifyPower(Integer mode, Power power, Integer nums, Integer curd, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("/Modify/Power");
+
+        if (nums < 0) return;
+        String sessionID = getSessionID(request.getCookies());
+        Budget budget = retrieveBudget(sessionID);
+        if (budget == null) {
+            response.sendError(444, "budget not exists");
+            return;
+        }
+
+        Map<Power, Integer> items = null;
+        items = budget.getPowers();
+        //删除
+        if (curd.equals(1)) {
+            items.remove(power);
+        } else {
+            if (curd.equals(2))//增改
+            {
+                items.remove(power);
+                items.put(power, nums);
+            } else if(curd.equals(3))
+                items.put(power, nums);
+            else if(curd.equals(0)){
+                items.put(power,nums);
+                powerDao.insertPower(power);
+            }else if(curd.equals(4)){
+                powerDao.deletePower(power);
+            }
+        }
+        afterUpdate(budget);
+        serializeBudget(budget, getFilePath(sessionID));
+    }
+
+
+
+    @Autowired
     private IInternationalCommunicationDao internationalCommunicationDao;
 
     /**
@@ -860,11 +900,16 @@ public class BudgetHandler {
         checkService.checkTravel(travel);
         if (curd.equals(0)) {
             items.put(travel, nums);
+            travelDao.insertTravel(travel);
         } else if (curd.equals(1)) {
             items.remove(travel);
-        } else {
+        } else if(curd.equals(2)){
             items.remove(travel);
             items.put(travel, nums);
+        }else if(curd.equals(3)){
+            items.put(travel, nums);
+        }else if(curd.equals(4)){
+            travelDao.deleteTravel(travel);
         }
         afterUpdate(budget);
         serializeBudget(budget, getFilePath(sessionID));
@@ -1023,206 +1068,4 @@ public class BudgetHandler {
 
     }
 
-    /**
-     * 将Budget对象以csv文件的形式写入输出流
-     *
-     * @param budget
-     * @param printWriter
-     */
-    private static void budgetToOutputStream(Budget budget, Writer printWriter) {
-        BufferedWriter writer = new BufferedWriter(printWriter);
-        try {
-            writer.write("设备费,名称,单价,数量,小计");
-            writer.newLine();
-            Map<Item, Integer> items = (Map) budget.getEquipments();
-            char comma = ',';
-            for (Item item : items.keySet()) {
-                writer.write(comma + item.getName()
-                        + comma + item.getPrice()
-                        + comma + items.get(item)
-                        + comma + item.computeUnitPrice() * items.get(item));
-                writer.newLine();
-            }
-            writer.newLine();
-
-            writer.write("材料费,名称,单价,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getMaterials();
-            for (Item item : items.keySet()) {
-                writer.write(comma + item.getName()
-                        + comma + item.getPrice()
-                        + comma + items.get(item)
-                        + comma + item.computeUnitPrice() * items.get(item));
-                writer.newLine();
-            }
-            writer.newLine();
-
-            writer.write("测试化验加工费,名称,单价,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getTestAndProcesses();
-            for (Item item : items.keySet()) {
-                writer.write(comma + item.getName()
-                        + comma + item.getPrice()
-                        + comma + items.get(item)
-                        + comma + item.computeUnitPrice() * items.get(item));
-                writer.newLine();
-            }
-            writer.newLine();
-
-            writer.write("燃料动力费,名称,单价,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getPowers();
-            for (Item item : items.keySet()) {
-                writer.write(comma + item.getName()
-                        + comma + item.getPrice()
-                        + comma + items.get(item)
-                        + comma + item.computeUnitPrice() * items.get(item));
-                writer.newLine();
-            }
-            writer.newLine();
-
-            writer.write("差旅费,目的地,往返价格,伙食费,交通费,住宿费,人数,天数,次数,小计");
-            writer.newLine();
-            Map<Travel, Integer> travels = budget.getTravels();
-            for (Item item : travels.keySet()) {
-                if (item instanceof Travel) {
-                    writer.write(comma + ((Travel) item).getName()
-                            + comma + item.getPrice()
-                            + comma + ((Travel) item).getFood()
-                            + comma + ((Travel) item).getTraffic()
-                            + comma + ((Travel) item).getAccommodation()
-                            + comma + ((Travel) item).getPeople()
-                            + comma + ((Travel) item).getDays()
-                            + comma + travels.get(item)
-                            + comma + item.computeUnitPrice() * travels.get(item));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            writer.write("会议费,会议内容,费用标准,参会人数,举办天数,会议次数,小计");
-            writer.newLine();
-            Map<Conference, Integer> conferences = budget.getConferences();
-            for (Item item : conferences.keySet()) {
-                if (item instanceof Conference) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + ((Conference) item).getPeople()
-                            + comma + ((Conference) item).getDays()
-                            + comma + conferences.get(item)
-                            + comma + item.computeUnitPrice() * conferences.get(item));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            writer.write("国际合作交流费,会议内容,市际交通（往返交通）,住宿补贴,伙食补贴,公杂费,人数,天数,次数,小计");
-            writer.newLine();
-            Map<InternationalCommunication, Integer> internationalCommunications = budget.getInternationalCommunications();
-            for (InternationalCommunication item : internationalCommunications.keySet()) {
-                writer.write(comma + item.getName()
-                        + comma + item.getPrice()
-                        + comma + item.getAccommodation()
-                        + comma + item.getFood()
-                        + comma + item.getTraffic()
-                        + comma + item.getPeople()
-                        + comma + item.getDays()
-                        + comma + items.get(item)
-                        + comma + item.computeUnitPrice() * internationalCommunications.get(item));
-                writer.newLine();
-            }
-            writer.newLine();
-
-            writer.write("出版/文献/信息传播/知识产权事务费,费用名称,费用标准,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getProperties();
-            for (Item item : items.keySet()) {
-                if (item instanceof Property) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + items.get(item)
-                            + comma + item.computeUnitPrice() * items.get(item));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            writer.write("劳务费,费用名称,费用标准,数量,小计(五险一金)");
-            writer.newLine();
-            items = (Map) budget.getLabour();
-            for (Item item : items.keySet()) {
-                if (item instanceof Labour) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + items.get(item)
-                            + comma + item.computeUnitPrice() * items.get(item));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            if (budget.getConferences() != null && budget.getConferences().size() > 0 && budget.getConsultations() != null) {
-                writer.write("咨询费,人员类型,费用标准,人数,小计");
-                writer.newLine();
-                Map<Consultation, Integer> consultations = budget.getConsultations();
-                for (Consultation consultation : consultations.keySet()) {
-                    writer.write(comma + consultation.getName()
-                            + comma + consultation.getPrice()
-                            + comma + consultations.get(consultation)
-                            + comma + consultation.getPrice() * consultations.get(consultation));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            writer.write("其他费用,费用名称,费用标准,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getOthers();
-            for (Item item : items.keySet()) {
-                if (item instanceof Others) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + items.get(item)
-                            + comma + item.computeUnitPrice() * items.get(item));
-                    writer.newLine();
-                }
-            }
-            writer.newLine();
-
-            writer.write("间接费用,费用名称,费用标准,数量,小计");
-            writer.newLine();
-            items = (Map) budget.getIndirects();
-            for (Item item : items.keySet()) {
-                if (item instanceof Indirect) {
-                    writer.write(comma + item.getName()
-                            + comma + item.getPrice()
-                            + comma + items.get(item)
-                            + comma + item.computeUnitPrice() * items.get(item));
-                    writer.newLine();
-                }
-            }
-
-
-            writer.flush();
-            System.out.println("CSV");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * GBK格式，解决csv文件中文乱码
-     *
-     * @param budget
-     * @param outputStream
-     */
-    public static void budgetToOutputStream(Budget budget, OutputStream outputStream) {
-        System.out.println("GBK");
-        try {
-            budgetToOutputStream(budget, new PrintWriter(new OutputStreamWriter(outputStream, "GBK")));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
 }

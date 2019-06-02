@@ -8,10 +8,7 @@ import service.IDetailService;
 import service.impl.BudgetService;
 import service.impl.DetailService;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -153,6 +150,37 @@ public class BudgetExportUtil {
         run = paragraph.createRun();
         run.addTab();
         run.setText("燃料动力费："+detailService.sumPower(budget.getPowers())+"万元。【具体用途自行填写】");
+
+        Map<Power, Integer> powers = budget.getPowers();
+        i = 0;
+        for (Power item : powers.keySet()) {
+            i++;
+            int num = powers.get(item);
+            double price = item.getPrice();
+
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+
+            StringBuilder line = new StringBuilder();
+            line.append("（").append(i).append("）");
+            line.append(item.getName())
+                    .append(num).append("次,每次")
+                    .append(price).append("元，共计")
+                    .append(num * price).append("元");
+            run.setText(line.toString());
+
+            line = new StringBuilder();
+            line.append("用途：【自行填写】，燃料动力费")
+                    .append(num).append("次，")
+                    .append("单价").append(price).append("元，共需").append(num * price).append("元。");
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+            run.setText(line.toString());
+        }
+
+
 
 
         //差旅费
@@ -418,6 +446,35 @@ public class BudgetExportUtil {
         run.setFontSize(18);
         run.setBold(true);
 
+        Map<Others, Integer> others = budget.getOthers();
+        i = 0;
+        for (Others item : others.keySet()) {
+            i++;
+            int num = others.get(item);
+            double price = item.getPrice();
+
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+
+            StringBuilder line = new StringBuilder();
+            line.append("（").append(i).append("）");
+            line.append(item.getName())
+                    .append(num).append("次,每次")
+                    .append(price).append("元，共计")
+                    .append(num * price).append("元");
+            run.setText(line.toString());
+
+            line = new StringBuilder();
+            line.append("用途：【自行填写】，购买")
+                    .append(num).append("服务，")
+                    .append("单价").append(price).append("元，共需").append(num * price).append("元。");
+            paragraph = document.createParagraph();
+            run = paragraph.createRun();
+            run.addTab();
+            run.setText(line.toString());
+        }
+
 
         //间接费用
         paragraph = document.createParagraph();
@@ -442,10 +499,207 @@ public class BudgetExportUtil {
         run.addTab();
         run.setText("间接费用实行总额控制，在与课题牵头单位信用等级挂钩基础上，按照不超过课题经费中直接费用扣除设备购置费后的一定比例核定，根据最新《北京市科技计划项目（课题）经费管理办法》和间接经费计算方法，" +
                 "本课题扣除设备购置费后 "+detailService.sumEquipment(budget.getEquipments())+" 元，" +
-                "间接经费根据上述管理办法计算为 "+indirectSum+" 元，其中绩效费用约 【自行分配】 万元，用于承担单位人员绩效支出。");
+                "间接经费根据上述管理办法计算为 "+indirectSum+" 元，其中绩效费用约 "+indirectSum*0.2+" 万元，用于承担单位人员绩效支出。");
 
 
 
         document.write(outputStream);
+    }
+
+    public static void toCsv(Budget budget,OutputStream outputStream){
+        System.out.println("GBK");
+        try {
+            toCsv(budget, new PrintWriter(new OutputStreamWriter(outputStream, "GBK")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void toCsv(Budget budget, PrintWriter printWriter){
+        BufferedWriter writer = new BufferedWriter(printWriter);
+        try {
+            writer.write("设备费,名称,规格型号,产地,数量,计量单位,单价,小计");
+            writer.newLine();
+            Map<Item, Integer> items = (Map) budget.getEquipments();
+            char comma = ',';
+            for (Item item : items.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + item.getComment()
+                        + comma + "中国"
+                        + comma + items.get(item)
+                        + comma + "台(套)"
+                        + comma + item.getPrice()
+                        + comma + item.computeUnitPrice() * items.get(item));
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("材料费,支出内容,单位,单价,数量,用途,小计");
+            writer.newLine();
+            items = (Map) budget.getMaterials();
+            for (Item item : items.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + "套(个)"
+                        + comma + item.getPrice()
+                        + comma + items.get(item)
+                        + comma + item.getComment()
+                        + comma + item.computeUnitPrice() * items.get(item));
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("测试化验加工费,名称,单价,数量,小计");
+            writer.newLine();
+            items = (Map) budget.getTestAndProcesses();
+            for (Item item : items.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + item.getPrice()
+                        + comma + items.get(item)
+                        + comma + item.computeUnitPrice() * items.get(item));
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("燃料动力费,名称,单价,数量,小计");
+            writer.newLine();
+            items = (Map) budget.getPowers();
+            for (Item item : items.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + item.getPrice()
+                        + comma + items.get(item)
+                        + comma + item.computeUnitPrice() * items.get(item));
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("差旅费,出差城市,交通方式,往返价格,伙食标准补助,交通标准补助,住宿标准,人数,天数,次数,小计");
+            writer.newLine();
+            Map<Travel, Integer> travels = budget.getTravels();
+            for (Item item : travels.keySet()) {
+                if (item instanceof Travel) {
+                    writer.write(comma + ((Travel) item).getName()
+                            + comma + "飞机"
+                            + comma + item.getPrice()
+                            + comma + ((Travel) item).getFood()
+                            + comma + ((Travel) item).getTraffic()
+                            + comma + ((Travel) item).getAccommodation()
+                            + comma + ((Travel) item).getPeople()
+                            + comma + ((Travel) item).getDays()
+                            + comma + travels.get(item)
+                            + comma + item.computeUnitPrice() * travels.get(item));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("会议费,会议内容,费用标准,会期,参会人数,会议次数,小计");
+            writer.newLine();
+            Map<Conference, Integer> conferences = budget.getConferences();
+            for (Item item : conferences.keySet()) {
+                if (item instanceof Conference) {
+                    writer.write(comma + item.getName()
+                            + comma + item.getPrice()
+                            + comma + ((Conference) item).getDays()
+                            + comma + ((Conference) item).getPeople()
+                            + comma + conferences.get(item)
+                            + comma + item.computeUnitPrice() * conferences.get(item));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("国际合作交流费,会议内容,市际交通（往返交通）,住宿补贴,伙食补贴,公杂费,人数,天数,次数,小计");
+            writer.newLine();
+            Map<InternationalCommunication, Integer> internationalCommunications = budget.getInternationalCommunications();
+            for (InternationalCommunication item : internationalCommunications.keySet()) {
+                writer.write(comma + item.getName()
+                        + comma + item.getPrice()
+                        + comma + item.getAccommodation()
+                        + comma + item.getFood()
+                        + comma + item.getTraffic()
+                        + comma + item.getPeople()
+                        + comma + item.getDays()
+                        + comma + internationalCommunications.get(item)
+                        + comma + item.computeUnitPrice() * internationalCommunications.get(item));
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("出版/文献/信息传播/知识产权事务费,出版/文献/信息传播/知识产权事务费内容,单位,单价,数量,小计");
+            writer.newLine();
+            items = (Map) budget.getProperties();
+            for (Item item : items.keySet()) {
+                if (item instanceof Property) {
+                    writer.write(comma + item.getName()
+                            + comma + "篇(个)"
+                            + comma + item.getPrice()
+                            + comma + items.get(item)
+                            + comma + item.computeUnitPrice() * items.get(item));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("劳务费,费用名称,费用标准,数量,小计(五险一金)");
+            writer.newLine();
+            items = (Map) budget.getLabour();
+            for (Item item : items.keySet()) {
+                if (item instanceof Labour) {
+                    writer.write(comma + item.getName()
+                            + comma + item.getPrice()
+                            + comma + items.get(item)
+                            + comma + item.computeUnitPrice() * items.get(item));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            if (budget.getConferences() != null && budget.getConferences().size() > 0 && budget.getConsultations() != null) {
+                writer.write("咨询费,人员类型,费用标准,人数,小计");
+                writer.newLine();
+                Map<Consultation, Integer> consultations = budget.getConsultations();
+                for (Consultation consultation : consultations.keySet()) {
+                    writer.write(comma + consultation.getName()
+                            + comma + consultation.getPrice()
+                            + comma + consultations.get(consultation)
+                            + comma + consultation.getPrice() * consultations.get(consultation));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("其他费用,费用名称,费用标准,数量,小计");
+            writer.newLine();
+            items = (Map) budget.getOthers();
+            for (Item item : items.keySet()) {
+                if (item instanceof Others) {
+                    writer.write(comma + item.getName()
+                            + comma + item.getPrice()
+                            + comma + items.get(item)
+                            + comma + item.computeUnitPrice() * items.get(item));
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("间接费用,费用名称,费用标准,数量,小计");
+            writer.newLine();
+            items = (Map) budget.getIndirects();
+            for (Item item : items.keySet()) {
+                if (item instanceof Indirect) {
+                    writer.write(comma + item.getName()
+                            + comma + item.getPrice()
+                            + comma + items.get(item)
+                            + comma + item.computeUnitPrice() * items.get(item));
+                    writer.newLine();
+                }
+            }
+
+
+            writer.flush();
+            System.out.println("CSV");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -10,14 +10,14 @@
     </select>
     <insert id="insertTravel">
         insert into budgetmanagementsystem.travel(name, price, food, traffic, accommodation)
-          values (#{dest},#{price},#{food},#{traffic},#{accommodation})
+          values (#{name},#{price},#{food},#{traffic},#{accommodation})
     </insert>
     <delete id="deleteTravel">
         delete from budgetmanagementsystem.travel where id=#{id}
     </delete>
     <update id="updateTravel">
         update budgetmanagementsystem.travel
-        set name=#{dest},price=#{price},food=#{food},traffic=#{traffic},accommodation=#{accommodation}
+        set name=#{name},price=#{price},food=#{food},traffic=#{traffic},accommodation=#{accommodation}
         where id=#{id}
     </update>
 </mapper>
