@@ -221,7 +221,7 @@
                     <tr>
                         <th hidden>编号</th>
                         <th>名称</th>
-                        <th>分类</th>
+                        <th hidden>分类</th>
                         <th>描述</th>
                         <th>单价</th>
                         <th>数量</th>
@@ -232,7 +232,7 @@
                     <tbody id="equipment-table">
                     <tr v-for="item in items">
                         <td><input type="text" readonly v-model="item.name" class="form-control"></td>
-                        <td><input type="text" v-model="item.type" class="form-control"></td>
+                        <td hidden><input type="text" v-model="item.type" class="form-control"></td>
                         <td><input type="text" v-model="item.comment" class="form-control"></td>
                         <td><input type="number" v-model="item.price" class="form-control"></td>
                         <td><input type="number" v-model="item.nums" class="form-control"></td>
@@ -243,7 +243,7 @@
                     </tr>
                     <tr class="success">
                         <td><input type="text" v-model="sample.name" class="form-control"></td>
-                        <td><input type="text" v-model="sample.type" class="form-control"></td>
+                        <td hidden><input type="text" v-model="sample.type" class="form-control"></td>
                         <td><input type="text" v-model="sample.comment" class="form-control"></td>
                         <td><input type="number" v-model="sample.price" class="form-control"></td>
                         <td><input type="number" v-model="sample.nums" class="form-control"></td>
@@ -259,7 +259,7 @@
                                 </option>
                             </select>
                         </td>
-                        <td><input type="text" v-model="database[selectedIndex].type" class="form-control"></td>
+                        <td hidden><input type="text" v-model="database[selectedIndex].type" class="form-control"></td>
                         <td><input type="text" v-model="database[selectedIndex].comment" class="form-control"></td>
                         <td>
                             <input type="number" v-model="database[selectedIndex].price" class="form-control">
@@ -614,8 +614,10 @@
                         <td><input type="number" v-model="database[selectedIndex].people" class="form-control"></td>
                         <td><input type="number" v-model="database[selectedIndex].days" class="form-control"></td>
                         <td>
-                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加</button>
-                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除</button>
+                            <button class="btn btn-success" @click="addFromDatabase(database[selectedIndex])">添加
+                            </button>
+                            <button class="btn btn-danger" @click="deleteFromDatabase(database[selectedIndex])">删除
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -905,9 +907,9 @@
     var equipmentVue = new Vue({
         el: "#equipment",
         data: {
-            sample: {id:0,name: "sample", price: 0, nums: 0, type: "", comment: ""},
+            sample: {id: 0, name: "sample", price: 0, nums: 0, type: "", comment: ""},
             items: [],
-            database: [{id:0,name: "sample", price: 0, nums: 0, type: "", comment: ""}],
+            database: [{id: 0, name: "sample", price: 0, nums: 0, type: "", comment: ""}],
             selectedIndex: 0
         },
         methods: {
@@ -919,7 +921,12 @@
                     this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -960,7 +967,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Equipment",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         type: item.type,
                         comment: item.comment,
@@ -985,8 +992,8 @@
         el: "#material",
         data: {
             items: [],
-            sample: {id:0,name: "sample", price: 0, nums: 0},
-            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            sample: {id: 0, name: "sample", price: 0, nums: 0},
+            database: [{id: 0, name: "sample", price: 0, nums: 0}],
             selectedIndex: 0
         },
         methods: {
@@ -997,7 +1004,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1038,7 +1048,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Material",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -1059,8 +1069,8 @@
         el: "#test",
         data: {
             items: [],
-            sample: {id:0,name: "sample", price: 0, nums: 0},
-            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            sample: {id: 0, name: "sample", price: 0, nums: 0},
+            database: [{id: 0, name: "sample", price: 0, nums: 0}],
             selectedIndex: 0
         },
         methods: {
@@ -1071,7 +1081,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1112,7 +1125,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/TestAndProcess",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -1133,8 +1146,28 @@
         el: "#international",
         data: {
             items: [],
-            sample: {id:0,name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0},
-            database: [{id:0,name: "sample", price: 0, food: 0, accommodation: 0, traffic: 0, days: 0, people: 0, nums: 0}],
+            sample: {
+                id: 0,
+                name: "sample",
+                price: 0,
+                food: 0,
+                accommodation: 0,
+                traffic: 0,
+                days: 0,
+                people: 0,
+                nums: 0
+            },
+            database: [{
+                id: 0,
+                name: "sample",
+                price: 0,
+                food: 0,
+                accommodation: 0,
+                traffic: 0,
+                days: 0,
+                people: 0,
+                nums: 0
+            }],
             selectedIndex: 0
         },
         methods: {
@@ -1145,7 +1178,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1186,7 +1222,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/International",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         food: item.food,
@@ -1229,8 +1265,8 @@
         el: "#property",
         data: {
             items: [],
-            sample: {id:0,name: "sample", price: 0, nums: 0},
-            database: [{id:0,name: "sample", price: 0, nums: 0}],
+            sample: {id: 0, name: "sample", price: 0, nums: 0},
+            database: [{id: 0, name: "sample", price: 0, nums: 0}],
             selectedIndex: 0
         },
         methods: {
@@ -1241,7 +1277,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1282,7 +1321,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Property",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,
@@ -1314,7 +1353,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Travel").then(
@@ -1382,7 +1424,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Indirect").then(
@@ -1417,8 +1462,8 @@
         el: "#conference",
         data: {
             items: [],
-            sample: {id:0,name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0},
-            database: [{id:0,name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0}],
+            sample: {id: 0, name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0},
+            database: [{id: 0, name: "sample", expertType: "专家", experts: 0, price: 0, people: 0, days: 0, nums: 0}],
             selectedIndex: 0
         },
         methods: {
@@ -1429,7 +1474,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1470,7 +1518,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Conference",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         people: item.people,
@@ -1506,7 +1554,10 @@
             },
             add: function (item) {
                 item.nums = 1;
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Labour").then(
@@ -1574,7 +1625,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             showlist: function () {
                 this.$http.get("${pageContext.request.contextPath}/Budget/Detail/Consultation").then(
@@ -1641,7 +1695,10 @@
                 if (confirm("确认删除？")) this.doUpdate(item, 1);
             },
             add: function (item) {
-                this.doUpdate(item, 0);
+                if (inItems(item, this.items)) {
+                    alert("已存在")
+                } else
+                    this.doUpdate(item, 0);
             },
             addFromDatabase: function (item) {
                 this.doUpdate(item, 3);
@@ -1682,7 +1739,7 @@
             doUpdate: function (item, curd) {
                 this.$http.post("${pageContext.request.contextPath}/Budget/Modify/Others",
                     {
-                        id:item.id,
+                        id: item.id,
                         name: item.name,
                         price: item.price,
                         nums: item.nums,

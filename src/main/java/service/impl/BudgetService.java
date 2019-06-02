@@ -122,14 +122,16 @@ public class BudgetService implements IBudgetService {
         Map<Equipment, Integer> map = new HashMap<>();
         List<Equipment> equipments = equipmentDao.selectAll();
         if (equipments != null && equipments.size() > 0) {
-            Collections.sort(equipments, new Comparator<Equipment>() {
-                @Override
-                public int compare(Equipment o1, Equipment o2) {
-                    double diff = o1.getPrice() - o2.getPrice();
-                    return (int) diff;
-                }
+            equipments.sort((o1, o2) -> {
+                double diff = o1.getPrice() - o2.getPrice();
+                return (int) diff;
             });
-            Equipment equipment = equipments.get(0);
+            Equipment equipment = null;
+            for (Equipment item : equipments) {
+                if(item.computeUnitPrice()!=0)
+                    equipment=item;
+            }
+            if(equipment==null) return map;
             double sum = 0.0;
             int i = 0;
             while (sum < number) {
@@ -152,7 +154,12 @@ public class BudgetService implements IBudgetService {
         List<Material> materials = materialDao.selectAll();
         Map<Material,Integer> result=new HashMap<>();
         if(materials!=null && materials.size()>0){
-            Material material = materials.get(0);
+            Material material = null;
+            for (Material item : materials) {
+                if(item.computeUnitPrice()>0)
+                    material=item;
+            }
+            if(material==null) return result;
             int i=0;
             while (i*material.getPrice()<number){
                 i++;
@@ -207,7 +214,14 @@ public class BudgetService implements IBudgetService {
         Map<Travel, Integer> result = new HashMap<>();
         List<Travel> travels = travelDao.selectAll();
         if (travels != null && travels.size() != 0) {
-            Travel travel = travels.get(0);
+            Travel travel = null;
+            for (Travel item : travels) {
+                item.setPeople(1);
+                item.setDays(1);
+                if(item.computeUnitPrice()>0)
+                    travel=item;
+            }
+            if(travel==null) return result;
             int i=1;
             travel.setDays(1);
             travel.setPeople(1);
@@ -234,7 +248,12 @@ public class BudgetService implements IBudgetService {
         Map<Conference, Integer> map = new HashMap<>();
         List<Conference> conferences = conferenceDao.selectAll();
         if(conferences!=null && conferences.size()>0){
-            Conference conference = conferences.get(0);
+            Conference conference = null;
+            for (Conference item : conferences) {
+                if(item.getPrice()>0)
+                    conference=item;
+            }
+            if(conference==null) return map;
             conference.setDays(1);
             conference.setPeople(1);
             int i=1;
@@ -257,7 +276,14 @@ public class BudgetService implements IBudgetService {
         List<InternationalCommunication> internationalCommunications = internationalCommunicationDao.selectAll();
         Map<InternationalCommunication,Integer> result=new HashMap<>();
         if(internationalCommunications==null || internationalCommunications.size()==0) return result;
-        InternationalCommunication internationalCommunication = internationalCommunications.get(0);
+        InternationalCommunication internationalCommunication = null;
+        for (InternationalCommunication item : internationalCommunications) {
+            item.setDays(1);
+            item.setPeople(1);
+            if(item.computeUnitPrice()>0)
+                internationalCommunication=item;
+        }
+        if(internationalCommunication==null) return result;
         internationalCommunication.setDays(1);
         internationalCommunication.setPeople(1);
         while(internationalCommunication.computeUnitPrice()<number){
@@ -278,7 +304,12 @@ public class BudgetService implements IBudgetService {
         List<Property> properties = propertyDao.selectAll();
         Map<Property,Integer> result=new HashMap<>();
         if(properties!=null && properties.size()>0){
-            Property property = properties.get(0);
+            Property property =null;
+            for (Property item : properties) {
+                if(item.getPrice()>0)
+                    property=item;
+            }
+            if(property==null) return result;
             int i=0;
             while(i*property.getPrice()<number){
                 i++;
@@ -299,7 +330,12 @@ public class BudgetService implements IBudgetService {
         List<Labour> list = labourDao.selectAll();
         Map<Labour, Integer> result = new HashMap<>();
         try {
-            Labour labour = list.get(0);
+            Labour labour = null;
+            for (Labour item : list) {
+                if(item.getPrice()>0)
+                    labour=item;
+            }
+            if(labour==null) return result;
             labour.setPeople(1);
             labour.setMonths(1);
             while (labour.computeUnitPrice() < number) {
